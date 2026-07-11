@@ -1,0 +1,162 @@
+<div class="recurrences-view">
+
+  <div class="alert-banner">
+    <i class="ti ti-info-circle"></i>
+    Ces règles génèrent automatiquement vos créneaux chaque semaine. Elles s'appliquent jusqu'à fin du mois courant.
+  </div>
+
+  <div class="section-header">
+    <div class="section-title">Mes règles de récurrence</div>
+    <button class="btn primary" (click)="openAdd()">
+      <i class="ti ti-plus"></i> Nouvelle règle
+    </button>
+  </div>
+
+  @for (regle of regles(); track regle.id) {
+    <div class="recurrence-card" [class.inactive]="!regle.isActive">
+      <div class="rc-header">
+        <div class="rc-info">
+          <div class="rc-title">{{ regle.nom }}</div>
+          <div class="rc-time">
+            <i class="ti ti-clock"></i>
+            {{ regle.heureDebut }} → {{ regle.heureFin }} · créneaux de 15 min ·
+            <span class="badge info">{{ regle.creneauxParSemaine }} créneaux/sem</span>
+          </div>
+        </div>
+        <div class="rc-actions">
+          <button
+            class="toggle"
+            [class.on]="regle.isActive"
+            [class.off]="!regle.isActive"
+            (click)="toggleActive(regle)"
+            [attr.aria-label]="regle.isActive ? 'Désactiver' : 'Activer'">
+          </button>
+          <button class="btn" (click)="openEdit(regle)" aria-label="Modifier">
+            <i class="ti ti-edit"></i>
+          </button>
+          <button class="btn danger" (click)="delete(regle.id)" aria-label="Supprimer">
+            <i class="ti ti-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="rc-days">
+        @for (j of allJours; track j.key) {
+          <div class="day-chip" [class.on]="isJourActive(regle, j.key)">
+            {{ j.label }}
+          </div>
+        }
+      </div>
+
+      <div class="rc-meta">
+        @if (regle.isActive) {
+          Active depuis le {{ regle.dateDebut }} · Génère {{ regle.creneauxParSemaine }} créneaux/semaine
+        } @else {
+          Désactivée · Les créneaux futurs ont été supprimés
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Configuration mensuelle -->
+  <div class="monthly-config">
+    <div class="mc-title">Configuration mensuelle</div>
+    <div class="mc-desc">
+      Vos règles s'appliquent automatiquement mois par mois. Une notification vous sera envoyée
+      <strong>5 jours avant la fin du mois</strong> pour valider ou ajuster vos disponibilités pour le mois suivant.
+    </div>
+    <div class="mc-badges">
+      <span class="badge success"><i class="ti ti-check"></i> Juillet configuré</span>
+      <span class="badge warning"><i class="ti ti-alert-triangle"></i> Août en attente</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal: Nouvelle règle -->
+<app-modal title="Nouvelle règle de récurrence" [visible]="activeModal() === 'add'" (close)="closeModal()">
+  <div class="modal-body">
+    <div class="field">
+      <label>Nom de la règle</label>
+      <input type="text" [(ngModel)]="newNom" placeholder="Ex : Matinées du lundi">
+    </div>
+    <div class="field">
+      <label>Jours actifs</label>
+      <div class="day-chips">
+        @for (j of allJours; track j.key) {
+          <div class="day-chip" [class.on]="isJourSelected(j.key)" (click)="toggleJour(j.key)">
+            {{ j.label }}
+          </div>
+        }
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Heure de début</label>
+        <input type="time" [(ngModel)]="newDebut">
+      </div>
+      <div class="field">
+        <label>Heure de fin</label>
+        <input type="time" [(ngModel)]="newFin">
+      </div>
+    </div>
+    <div class="preview-banner">
+      <i class="ti ti-sparkles"></i> {{ recPreview }}
+    </div>
+    <div class="field">
+      <label>Appliquer à partir de</label>
+      <select>
+        <option>Ce mois-ci (juillet 2025)</option>
+        <option>Mois prochain (août 2025)</option>
+        <option>Semaine prochaine uniquement</option>
+      </select>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" (click)="closeModal()">Annuler</button>
+    <button class="btn primary" (click)="saveAdd()">
+      <i class="ti ti-check"></i> Créer la règle
+    </button>
+  </div>
+</app-modal>
+
+<!-- Modal: Modifier règle -->
+<app-modal title="Modifier la règle" [visible]="activeModal() === 'edit'" (close)="closeModal()">
+  <div class="modal-body">
+    <div class="field">
+      <label>Nom</label>
+      <input type="text" [(ngModel)]="newNom">
+    </div>
+    <div class="field">
+      <label>Jours actifs</label>
+      <div class="day-chips">
+        @for (j of allJours; track j.key) {
+          <div class="day-chip" [class.on]="isJourSelected(j.key)" (click)="toggleJour(j.key)">
+            {{ j.label }}
+          </div>
+        }
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Heure de début</label>
+        <input type="time" [(ngModel)]="newDebut">
+      </div>
+      <div class="field">
+        <label>Heure de fin</label>
+        <input type="time" [(ngModel)]="newFin">
+      </div>
+    </div>
+    <div class="warning-banner">
+      <i class="ti ti-alert-triangle"></i>
+      La modification s'appliquera uniquement aux créneaux <strong>futurs non réservés</strong>.
+      Les rendez-vous déjà confirmés ne seront pas affectés.
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" (click)="closeModal()">Annuler</button>
+    <button class="btn primary" (click)="saveEdit()">
+      <i class="ti ti-check"></i> Enregistrer
+    </button>
+  </div>
+</app-modal>

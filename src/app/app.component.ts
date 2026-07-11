@@ -1,0 +1,41 @@
+import { Component, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { SidebarComponent } from './features/disponibilites/shared/sidebar/sidebar.component';
+import { CalendarComponent } from './features/disponibilites/calendar/calendar.component';
+import { RecurrencesComponent } from './features/disponibilites/recurrences/recurrences.component';
+import { CreneauxComponent } from './features/disponibilites/creneaux/creneaux.component';
+import { StatsComponent } from './features/disponibilites/stats/stats.component';
+
+export type ViewName = 'calendar' | 'recurrences' | 'creneaux' | 'stats';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [
+    CommonModule,
+    SidebarComponent,
+    CalendarComponent,
+    RecurrencesComponent,
+    CreneauxComponent,
+    StatsComponent,
+  ],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+})
+export class AppComponent {
+  activeView = signal<ViewName>('calendar');
+
+onViewChange(view: any): void {
+  this.activeView.set(view as ViewName);
+}
+
+  getTopbarTitle(): string {
+    const titles: Record<ViewName, string> = {
+      calendar: 'Mes disponibilités — Juillet 2025',
+      recurrences: 'Règles de récurrence',
+      creneaux: 'Mes créneaux',
+      stats: 'Statistiques',
+    };
+    return titles[this.activeView()];
+  }
+}

@@ -1,0 +1,35 @@
+<div class="app">
+  <app-sidebar [activeView]="activeView()" (viewChange)="onViewChange($event)"></app-sidebar>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">{{ getTopbarTitle() }}</div>
+      <div class="topbar-actions">
+        <button class="btn" [hidden]="activeView() !== 'calendar'">
+          <i class="ti ti-copy"></i> Copier semaine
+        </button>
+        <button class="btn" [hidden]="activeView() !== 'calendar'">
+          <i class="ti ti-template"></i> Templates
+        </button>
+        <button class="btn primary" [hidden]="activeView() !== 'calendar'">
+          <i class="ti ti-plus"></i> Ajouter
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      @if (activeView() === 'calendar') {
+        <app-calendar (navigateTo)="onViewChange($event)"></app-calendar>
+      }
+      @if (activeView() === 'recurrences') {
+        <app-recurrences></app-recurrences>
+      }
+      @if (activeView() === 'creneaux') {
+        <app-creneaux></app-creneaux>
+      }
+      @if (activeView() === 'stats') {
+        <app-stats></app-stats>
+      }
+    </div>
+  </div>
+</div>

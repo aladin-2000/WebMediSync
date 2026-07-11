@@ -1,13 +1,43 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>WebMediSync</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-  <app-root></app-root>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>MediSync — Disponibilités Médecin</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1971c2" />
+    <meta name="description" content="Gestion des disponibilités médicales pour MediSync" />
+
+    <!-- Tabler Icons (CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/tabler-icons.min.css" />
+
+    <!-- Global styles -->
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: #ffffff;
+        color: #212529;
+        line-height: 1.5;
+      }
+
+      input::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
 </html>

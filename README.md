@@ -1,59 +1,90 @@
-# WebMediSync
+# MediSync — Disponibilités Médecin (Angular 20)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.1.
+Une application Angular 20 de gestion des disponibilités médicales avec interface moderne et responsive.
 
-## Development server
+## 📋 Structure du projet
 
-To start a local development server, run:
-
-```bash
-ng serve
+```
+src/
+├── app/
+│   ├── features/disponibilites/
+│   │   ├── calendar/          # Vue calendrier mensuel
+│   │   ├── recurrences/       # Gestion des règles de récurrence
+│   │   ├── creneaux/          # Vue semaine des créneaux
+│   │   ├── stats/             # Statistiques et graphiques
+│   │   ├── shared/            # Composants partagés
+│   │   │   ├── sidebar/
+│   │   │   └── modal/
+│   │   ├── models/            # Types TypeScript
+│   │   └── data/              # Mock data
+│   ├── app.component.*        # Composant principal
+│   ├── app.config.ts          # Configuration Angular
+│   └── app.routes.ts          # Routes
+├── main.ts                    # Point d'entrée
+├── index.html
+└── styles.css                 # Styles globaux
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 🚀 Installation & Démarrage
 
-## Code scaffolding
+### Prérequis
+- Node.js 18+
+- Angular CLI 20+
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+### 1. Cloner et installer les dépendances
 ```bash
-ng generate component component-name
+cd medisync-disponibilites
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+### 2. Démarrer le serveur de développement
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+L'application s'ouvrira automatiquement sur `http://localhost:4200`
 
-To build the project run:
-
+### 3. Build pour la production
 ```bash
-ng build
+npm run build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 📱 Fonctionnalités actuelles (Mock)
 
-## Running unit tests
+- ✅ **Calendrier mensuel** — vue globale avec stats
+- ✅ **Récurrences** — création/modification de règles hebdomadaires
+- ✅ **Créneaux** — vue semaine avec gestion des créneaux
+- ✅ **Statistiques** — taux de remplissage par jour
+- ✅ **Modales** — ajout, édition de créneaux
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## 🎨 Design & Palette
 
-```bash
-ng test
-```
+- **Primaire** : #1971c2 (Bleu santé)
+- **Succès** : #2f9e44 (Vert)
+- **Attention** : #f59f00 (Orange)
+- **Danger** : #c92a2a (Rouge)
+- **Icônes** : Tabler Icons (CDN)
 
-## Running end-to-end tests
+## 📝 Prochaines étapes
 
-For end-to-end (e2e) testing, run:
+1. Intégrer un service REST pour les disponibilités
+2. Ajouter l'authentification utilisateur
+3. Implémenter la validation côté serveur
+4. Ajouter les notifications en temps réel
+5. Optimiser les performances pour mobile
 
-```bash
-ng e2e
-```
+## 🛠️ Technologies
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+- **Framework** : Angular 20 (standalone)
+- **Langage** : TypeScript 5.6
+- **Styles** : CSS vanilla (pas de framework)
+- **State** : Angular signals
+- **Icons** : Tabler Icons
 
-## Additional Resources
+## 📦 Notes
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- **Sans services** : Les composants utilisent des mock data
+- **Standalone** : Aucun NgModule, architecture modulaire
+- **TypeScript strict** : Configuration stricte activée
+
+Bon développement ! 🎉
