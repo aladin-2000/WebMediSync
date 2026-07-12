@@ -1,10 +1,9 @@
 <div class="calendar-view">
 
-  <!-- Alert banner -->
-  <div class="alert-banner">
-    <i class="ti ti-alert-triangle"></i>
-    Vous n'avez pas encore configuré vos disponibilités pour août. La configuration se clôture dans <strong>5 jours</strong>.
-    <button class="btn" style="margin-left:auto" (click)="navigateTo.emit('recurrences')">Configurer</button>
+  <div class="actions">
+    <button class="btn primary">
+      <i class="ti ti-plus"></i> Ajouter Disponibilité
+    </button>
   </div>
 
   <!-- Stats -->
@@ -62,34 +61,6 @@
       </div>
     }
   </div>
-
-  <!-- Quick actions -->
-  <div class="section-header" style="margin-top:20px">
-    <div class="section-title">Actions rapides</div>
-  </div>
-  <div class="quick-actions">
-    <div class="qa-card" (click)="openModal('addDispo')">
-      <i class="ti ti-calendar-plus qa-icon"></i>
-      <div class="qa-label">Ajouter des créneaux</div>
-      <div class="qa-desc">Manuellement pour une date spécifique</div>
-    </div>
-    <div class="qa-card" (click)="openModal('copyWeek')">
-      <i class="ti ti-copy qa-icon"></i>
-      <div class="qa-label">Copier une semaine</div>
-      <div class="qa-desc">Dupliquer les créneaux d'une semaine vers une autre</div>
-    </div>
-    <div class="qa-card" (click)="navigateTo.emit('recurrences')">
-      <i class="ti ti-repeat qa-icon"></i>
-      <div class="qa-label">Règles de récurrence</div>
-      <div class="qa-desc">Configurer mes disponibilités hebdomadaires</div>
-    </div>
-    <div class="qa-card" (click)="openModal('template')">
-      <i class="ti ti-template qa-icon"></i>
-      <div class="qa-label">Appliquer un template</div>
-      <div class="qa-desc">Semaine type prédéfinie à appliquer en un clic</div>
-    </div>
-  </div>
-
 </div>
 
 <!-- Modal: Ajouter disponibilité -->

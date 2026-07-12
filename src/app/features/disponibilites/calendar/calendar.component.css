@@ -1,5 +1,11 @@
 .calendar-view { padding: 20px; }
 
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
 .alert-banner {
   background: #fff3cd;
   border: 1px solid #ffc107;
@@ -122,12 +128,7 @@
 .slot-pill.disponible { background: #dbe4ff; color: #1971c2; }
 .slot-pill.reserve    { background: #d3f9d8; color: #2f9e44; }
 
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
+
 
 .section-title {
   font-size: 12px;
