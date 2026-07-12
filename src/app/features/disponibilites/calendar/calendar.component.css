@@ -218,6 +218,10 @@
 }
 .template-chip:hover { background: #1971c2; color: #fff; }
 
+.template-chip.selected {
+  background: #1971c2;
+  color: white;
+}
 .day-chips { display: flex; gap: 4px; margin-top: 4px; }
 .day-chip {
   width: 28px; height: 28px; border-radius: 50%;

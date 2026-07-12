@@ -1,48 +1,45 @@
 import { RegleRecurrence, JourSemaineView, StatMois, StatJour } from '../models/disponibilite.models';
 
 export const SLOT_DATA: Record<string, { avail: number; taken: number }> = {
-  '2025-7-2':  { avail: 8,  taken: 6  },
-  '2025-7-3':  { avail: 12, taken: 12 },
-  '2025-7-7':  { avail: 8,  taken: 5  },
-  '2025-7-8':  { avail: 12, taken: 8  },
-  '2025-7-9':  { avail: 8,  taken: 8  },
-  '2025-7-10': { avail: 12, taken: 3  },
-  '2025-7-14': { avail: 8,  taken: 7  },
-  '2025-7-15': { avail: 12, taken: 10 },
-  '2025-7-16': { avail: 8,  taken: 2  },
-  '2025-7-21': { avail: 12, taken: 12 },
-  '2025-7-22': { avail: 8,  taken: 4  },
+  '2026-7-2':  { avail: 8,  taken: 6  },
+  '2026-7-3':  { avail: 12, taken: 12 },
+  '2026-7-7':  { avail: 8,  taken: 5  },
+  '2026-7-8':  { avail: 12, taken: 8  },
+  '2026-7-9':  { avail: 8,  taken: 8  },
+  '2026-7-10': { avail: 12, taken: 3  },
+  '2026-7-14': { avail: 8,  taken: 7  },
+  '2026-7-15': { avail: 12, taken: 10 },
+  '2026-7-16': { avail: 8,  taken: 2  },
+  '2026-7-21': { avail: 12, taken: 12 },
+  '2026-7-22': { avail: 8,  taken: 4  },
 };
 
 export const MOCK_REGLES: RegleRecurrence[] = [
   {
     id: '1',
     nom: 'Matinées classiques',
-    jours: ['L', 'M', 'J'],
     heureDebut: '09:00',
     heureFin: '12:00',
     isActive: true,
-    dateDebut: '2025-06-01',
+    dateDebut: '2026-06-01',
     creneauxParSemaine: 32,
   },
   {
     id: '2',
     nom: 'Après-midi mercredi',
-    jours: ['Me'],
     heureDebut: '14:00',
     heureFin: '17:30',
     isActive: true,
-    dateDebut: '2025-06-15',
+    dateDebut: '2026-06-15',
     creneauxParSemaine: 14,
   },
   {
     id: '3',
     nom: 'Vendredi matin',
-    jours: ['V'],
     heureDebut: '08:00',
     heureFin: '10:00',
     isActive: false,
-    dateDebut: '2025-06-01',
+    dateDebut: '2026-06-01',
     creneauxParSemaine: 0,
   },
 ];
@@ -128,18 +125,3 @@ export const MONTHS = [
 ];
 
 export const DAYS_LABELS = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-
-export const TEMPLATES = [
-  { nom: 'Semaine standard',  desc: 'Lun–Jeu 09h→12h · Mer 14h→17h30 · 46 créneaux' },
-  { nom: 'Semaine chargée',   desc: 'Lun–Sam 09h→12h + 14h→17h · 88 créneaux'       },
-  { nom: 'Semaine légère',    desc: 'Mar + Jeu 09h→12h · 24 créneaux'                },
-];
-
-export const ALL_JOURS: { key: string; label: string }[] = [
-  { key: 'L',  label: 'L' },
-  { key: 'M',  label: 'M' },
-  { key: 'Me', label: 'M' },
-  { key: 'J',  label: 'J' },
-  { key: 'V',  label: 'V' },
-  { key: 'S',  label: 'S' },
-];

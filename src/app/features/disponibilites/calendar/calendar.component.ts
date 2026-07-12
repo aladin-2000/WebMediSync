@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output, signal, computed } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../shared/modal/modal.component';
-import { SLOT_DATA, MONTHS, DAYS_LABELS, TEMPLATES, ALL_JOURS } from '../data/mock-data';
+import { SLOT_DATA, MONTHS, DAYS_LABELS } from '../data/mock-data';
 
 export interface CalendarCell {
   day: number;
@@ -13,6 +13,7 @@ export interface CalendarCell {
   available: number;
   taken: number;
   key: string;
+  isPast: boolean;
 }
 
 export type ModalType = 'addDispo' | 'copyWeek' | 'template' | null;
@@ -27,16 +28,15 @@ export type ModalType = 'addDispo' | 'copyWeek' | 'template' | null;
 export class CalendarComponent {
   @Output() navigateTo = new EventEmitter<string>();
 
-  currentDate = signal(new Date(2025, 6, 1));
+  currentDate = signal(new Date());
   activeModal = signal<ModalType>(null);
 
   dispoDebut = '09:00';
   dispoFin = '12:00';
-  dispoDate = '2025-07-08';
+  dateDebut = new Date().toISOString().split('T')[0]; // Default to today's date in YYYY-MM-DD format
+  dateFin = new Date().toISOString().split('T')[0]; // Default to today's date in YYYY-MM-DD format
   selectedDays: string[] = [];
 
-  readonly allJours = ALL_JOURS;
-  readonly templates = TEMPLATES;
 
   readonly monthLabel = computed(() => {
     const d = this.currentDate();
@@ -57,23 +57,27 @@ export class CalendarComponent {
   readonly cells = computed((): CalendarCell[] => {
     const d = this.currentDate();
     const y = d.getFullYear(), m = d.getMonth();
-    const firstDay = new Date(y, m, 1).getDay();
-    const daysInMonth = new Date(y, m + 1, 0).getDate();
-    const today = new Date();
+    const numberfirstDayInMounth = new Date(y, m, 1).getDay();
+    const numberdaysInMonth = new Date(y, m + 1, 0).getDate();
+    const today = this.currentDate();
+    today.setHours(0, 0, 0, 0);
     const cells: CalendarCell[] = [];
 
-    for (let i = 0; i < firstDay; i++) {
-      cells.push({ day: 0, otherMonth: true, isToday: false, hasFull: false, hasSlots: false, available: 0, taken: 0, key: '' });
+    for (let i = 0; i < numberfirstDayInMounth; i++) {
+      cells.push({ day: 0, otherMonth: true, isToday: false, isPast: false, hasFull: false, hasSlots: false, available: 0, taken: 0, key: '' });
     }
 
-    for (let day = 1; day <= daysInMonth; day++) {
+    for (let day = 1; day <= numberdaysInMonth; day++) {
       const key = `${y}-${m + 1}-${day}`;
       const slot = SLOT_DATA[key];
       const isToday = y === today.getFullYear() && m === today.getMonth() && day === today.getDate();
+      const cellDate = new Date(y, m, day);
+      const isPast = cellDate < today;
       cells.push({
         day,
         otherMonth: false,
         isToday,
+        isPast,
         hasFull: !!slot && slot.taken >= slot.avail,
         hasSlots: !!slot && slot.taken < slot.avail,
         available: slot ? slot.avail - slot.taken : 0,
@@ -93,21 +97,60 @@ export class CalendarComponent {
     return Math.max(0, Math.floor(mins / 15));
   }
 
-  changeMonth(dir: number): void {
-    const d = this.currentDate();
-    this.currentDate.set(new Date(d.getFullYear(), d.getMonth() + dir, 1));
+changeMonth(dir: number): void {
+  const current = this.currentDate();
+  const today = new Date();
+
+  const newDate = new Date(
+    current.getFullYear(),
+    current.getMonth() + dir,
+    1
+  );
+
+  // Bloquer les mois avant le mois actuel
+  if (
+    newDate.getFullYear() < today.getFullYear() ||
+    (newDate.getFullYear() === today.getFullYear() &&
+      newDate.getMonth() < today.getMonth())
+  ) {
+    return;
   }
+
+  // Si on revient au mois actuel, remettre la vraie date du jour
+  if (
+    newDate.getFullYear() === today.getFullYear() &&
+    newDate.getMonth() === today.getMonth()
+  ) {
+    this.currentDate.set(today);
+  } else {
+    this.currentDate.set(newDate);
+  }
+}
 
   goToday(): void {
-    this.currentDate.set(new Date(2025, 6, 1));
+    this.currentDate.set(new Date());
   }
 
-  openModal(type: ModalType): void {
-    this.activeModal.set(type);
+
+  showModalAddDisponibilite : boolean = false;
+
+  openModalAddDisponibiliteFromCalendar(cell: CalendarCell): void {
+    const [year, month, day] = cell.key.split('-').map(Number);
+    let cellDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    console.log(cell);
+    this.dateDebut = cellDate;
+    this.dateFin = cellDate;
+    this.showModalAddDisponibilite = true;
+}
+
+   openModalAddDisponibilite(): void {
+    this.dateDebut = new Date().toISOString().split('T')[0]; // Default to today's date in YYYY-MM-DD format
+    this.dateFin = new Date().toISOString().split('T')[0]; // Default to today's date in YYYY-MM-DD format
+    this.showModalAddDisponibilite = true;
   }
 
-  closeModal(): void {
-    this.activeModal.set(null);
+   closeModalAddDisponibilite() {
+    this.showModalAddDisponibilite = false;
   }
 
   toggleDay(key: string): void {
@@ -124,6 +167,7 @@ export class CalendarComponent {
   }
 
   applyTemplate(preset: string): void {
+    this.selectedTemplate = preset;
     const presets: Record<string, [string, string]> = {
       matin:   ['09:00', '12:00'],
       aprem:   ['14:00', '17:30'],
@@ -133,4 +177,12 @@ export class CalendarComponent {
       [this.dispoDebut, this.dispoFin] = presets[preset];
     }
   }
+
+  selectedTemplate: string | null = null;
+
+  applyTemplate2(type: string): void {
+  this.selectedTemplate = type;
+    // ton traitement existant ici
+  }
+  
 }

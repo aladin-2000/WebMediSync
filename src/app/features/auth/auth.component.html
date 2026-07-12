@@ -1,0 +1,40 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="logo-box">
+        <i class="ti ti-heartbeat"></i>
+      </div>
+      <h2>WebMediSync</h2>
+      <p>Connectez-vous à votre espace dédié</p>
+    </div>
+
+    <form (ngSubmit)="onLogin()">
+      <div class="form-group">
+        <label for="username">Nom d'utilisateur</label>
+        <div class="input-icon">
+          <i class="ti ti-user"></i>
+          <input type="text" id="username" name="username" [(ngModel)]="username" placeholder="Entrez votre identifiant" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <div class="input-icon">
+          <i class="ti ti-lock"></i>
+          <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="Entrez votre mot de passe" required>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-banner">
+        <i class="ti ti-alert-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <button type="submit" class="btn-login">Se connecter</button>
+    </form>
+    
+    <div class="auth-footer">
+      <p>Comptes démo: <strong>medecin / medecin</strong> ou <strong>delegue / delegue</strong></p>
+    </div>
+  </div>
+</div>

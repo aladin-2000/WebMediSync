@@ -10,7 +10,6 @@ export interface SlotDay {
 export interface RegleRecurrence {
   id: string;
   nom: string;
-  jours: JourSemaine[];
   heureDebut: string;
   heureFin: string;
   isActive: boolean;

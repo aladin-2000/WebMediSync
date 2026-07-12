@@ -15,7 +15,7 @@ import { MOCK_SEMAINE } from '../data/mock-data';
 export class CreneauxComponent {
   semaine = signal<JourSemaineView[]>(MOCK_SEMAINE.map(j => ({ ...j })));
   weekOffset = signal(0);
-  showAddModal = signal(false);
+  showAddModal = false;
 
   newDate = '2025-07-08';
   newHeure = '14:00';
@@ -35,11 +35,11 @@ export class CreneauxComponent {
   }
 
   openAddModal(): void {
-    this.showAddModal.set(true);
+    this.showAddModal=true;
   }
 
   closeAddModal(): void {
-    this.showAddModal.set(false);
+    this.showAddModal =false;
   }
 
   addCreneau(): void {

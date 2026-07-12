@@ -1,7 +1,7 @@
 <div class="calendar-view">
 
   <div class="actions">
-    <button class="btn primary">
+    <button class="btn primary" (click)="openModalAddDisponibilite()">
       <i class="ti ti-plus"></i> Ajouter Disponibilité
     </button>
   </div>
@@ -21,11 +21,12 @@
       <div class="stat-label">Taux remplissage</div>
     </div>
   </div>
+  <!-- End Stats -->
 
   <!-- Month navigation -->
   <div class="month-nav">
-    <button class="btn" (click)="changeMonth(-1)" aria-label="Mois précédent">
-      <i class="ti ti-chevron-left"></i>
+    <button class="btn" (click)="changeMonth(-1)" aria-label="Mois précédent" icon="ti ti-chevron-left">
+      <i class="fa-solid fa-angle-right"></i>
     </button>
     <div class="month-label">{{ monthLabel() }}</div>
     <button class="btn" (click)="changeMonth(1)" aria-label="Mois suivant">
@@ -37,7 +38,7 @@
       <span class="badge success"><span class="dot-badge green"></span>Réservé</span>
     </div>
   </div>
-
+  <!-- End Month navigation -->
   <!-- Calendar grid -->
   <div class="cal-grid">
     @for (day of daysLabels; track day) {
@@ -49,7 +50,8 @@
         [class.other-month]="cell.otherMonth"
         [class.has-slots]="cell.hasSlots"
         [class.full]="cell.hasFull"
-        (click)="!cell.otherMonth && openModal('addDispo')"
+        [class.past-day]="cell.isPast"
+        (click)="!cell.otherMonth && !cell.isPast && openModalAddDisponibiliteFromCalendar(cell)"
       >
         <div class="day-num" [class.today]="cell.isToday">{{ cell.otherMonth ? '' : cell.day }}</div>
         @if (cell.taken > 0) {
@@ -62,18 +64,39 @@
     }
   </div>
 </div>
-
+ <!-- End Calendar grid -->
 <!-- Modal: Ajouter disponibilité -->
-<app-modal title="Ajouter des disponibilités" [visible]="activeModal() === 'addDispo'" (close)="closeModal()">
+<app-modal title="Ajouter des disponibilités" [visible]="showModalAddDisponibilite" (close)="closeModalAddDisponibilite()">
   <div class="modal-body">
     <div class="template-row">
-      <div class="template-chip" (click)="applyTemplate('matin')">Matin type</div>
-      <div class="template-chip" (click)="applyTemplate('aprem')">Après-midi type</div>
-      <div class="template-chip" (click)="applyTemplate('journee')">Journée complète</div>
-    </div>
+  <div 
+    class="template-chip"
+    [class.selected]="selectedTemplate === 'matin'"
+    (click)="applyTemplate('matin')">
+    Matin type
+  </div>
+
+  <div 
+    class="template-chip"
+    [class.selected]="selectedTemplate === 'aprem'"
+    (click)="applyTemplate('aprem')">
+    Après-midi type
+  </div>
+
+  <div 
+    class="template-chip"
+    [class.selected]="selectedTemplate === 'journee'"
+    (click)="applyTemplate('journee')">
+    Journée complète
+  </div>
+
+</div>
+
     <div class="field">
-      <label>Date</label>
-      <input type="date" [(ngModel)]="dispoDate">
+      <label>Date Debut</label>
+      <input type="date" [(ngModel)]="dateDebut">
+      <label>Date Fin</label>
+      <input type="date" [(ngModel)]="dateFin">
     </div>
     <div class="field-row">
       <div class="field">
@@ -89,67 +112,11 @@
       <i class="ti ti-info-circle"></i>
       Cette plage génèrera <strong>{{ slotsCount }} créneau{{ slotsCount > 1 ? 'x' : '' }}</strong> de 15 min
     </div>
-    <div class="field">
-      <label>Appliquer aussi à</label>
-      <div class="day-chips">
-        @for (j of allJours; track j.key) {
-          <div class="day-chip" [class.on]="isDaySelected(j.key)" (click)="toggleDay(j.key)">
-            {{ j.label }}
-          </div>
-        }
-      </div>
-      <div class="hint">Sélectionnez d'autres jours pour appliquer la même plage</div>
-    </div>
   </div>
   <div class="modal-footer">
-    <button class="btn" (click)="closeModal()">Annuler</button>
-    <button class="btn primary" (click)="closeModal()">
+    <button class="btn" (click)="closeModalAddDisponibilite()">Annuler</button>
+    <button class="btn primary" (click)="closeModalAddDisponibilite()">
       <i class="ti ti-check"></i> Confirmer
     </button>
-  </div>
-</app-modal>
-
-<!-- Modal: Copier semaine -->
-<app-modal title="Copier une semaine" [visible]="activeModal() === 'copyWeek'" (close)="closeModal()">
-  <div class="modal-body">
-    <div class="field">
-      <label>Semaine source (à copier)</label>
-      <input type="week" value="2025-W27">
-    </div>
-    <div class="field">
-      <label>Semaine destination</label>
-      <input type="week" value="2025-W28">
-    </div>
-    <div class="slots-preview">
-      <i class="ti ti-info-circle"></i>
-      Seuls les créneaux <strong>disponibles</strong> seront copiés. Les créneaux déjà réservés ne sont pas dupliqués.
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn" (click)="closeModal()">Annuler</button>
-    <button class="btn primary" (click)="closeModal()">
-      <i class="ti ti-copy"></i> Copier
-    </button>
-  </div>
-</app-modal>
-
-<!-- Modal: Templates -->
-<app-modal title="Appliquer un template" [visible]="activeModal() === 'template'" (close)="closeModal()">
-  <div class="modal-body">
-    <p class="hint" style="margin-bottom:8px">Sélectionnez un template à appliquer sur la semaine en cours</p>
-    <div class="template-list">
-      @for (t of templates; track t.nom) {
-        <div class="template-item" (click)="closeModal()">
-          <div class="tpl-nom">{{ t.nom }}</div>
-          <div class="tpl-desc">{{ t.desc }}</div>
-        </div>
-      }
-      <div class="template-item dashed" (click)="closeModal()">
-        <i class="ti ti-plus"></i> Créer un template depuis cette semaine
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn" (click)="closeModal()">Fermer</button>
   </div>
 </app-modal>
