@@ -1,21 +1,41 @@
 @if (!isLoggedIn) {
   <app-auth></app-auth>
 } @else {
-  <div class="app">
-    <app-sidebar [activeView]="activeView()" (viewChange)="onViewChange($event)"></app-sidebar>
+  @if (authService.currentUserRole === 'medecin') {
+    <div class="app">
+      <app-sidebar [activeView]="activeView()" (viewChange)="onViewChange($event)"></app-sidebar>
 
-    <div class="main">
-      <div class="content">
-        @if (activeView() === 'calendar') {
-          <app-calendar (navigateTo)="onViewChange($event)"></app-calendar>
-        }
-        @if (activeView() === 'creneaux') {
-          <app-creneaux></app-creneaux>
-        }
-        @if (activeView() === 'stats') {
-          <app-stats></app-stats>
-        }
+      <div class="main">
+        <div class="content">
+          @if (activeView() === 'calendar') {
+            <app-calendar (navigateTo)="onViewChange($event)"></app-calendar>
+          }
+          @if (activeView() === 'creneaux') {
+            <app-creneaux></app-creneaux>
+          }
+          @if (activeView() === 'stats') {
+            <app-stats></app-stats>
+          }
+        </div>
       </div>
     </div>
-  </div>
+  } @else if (authService.currentUserRole === 'delegue') {
+    <div class="app">
+      <app-delegue-sidebar [activePage]="activeDelegueView()" (pageChange)="onDelegueViewChange($event)"></app-delegue-sidebar>
+
+      <div class="main">
+        <div class="content">
+          @if (activeDelegueView() === 'search') {
+            <app-search></app-search>
+          }
+          @if (activeDelegueView() === 'planning') {
+            <app-planning></app-planning>
+          }
+          @if (activeDelegueView() === 'history') {
+            <app-history></app-history>
+          }
+        </div>
+      </div>
+    </div>
+  }
 }

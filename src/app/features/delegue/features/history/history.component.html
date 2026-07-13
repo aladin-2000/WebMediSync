@@ -1,0 +1,94 @@
+<div class="history-page">
+
+  <!-- En-tête -->
+  <div class="page-header">
+    <h1>Historique de mes visites</h1>
+    <p>Consultez le détail de toutes vos visites réalisées, annulations et scores</p>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num">{{ getTotalVisits() }}</div>
+      <div class="stat-label">Visites réalisées</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{ getTotalCancellations() }}</div>
+      <div class="stat-label">Annulations</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{ getCancellationRate() }}%</div>
+      <div class="stat-label">Taux d'annulation</div>
+    </div>
+  </div>
+
+  <!-- VISITES REALISEES -->
+  <div class="history-section">
+    <div class="section-title">
+      <i class="ti ti-calendar-check"></i> Visites réalisées ({{ getTotalVisits() }})
+    </div>
+
+    @if (completedVisits.length === 0) {
+      <div class="empty-state">Aucune visite réalisée</div>
+    } @else {
+      <div class="visits-list">
+        @for (visit of completedVisits; track visit.id) {
+          <div class="visit-card">
+            <div class="visit-header">
+              <div class="visit-doctor">{{ visit.doctorName }}</div>
+              <div class="visit-status done">
+                <i class="ti ti-check"></i> Réalisée
+              </div>
+            </div>
+            <div class="visit-details">
+              <div class="detail">
+                <i class="ti ti-calendar"></i> {{ formatDate(visit.date) }}
+              </div>
+              <div class="detail">
+                <i class="ti ti-clock"></i> {{ visit.time }}
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- ANNULATIONS -->
+  <div class="history-section">
+    <div class="section-title">
+      <i class="ti ti-alert-circle"></i> Annulations ({{ getTotalCancellations() }})
+    </div>
+
+    @if (cancellations.length === 0) {
+      <div class="empty-state">Aucune annulation</div>
+    } @else {
+      <div class="visits-list">
+        @for (cancellation of cancellations; track cancellation.id) {
+          <div class="visit-card cancelled">
+            <div class="visit-header">
+              <div class="visit-doctor">{{ cancellation.doctorName }}</div>
+              <div class="visit-status cancelled">
+                <i class="ti ti-x"></i> Annulée
+              </div>
+            </div>
+            <div class="visit-details">
+              <div class="detail">
+                <i class="ti ti-calendar"></i> {{ formatDate(cancellation.date) }}
+              </div>
+              <div class="detail">
+                <i class="ti ti-clock"></i> {{ cancellation.time }}
+              </div>
+              @if (cancellation.cancellationReason) {
+                <div class="detail reason">
+                  <i class="ti ti-alert-triangle"></i> Raison: {{ cancellation.cancellationReason }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+</div>

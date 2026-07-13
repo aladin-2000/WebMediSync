@@ -7,7 +7,13 @@ import { StatsComponent } from './features/disponibilites/stats/stats.component'
 import { AuthComponent } from './features/auth/auth.component';
 import { AuthService } from './core/services/auth.service';
 
+import { SidebarComponent as DelegueSidebarComponent } from './features/delegue/shared/sidebar/sidebar.component';
+import { SearchComponent } from './features/delegue/features/search/search.component';
+import { PlanningComponent } from './features/delegue/features/planning/planning.component';
+import { HistoryComponent } from './features/delegue/features/history/history.component';
+
 export type ViewName = 'calendar' | 'recurrences' | 'creneaux' | 'stats';
+export type DeleguePageName = 'search' | 'planning' | 'history';
 
 @Component({
   selector: 'app-root',
@@ -18,13 +24,18 @@ export type ViewName = 'calendar' | 'recurrences' | 'creneaux' | 'stats';
     CalendarComponent,
     CreneauxComponent,
     StatsComponent,
-    AuthComponent
+    AuthComponent,
+    DelegueSidebarComponent,
+    SearchComponent,
+    PlanningComponent,
+    HistoryComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
   activeView = signal<ViewName>('calendar');
+  activeDelegueView = signal<DeleguePageName>('search');
 
   constructor(public authService: AuthService) {}
 
@@ -34,7 +45,11 @@ export class AppComponent {
 
   onViewChange(view: any): void {
     this.activeView.set(view as ViewName);
-}
+  }
+
+  onDelegueViewChange(view: any): void {
+    this.activeDelegueView.set(view as DeleguePageName);
+  }
 
   getTopbarTitle(): string {
     const titles: Record<ViewName, string> = {

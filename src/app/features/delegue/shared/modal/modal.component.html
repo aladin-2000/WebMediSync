@@ -1,0 +1,13 @@
+@if (visible) {
+  <div class="overlay" (click)="onOverlayClick($event)">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">{{ title }}</span>
+        <button class="btn-close" (click)="close.emit()">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <ng-content></ng-content>
+    </div>
+  </div>
+}

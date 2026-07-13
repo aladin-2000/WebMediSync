@@ -1,0 +1,52 @@
+<div class="planning-page">
+
+  <!-- En-tête -->
+  <div class="page-header">
+    <h1>Mon Planning</h1>
+    <p>Consultez vos rendez-vous pour les semaines à venir</p>
+  </div>
+
+  <!-- Navigation du mois -->
+  <div class="month-nav">
+    <button class="btn-nav" (click)="changeMonth(-1)">
+      <i class="ti ti-chevron-left"></i>
+    </button>
+    <div class="month-label">{{ monthLabel() }}</div>
+    <button class="btn-nav" (click)="changeMonth(1)">
+      <i class="ti ti-chevron-right"></i>
+    </button>
+    <button class="btn-nav" (click)="goToday()">Aujourd'hui</button>
+  </div>
+
+  <!-- Calendrier -->
+  <div class="cal-grid">
+    <!-- En-têtes (Lun, Mar...) -->
+    @for (day of dayLabels; track day) {
+      <div class="cal-head">{{ day }}</div>
+    }
+
+    <!-- Cellules du calendrier -->
+    @for (cell of cells(); track $index) {
+      <div class="cal-cell" [class.empty]="cell.otherMonth">
+        @if (!cell.otherMonth) {
+          <div class="day-num">{{ cell.day }}</div>
+
+          <!-- Rendez-vous pour ce jour -->
+          @if (cell.reservations.length > 0) {
+            <div class="reservations">
+              @for (res of cell.reservations; track res.id) {
+                <div class="reservation-badge">
+                  <div class="res-time">{{ res.time }}</div>
+                  <div class="res-doctor">{{ res.doctorName }}</div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="no-reservation">Libre</div>
+          }
+        }
+      </div>
+    }
+  </div>
+
+</div>

@@ -1,0 +1,147 @@
+.history-page {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.page-header p {
+  font-size: 13px;
+  color: #868e96;
+}
+
+/* Statistiques */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+}
+
+.stat-num {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1971c2;
+  margin-bottom: 2px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #868e96;
+  font-weight: 500;
+}
+
+/* Sections d'historique */
+.history-section {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #212529;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #868e96;
+  font-size: 12px;
+}
+
+.visits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Carte de visite */
+.visit-card {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #2f9e44;
+}
+
+.visit-card.cancelled {
+  border-left-color: #c92a2a;
+  opacity: 0.8;
+}
+
+.visit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.visit-doctor {
+  font-size: 13px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.visit-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.visit-status.done {
+  background: #d3f9d8;
+  color: #2f9e44;
+}
+
+.visit-status.cancelled {
+  background: #ffe0e0;
+  color: #c92a2a;
+}
+
+.visit-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail {
+  font-size: 12px;
+  color: #868e96;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail.reason {
+  color: #c92a2a;
+  font-weight: 500;
+}

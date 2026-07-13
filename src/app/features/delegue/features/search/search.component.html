@@ -1,0 +1,160 @@
+<div class="search-page">
+
+  <!-- Si aucun médecin n'est sélectionné: afficher la liste -->
+  @if (!selectedDoctor()) {
+    <div class="search-section">
+      <!-- En-tête -->
+      <div class="section-header">
+        <h1>Trouver un médecin</h1>
+        <p class="subtitle">Recherchez et réservez un rendez-vous jusqu'à 1 mois à l'avance</p>
+      </div>
+
+      <!-- Champ de recherche -->
+      <div class="search-box">
+        <i class="ti ti-search"></i>
+        <input
+          type="text"
+          [(ngModel)]="searchText"
+          placeholder="Nom du médecin, spécialité, ville...">
+      </div>
+
+      <!-- Résultats -->
+      <div class="results">
+        @if (filteredDoctors.length === 0) {
+          <div class="empty-state">
+            <i class="ti ti-search-off"></i>
+            Aucun médecin trouvé
+          </div>
+        } @else {
+          @for (doctor of filteredDoctors; track doctor.id) {
+            <div class="doctor-card" (click)="selectDoctor(doctor)">
+              <!-- Photo (placeholder) -->
+              <div class="doctor-avatar">
+                <i class="ti ti-user-md"></i>
+              </div>
+
+              <!-- Infos du médecin -->
+              <div class="doctor-info">
+                <div class="doctor-name">{{ doctor.name }}</div>
+                <div class="doctor-specialty">{{ doctor.specialty }}</div>
+                <div class="doctor-city">
+                  <i class="ti ti-map-pin"></i> {{ doctor.city }}
+                </div>
+              </div>
+
+              <!-- Score + Dispo -->
+              <div class="doctor-stats">
+                <div class="score">
+                  <div class="score-badge">{{ doctor.score }}</div>
+                  <div class="score-label">Score</div>
+                </div>
+                <div class="reservations">
+                  <i class="ti ti-calendar-check"></i>
+                  {{ countReservations(doctor.id) }}
+                </div>
+              </div>
+
+              <!-- Bouton suivant -->
+              <i class="ti ti-chevron-right"></i>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Si un médecin EST sélectionné: afficher ses disponibilités -->
+  @if (selectedDoctor()) {
+    <div class="details-section">
+      <!-- En-tête avec bouton retour -->
+      <div class="details-header">
+        <button class="btn-back" (click)="closeDoctor()">
+          <i class="ti ti-chevron-left"></i> Retour
+        </button>
+        <div class="details-title">
+          <h2>{{ selectedDoctor()!.name }}</h2>
+          <p>{{ selectedDoctor()!.specialty }} • {{ selectedDoctor()!.city }}</p>
+        </div>
+      </div>
+
+      <!-- Disponibilités -->
+      @if (availabilities().length === 0) {
+        <div class="empty-state">
+          <i class="ti ti-calendar-x"></i>
+          Aucune disponibilité pour le moment
+        </div>
+      } @else {
+        <div class="availabilities">
+          <div class="avail-title">Créneaux disponibles</div>
+          <div class="slots-list">
+            @for (slot of availabilities(); track slot.id) {
+              <div class="slot-card" (click)="selectAvailability(slot)">
+                <div class="slot-date">{{ formatDate(slot.date) }}</div>
+                <div class="slot-time">
+                  <i class="ti ti-clock"></i> {{ slot.time }}
+                </div>
+                <div class="slot-duration">{{ slot.duration }} min</div>
+                <button class="btn-reserve">
+                  Réserver
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+</div>
+
+<!-- ====================================================
+     MODAL: Confirmer la réservation
+     ==================================================== -->
+<app-modal 
+  title="Confirmer la réservation" 
+  [visible]="showConfirmModal()" 
+  (close)="cancelReservation()">
+  
+  <div class="modal-body">
+    @if (selectedDoctor() && selectedAvailability()) {
+      <!-- Détails du rendez-vous -->
+      <div class="reservation-details">
+        <div class="detail-row">
+          <span class="label">Médecin</span>
+          <span class="value">{{ selectedDoctor()!.name }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Spécialité</span>
+          <span class="value">{{ selectedDoctor()!.specialty }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Date</span>
+          <span class="value">{{ formatDate(selectedAvailability()!.date) }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Heure</span>
+          <span class="value">{{ selectedAvailability()!.time }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Durée</span>
+          <span class="value">{{ selectedAvailability()!.duration }} minutes</span>
+        </div>
+      </div>
+
+      <!-- Info: annulation affecte le score -->
+      <div class="info-banner">
+        <i class="ti ti-info-circle"></i>
+        Attention: toute annulation de rendez-vous affecte votre score auprès du médecin
+      </div>
+    }
+  </div>
+
+  <!-- Boutons -->
+  <div class="modal-footer">
+    <button class="btn-cancel" (click)="cancelReservation()">Annuler</button>
+    <button class="btn-confirm" (click)="confirmReservation()">
+      <i class="ti ti-check"></i> Confirmer
+    </button>
+  </div>
+
+</app-modal>

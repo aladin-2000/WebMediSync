@@ -1,0 +1,51 @@
+<aside class="sidebar">
+  <!-- Logo -->
+  <div class="logo">
+    <i class="ti ti-heartbeat"></i>
+    MediSync
+  </div>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <!-- Page: Recherche -->
+    <div 
+      class="nav-item" 
+      [class.active]="activePage === 'search'"
+      (click)="navigate('search')">
+      <i class="ti ti-search"></i> Chercher un médecin
+    </div>
+
+    <!-- Page: Planning -->
+    <div 
+      class="nav-item" 
+      [class.active]="activePage === 'planning'"
+      (click)="navigate('planning')">
+      <i class="ti ti-calendar"></i> Mon planning
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+    <!-- Page: Historique -->
+    <div 
+      class="nav-item" 
+      [class.active]="activePage === 'history'"
+      (click)="navigate('history')">
+      <i class="ti ti-history"></i> Historique
+    </div>
+  </nav>
+
+  <!-- Spacer (pousse le profil vers le bas) -->
+  <div class="spacer"></div>
+
+  <!-- Profil en bas -->
+  <div class="profile-section">
+    <div class="profile-name">
+      <i class="ti ti-user"></i>
+      <span>Jean Dupont</span>
+    </div>
+    <div class="profile-score">
+      Score: <strong>92/100</strong>
+    </div>
+  </div>
+</aside>
