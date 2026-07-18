@@ -1,9 +1,135 @@
-.calendar-view { padding: 20px; }
+:host {
+  display: block;
+  height: 100%;
+}
 
-.actions {
+.calendar-view {
+  padding: 20px;
+  height: 100%;
   display: flex;
-  justify-content: flex-end;
+  gap: 20px;
+  align-items: flex-start;
+  box-sizing: border-box;
+}
+
+.calendar-main {
+  flex: 1;
+  min-width: 0;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+}
+
+.side-column {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 20px;
+}
+
+.actions-panel {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.actions-panel .btn {
+  flex: 1;
+  justify-content: center;
+}
+
+.day-panel {
+  background: #eef4fb;
+  border: 1px solid #dbe4ff;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 70px;   /* ← ajoute cette ligne, augmente la valeur pour descendre plus */
+  display: flex;
+  flex-direction: column;
+}
+
+.day-panel-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+.day-panel-empty {
+  font-size: 13px;
+  color: #868e96;
   margin-bottom: 12px;
+}
+
+.slot-box {
+  max-height: 200px;
+  margin-top: 12px;
+  background: #ffffff;
+  border: 1px solid #dbe4ff;
+  border-radius: 8px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.slot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+  overflow-y: auto;
+}
+
+.slot-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.slot-row.reserve { background: #d3f9d8; color: #2f9e44; }
+.slot-row.libre    { background: #dbe4ff; color: #1971c2; }
+
+.slot-extra {
+  font-size: 12px;
+  color: #868e96;
+  margin-bottom: 4px;
+}
+
+.day-panel-section {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn.block {
+  width: 100%;
+  justify-content: center;
+}
+
+.btn.danger {
+  color: #c92a2a;
+  border-color: #ffc9c9;
+}
+
+.day-panel .btn.danger {
+  margin-top: 16px;
+}
+
+.btn.danger:hover { background: #fff5f5; }
+
+.hint.center {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.cal-cell.selected {
+  outline: 2px solid #1971c2;
+  outline-offset: -2px;
 }
 
 .alert-banner {
@@ -66,6 +192,7 @@
 }
 
 .cal-grid {
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 1px;

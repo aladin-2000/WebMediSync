@@ -18,6 +18,13 @@ export interface CalendarCell {
 
 export type ModalType = 'addDispo' | 'copyWeek' | 'template' | null;
 
+export interface DaySlot {
+  heure: string;
+  statut: 'reserve' | 'libre';
+}
+
+const JOURS_LONGS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+
 @Component({
   selector: 'app-calendar',
   standalone: true,
@@ -30,6 +37,12 @@ export class CalendarComponent {
 
   currentDate = signal(new Date());
   activeModal = signal<ModalType>(null);
+  selectedKey: string | null = null;
+
+  constructor() {
+    const today = new Date();
+    this.selectedKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+  }
 
   dispoDebut = '09:00';
   dispoFin = '12:00';
@@ -88,6 +101,8 @@ export class CalendarComponent {
     return cells;
   });
 
+  readonly weeksCount = computed(() => Math.ceil(this.cells().length / 7));
+
   readonly daysLabels = DAYS_LABELS;
 
   get slotsCount(): number {
@@ -134,14 +149,83 @@ changeMonth(dir: number): void {
 
   showModalAddDisponibilite : boolean = false;
 
-  openModalAddDisponibiliteFromCalendar(cell: CalendarCell): void {
-    const [year, month, day] = cell.key.split('-').map(Number);
-    let cellDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    console.log(cell);
-    this.dateDebut = cellDate;
-    this.dateFin = cellDate;
+  selectDay(cell: CalendarCell): void {
+    this.selectedKey = cell.key;
+  }
+
+  get selectedDayLabel(): string {
+    if (!this.selectedKey) {
+      return '';
+    }
+    const [year, month, day] = this.selectedKey.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return `${JOURS_LONGS[date.getDay()]} ${day} ${MONTHS[month - 1].toLowerCase()}`;
+  }
+
+  get selectedDaySlots(): DaySlot[] {
+    if (!this.selectedKey) {
+      return [];
+    }
+    const slot = SLOT_DATA[this.selectedKey];
+    if (!slot) {
+      return [];
+    }
+    const libres = Math.max(0, slot.avail - slot.taken);
+    const list: DaySlot[] = [];
+    let h = 9, m = 0;
+    for (let i = 0; i < slot.taken; i++) {
+      list.push({ heure: this.formatHeure(h, m), statut: 'reserve' });
+      m += 15; if (m >= 60) { m -= 60; h++; }
+    }
+    for (let i = 0; i < libres; i++) {
+      list.push({ heure: this.formatHeure(h, m), statut: 'libre' });
+      m += 15; if (m >= 60) { m -= 60; h++; }
+    }
+    return list;
+  }
+
+  get visibleDaySlots(): DaySlot[] {
+    return this.selectedDaySlots.slice(0, 4);
+  }
+
+  get extraReserveCount(): number {
+    return this.countExtra('reserve');
+  }
+
+  get extraLibreCount(): number {
+    return this.countExtra('libre');
+  }
+
+  private countExtra(statut: 'reserve' | 'libre'): number {
+    const all = this.selectedDaySlots;
+    const hidden = all.slice(4);
+    return hidden.filter((s) => s.statut === statut).length;
+  }
+
+  private formatHeure(h: number, m: number): string {
+    return `${String(h).padStart(2, '0')}h${String(m).padStart(2, '0')}`;
+  }
+
+  openQuickAdd(preset: string): void {
+    if (this.selectedKey) {
+      const [year, month, day] = this.selectedKey.split('-').map(Number);
+      const cellDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      this.dateDebut = cellDate;
+      this.dateFin = cellDate;
+    }
+    this.applyTemplate(preset);
     this.showModalAddDisponibilite = true;
-}
+  }
+
+  supprimerCreneauxLibres(): void {
+    if (!this.selectedKey) {
+      return;
+    }
+    const slot = SLOT_DATA[this.selectedKey];
+    if (slot) {
+      slot.avail = slot.taken;
+    }
+  }
 
    openModalAddDisponibilite(): void {
     this.dateDebut = new Date().toISOString().split('T')[0]; // Default to today's date in YYYY-MM-DD format
@@ -184,5 +268,5 @@ changeMonth(dir: number): void {
   this.selectedTemplate = type;
     // ton traitement existant ici
   }
-  
+
 }

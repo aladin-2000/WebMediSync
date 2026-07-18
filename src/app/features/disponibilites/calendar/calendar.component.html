@@ -1,11 +1,5 @@
 <div class="calendar-view">
-
-   <div class="actions">
-    <button class="btn primary" (click)="openModalAddDisponibilite()">
-      <i class="ti ti-plus"></i> Ajouter Disponibilité
-    </button>
-  </div> 
-
+ <div class="calendar-main">
   <!-- Stats -->
   <div class="stats-row">
     <div class="stat-card">
@@ -40,7 +34,7 @@
   </div>
   <!-- End Month navigation -->
   <!-- Calendar grid -->
-  <div class="cal-grid">
+  <div class="cal-grid" [style.grid-template-rows]="'auto repeat(' + weeksCount() + ', 1fr)'">
     @for (day of daysLabels; track day) {
       <div class="cal-head">{{ day }}</div>
     }
@@ -51,7 +45,8 @@
         [class.has-slots]="cell.hasSlots"
         [class.full]="cell.hasFull"
         [class.past-day]="cell.isPast"
-        (click)="!cell.otherMonth && !cell.isPast && openModalAddDisponibiliteFromCalendar(cell)"
+        [class.selected]="cell.key === selectedKey"
+        (click)="!cell.otherMonth && selectDay(cell)"
       >
         <div class="day-num" [class.today]="cell.isToday">{{ cell.otherMonth ? '' : cell.day }}</div>
         @if (cell.taken > 0) {
@@ -63,27 +58,79 @@
       </div>
     }
   </div>
+ </div>
+  <!-- End calendar-main -->
+
+ <div class="side-column">
+  <div class="actions-panel">
+    <button class="btn primary" (click)="openModalAddDisponibilite()">
+      <i class="ti ti-plus"></i> Ajouter Disponibilité
+    </button>
+    <button class="btn danger" (click)="supprimerCreneauxLibres()">
+      <i class="ti ti-trash"></i> Supprimer Disponibilité
+    </button>
+  </div>
+
+  <!-- Day panel -->
+  <div class="day-panel">
+    <h3 class="day-panel-title">{{ selectedDayLabel }}</h3>
+
+    <div class="day-panel-section">
+      <div class="section-title">Ajouter des créneaux</div>
+      <button class="btn block" (click)="openQuickAdd('matin')">Matin · 09h à 12h</button>
+      <button class="btn block" (click)="openQuickAdd('aprem')">Après-midi · 14h à 17h</button>
+      <button class="btn block" (click)="openQuickAdd('journee')">Journée · 09h à 17h</button>
+    </div>
+
+    <button class="btn block danger" (click)="supprimerCreneauxLibres()">
+      <i class="ti ti-trash"></i> Supprimer les créneaux libres
+    </button>
+    <p class="hint center">Les créneaux réservés ne sont jamais supprimés</p>
+
+    <div class="slot-box">
+      @if (selectedDaySlots.length === 0) {
+        <p class="day-panel-empty">Aucun créneau pour cette date.</p>
+      } @else {
+        <div class="slot-list">
+          @for (slot of visibleDaySlots; track slot.heure) {
+            <div class="slot-row" [class.reserve]="slot.statut === 'reserve'" [class.libre]="slot.statut === 'libre'">
+              <i class="ti" [class.ti-lock]="slot.statut === 'reserve'" [class.ti-clock]="slot.statut === 'libre'"></i>
+              <span>{{ slot.heure }} · {{ slot.statut === 'reserve' ? 'réservé' : 'libre' }}</span>
+            </div>
+          }
+        </div>
+        @if (extraReserveCount > 0) {
+          <div class="slot-extra">+{{ extraReserveCount }} autres réservés</div>
+        }
+        @if (extraLibreCount > 0) {
+          <div class="slot-extra">+{{ extraLibreCount }} autres libres</div>
+        }
+      }
+    </div>
+  </div>
+ </div>
+ <!-- End side-column -->
 </div>
  <!-- End Calendar grid -->
 <!-- Modal: Ajouter disponibilité -->
 <app-modal title="Ajouter des disponibilités" [visible]="showModalAddDisponibilite" (close)="closeModalAddDisponibilite()">
   <div class="modal-body">
     <div class="template-row">
-  <div 
+  <div
     class="template-chip"
     [class.selected]="selectedTemplate === 'matin'"
     (click)="applyTemplate('matin')">
     Matin type
   </div>
 
-  <div 
+  <div
     class="template-chip"
     [class.selected]="selectedTemplate === 'aprem'"
     (click)="applyTemplate('aprem')">
     Après-midi type
   </div>
 
-  <div 
+  <div
     class="template-chip"
     [class.selected]="selectedTemplate === 'journee'"
     (click)="applyTemplate('journee')">
