@@ -1,0 +1,19 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-box">
+      <i class="ti ti-heartbeat"></i>
+    </div>
+    <span class="brand">WebMediSync</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <button
+      class="nav-item"
+      [class.active]="activePage === 'medecins'"
+      (click)="navigate('medecins')"
+    >
+      <i class="ti ti-users"></i>
+      <span>Gérer les médecins</span>
+    </button>
+  </nav>
+</aside>

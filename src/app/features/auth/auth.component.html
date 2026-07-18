@@ -10,10 +10,10 @@
 
     <form (ngSubmit)="onLogin()">
       <div class="form-group">
-        <label for="username">Nom d'utilisateur</label>
+        <label for="email">Email</label>
         <div class="input-icon">
           <i class="ti ti-user"></i>
-          <input type="text" id="username" name="username" [(ngModel)]="username" placeholder="Entrez votre identifiant" required>
+          <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="Entrez votre email" required>
         </div>
       </div>
 
@@ -30,11 +30,9 @@
         <span>{{ errorMessage }}</span>
       </div>
 
-      <button type="submit" class="btn-login">Se connecter</button>
+      <button type="submit" class="btn-login" [disabled]="isLoading">
+        {{ isLoading ? 'Connexion...' : 'Se connecter' }}
+      </button>
     </form>
-    
-    <div class="auth-footer">
-      <p>Comptes démo: <strong>medecin / medecin</strong> ou <strong>delegue / delegue</strong></p>
-    </div>
   </div>
 </div>

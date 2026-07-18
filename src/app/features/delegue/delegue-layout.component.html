@@ -1,0 +1,17 @@
+<div class="app">
+  <app-delegue-sidebar [activePage]="activePage()" (pageChange)="onPageChange($event)"></app-delegue-sidebar>
+
+  <div class="main">
+    <div class="content">
+      @if (activePage() === 'search') {
+        <app-search></app-search>
+      }
+      @if (activePage() === 'planning') {
+        <app-planning></app-planning>
+      }
+      @if (activePage() === 'history') {
+        <app-history></app-history>
+      }
+    </div>
+  </div>
+</div>

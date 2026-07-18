@@ -1,0 +1,96 @@
+<div class="page">
+  <div class="page-header">
+    <h2>Gérer les médecins</h2>
+    <button class="btn primary" (click)="openAddModal()">
+      <i class="ti ti-plus"></i>
+      Ajouter un médecin
+    </button>
+  </div>
+
+  @if (errorMessage) {
+    <div class="error-banner">{{ errorMessage }}</div>
+  }
+
+  @if (isLoading) {
+    <p class="info-text">Chargement...</p>
+  } @else if (medecins.length === 0) {
+    <p class="info-text">Aucun médecin enregistré.</p>
+  } @else {
+    <table class="medecins-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Spécialité</th>
+          <th>Adresse cabinet</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (medecin of medecins; track medecin.id) {
+          <tr>
+            <td>{{ medecin.nom }}</td>
+            <td>{{ medecin.prenom }}</td>
+            <td>{{ medecin.specialite }}</td>
+            <td>{{ medecin.adresseCabinet || '—' }}</td>
+            <td class="actions">
+              <button class="btn" (click)="openEditModal(medecin)">
+                <i class="ti ti-pencil"></i>
+              </button>
+              <button class="btn danger" (click)="deleteMedecin(medecin)">
+                <i class="ti ti-trash"></i>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+
+<app-modal
+  [title]="editingMedecin ? 'Modifier le médecin' : 'Ajouter un médecin'"
+  [visible]="showModal"
+  (close)="closeModal()"
+>
+  <form (ngSubmit)="onSubmit()">
+    @if (!editingMedecin) {
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" [(ngModel)]="form.email" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" [(ngModel)]="form.password" required>
+      </div>
+    }
+
+    <div class="form-group">
+      <label for="nom">Nom</label>
+      <input type="text" id="nom" name="nom" [(ngModel)]="form.nom" required>
+    </div>
+    <div class="form-group">
+      <label for="prenom">Prénom</label>
+      <input type="text" id="prenom" name="prenom" [(ngModel)]="form.prenom" required>
+    </div>
+    <div class="form-group">
+      <label for="specialite">Spécialité</label>
+      <input type="text" id="specialite" name="specialite" [(ngModel)]="form.specialite" required>
+    </div>
+    <div class="form-group">
+      <label for="adresseCabinet">Adresse cabinet</label>
+      <input type="text" id="adresseCabinet" name="adresseCabinet" [(ngModel)]="form.adresseCabinet">
+    </div>
+
+    @if (formError) {
+      <div class="error-banner">{{ formError }}</div>
+    }
+
+    <div class="modal-actions">
+      <button type="button" class="btn" (click)="closeModal()">Annuler</button>
+      <button type="submit" class="btn primary" [disabled]="isSaving">
+        {{ isSaving ? 'Enregistrement...' : 'Enregistrer' }}
+      </button>
+    </div>
+  </form>
+</app-modal>

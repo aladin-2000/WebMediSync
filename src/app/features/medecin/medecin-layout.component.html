@@ -1,0 +1,17 @@
+<div class="app">
+  <app-sidebar [activeView]="activeView()" (viewChange)="onViewChange($event)"></app-sidebar>
+
+  <div class="main">
+    <div class="content">
+      @if (activeView() === 'calendar') {
+        <app-calendar (navigateTo)="onViewChange($event)"></app-calendar>
+      }
+      @if (activeView() === 'creneaux') {
+        <app-creneaux></app-creneaux>
+      }
+      @if (activeView() === 'stats') {
+        <app-stats></app-stats>
+      }
+    </div>
+  </div>
+</div>
