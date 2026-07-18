@@ -1,7 +1,7 @@
 <div class="creneaux-view">
 
   <div class="section-header">
-    <div class="section-title">Créneaux de la semaine</div>
+    <div class="section-title">Rendez-vous de la semaine</div>
     <div class="header-actions">
       <button class="btn" (click)="changeWeek(-1)" aria-label="Semaine précédente">
         <i class="ti ti-chevron-left"></i>
@@ -9,9 +9,6 @@
       <span class="week-label">{{ currentWeekLabel }}</span>
       <button class="btn" (click)="changeWeek(1)" aria-label="Semaine suivante">
         <i class="ti ti-chevron-right"></i>
-      </button>
-      <button class="btn primary" (click)="openAddModal()">
-        <i class="ti ti-plus"></i> Créneau ponctuel
       </button>
     </div>
   </div>
@@ -29,45 +26,12 @@
               <div class="timeline-slot" [class.reserve]="slot.statut === 'reserve'" [class.libre]="slot.statut === 'libre'">
                 <div class="dot" [class.taken]="slot.statut === 'reserve'" [class.free]="slot.statut === 'libre'"></div>
                 <span class="slot-time">{{ slot.heure }}</span>
-                @if (slot.statut === 'libre') {
-                  <button class="btn-delete" (click)="deleteCreneau(i, j)" aria-label="Supprimer">
-                    <i class="ti ti-trash"></i>
-                  </button>
-                }
               </div>
             }
           </div>
-          <button class="btn btn-add-slot" (click)="openAddModal()">
-            <i class="ti ti-plus"></i>
-          </button>
         }
       </div>
     }
   </div>
 
 </div>
-
-<!-- Modal: Ajouter créneau -->
-<app-modal title="Ajouter un créneau ponctuel" [visible]="showAddModal" (close)="closeAddModal()">
-  <div class="modal-body">
-    <div class="field">
-      <label>Date</label>
-      <input type="date" [(ngModel)]="newDate">
-    </div>
-    <div class="field">
-      <label>Heure de début</label>
-      <input type="time" [(ngModel)]="newHeure">
-    </div>
-    <div class="info-banner">
-      <i class="ti ti-clock"></i>
-      Créneau de 15 min · fin à <strong>{{ newHeure }}</strong>
-    </div>
-    <div class="hint">Ce créneau est ponctuel. Pour des créneaux récurrents, utilisez les règles de récurrence.</div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn" (click)="closeAddModal()">Annuler</button>
-    <button class="btn primary" (click)="addCreneau()">
-      <i class="ti ti-plus"></i> Ajouter
-    </button>
-  </div>
-</app-modal>

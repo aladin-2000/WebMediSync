@@ -337,6 +337,11 @@
   display: flex; align-items: center; gap: 6px;
 }
 
+.slots-preview.danger {
+  background: #fff5f5;
+  color: #c92a2a;
+}
+
 .template-row { display: flex; gap: 6px; flex-wrap: wrap; }
 .template-chip {
   padding: 5px 12px; border-radius: 8px;

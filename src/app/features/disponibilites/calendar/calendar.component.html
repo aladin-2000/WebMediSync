@@ -64,10 +64,10 @@
  <div class="side-column">
   <div class="actions-panel">
     <button class="btn primary" (click)="openModalAddDisponibilite()">
-      <i class="ti ti-plus"></i> Ajouter Disponibilité
+      <i class="ti ti-plus"></i> Planifier une plage
     </button>
-    <button class="btn danger" (click)="supprimerCreneauxLibres()">
-      <i class="ti ti-trash"></i> Supprimer Disponibilité
+    <button class="btn danger" (click)="openModalSupprimerPlage()">
+      <i class="ti ti-trash"></i> Supprimer une plage
     </button>
   </div>
 
@@ -76,14 +76,13 @@
     <h3 class="day-panel-title">{{ selectedDayLabel }}</h3>
 
     <div class="day-panel-section">
-      <div class="section-title">Ajouter des créneaux</div>
-      <button class="btn block" (click)="openQuickAdd('matin')">Matin · 09h à 12h</button>
-      <button class="btn block" (click)="openQuickAdd('aprem')">Après-midi · 14h à 17h</button>
-      <button class="btn block" (click)="openQuickAdd('journee')">Journée · 09h à 17h</button>
+      <button class="btn block primary" (click)="planifierCreneaux()">
+        <i class="ti ti-calendar-plus"></i> Planifier des créneaux
+      </button>
     </div>
 
     <button class="btn block danger" (click)="supprimerCreneauxLibres()">
-      <i class="ti ti-trash"></i> Supprimer les créneaux libres
+      <i class="ti ti-trash"></i> Supprimer les libres de ce jour
     </button>
     <p class="hint center">Les créneaux réservés ne sont jamais supprimés</p>
 
@@ -164,6 +163,38 @@
     <button class="btn" (click)="closeModalAddDisponibilite()">Annuler</button>
     <button class="btn primary" (click)="closeModalAddDisponibilite()">
       <i class="ti ti-check"></i> Confirmer
+    </button>
+  </div>
+</app-modal>
+
+<!-- Modal: Supprimer une plage de créneaux libres -->
+<app-modal title="Supprimer une plage de créneaux libres" [visible]="showModalSupprimerPlage" (close)="closeModalSupprimerPlage()">
+  <div class="modal-body">
+    <div class="field">
+      <label>Date Debut</label>
+      <input type="date" [(ngModel)]="suppDateDebut">
+      <label>Date Fin</label>
+      <input type="date" [(ngModel)]="suppDateFin">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Heure de début</label>
+        <input type="time" [(ngModel)]="suppHeureDebut">
+      </div>
+      <div class="field">
+        <label>Heure de fin</label>
+        <input type="time" [(ngModel)]="suppHeureFin">
+      </div>
+    </div>
+    <div class="slots-preview danger">
+      <i class="ti ti-alert-triangle"></i>
+      Tous les créneaux <strong>libres</strong> de cette plage seront supprimés. Les créneaux réservés ne sont jamais supprimés.
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" (click)="closeModalSupprimerPlage()">Annuler</button>
+    <button class="btn danger" (click)="confirmerSuppressionPlage()">
+      <i class="ti ti-trash"></i> Supprimer
     </button>
   </div>
 </app-modal>

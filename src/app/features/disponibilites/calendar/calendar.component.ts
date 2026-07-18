@@ -206,14 +206,13 @@ changeMonth(dir: number): void {
     return `${String(h).padStart(2, '0')}h${String(m).padStart(2, '0')}`;
   }
 
-  openQuickAdd(preset: string): void {
+  planifierCreneaux(): void {
     if (this.selectedKey) {
       const [year, month, day] = this.selectedKey.split('-').map(Number);
       const cellDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
       this.dateDebut = cellDate;
       this.dateFin = cellDate;
     }
-    this.applyTemplate(preset);
     this.showModalAddDisponibilite = true;
   }
 
@@ -225,6 +224,37 @@ changeMonth(dir: number): void {
     if (slot) {
       slot.avail = slot.taken;
     }
+  }
+
+  showModalSupprimerPlage: boolean = false;
+  suppDateDebut = new Date().toISOString().split('T')[0];
+  suppDateFin = new Date().toISOString().split('T')[0];
+  suppHeureDebut = '09:00';
+  suppHeureFin = '12:00';
+
+  openModalSupprimerPlage(): void {
+    this.suppDateDebut = new Date().toISOString().split('T')[0];
+    this.suppDateFin = new Date().toISOString().split('T')[0];
+    this.suppHeureDebut = '09:00';
+    this.suppHeureFin = '12:00';
+    this.showModalSupprimerPlage = true;
+  }
+
+  closeModalSupprimerPlage(): void {
+    this.showModalSupprimerPlage = false;
+  }
+
+  confirmerSuppressionPlage(): void {
+    const debut = new Date(this.suppDateDebut);
+    const fin = new Date(this.suppDateFin);
+    Object.keys(SLOT_DATA).forEach((key) => {
+      const [y, m, d] = key.split('-').map(Number);
+      const date = new Date(y, m - 1, d);
+      if (date >= debut && date <= fin) {
+        SLOT_DATA[key].avail = SLOT_DATA[key].taken;
+      }
+    });
+    this.showModalSupprimerPlage = false;
   }
 
    openModalAddDisponibilite(): void {
