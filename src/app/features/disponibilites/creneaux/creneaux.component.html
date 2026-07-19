@@ -14,7 +14,7 @@
   </div>
 
   <div class="week-grid">
-    @for (jour of semaine(); track jour.label; let i = $index) {
+    @for (jour of semaine; track jour.label; let i = $index) {
       <div class="day-column">
         <div class="day-header">{{ jour.label }}</div>
 

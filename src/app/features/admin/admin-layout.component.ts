@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminSidebarComponent, AdminPageName } from './shared/sidebar/sidebar.component';
 import { MedecinsComponent } from './medecins/medecins.component';
@@ -11,9 +11,9 @@ import { MedecinsComponent } from './medecins/medecins.component';
   styleUrls: ['./admin-layout.component.css'],
 })
 export class AdminLayoutComponent {
-  activePage = signal<AdminPageName>('medecins');
+  activePage: AdminPageName = 'medecins';
 
   onPageChange(page: any): void {
-    this.activePage.set(page as AdminPageName);
+    this.activePage = page as AdminPageName;
   }
 }

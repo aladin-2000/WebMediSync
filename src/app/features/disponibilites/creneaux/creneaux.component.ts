@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { JourSemaineView } from '../models/disponibilite.models';
 import { MOCK_SEMAINE } from '../data/mock-data';
@@ -11,8 +11,8 @@ import { MOCK_SEMAINE } from '../data/mock-data';
   styleUrls: ['./creneaux.component.css'],
 })
 export class CreneauxComponent {
-  semaine = signal<JourSemaineView[]>(MOCK_SEMAINE.map(j => ({ ...j })));
-  weekOffset = signal(0);
+  semaine: JourSemaineView[] = MOCK_SEMAINE.map(j => ({ ...j }));
+  weekOffset = 0;
 
   readonly weekLabels = [
     'Semaine du 30 juin au 5 juillet',
@@ -21,10 +21,10 @@ export class CreneauxComponent {
   ];
 
   get currentWeekLabel(): string {
-    return this.weekLabels[Math.abs(this.weekOffset()) % this.weekLabels.length];
+    return this.weekLabels[Math.abs(this.weekOffset) % this.weekLabels.length];
   }
 
   changeWeek(dir: number): void {
-    this.weekOffset.update(w => w + dir);
+    this.weekOffset += dir;
   }
 }

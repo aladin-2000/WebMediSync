@@ -1,9 +1,9 @@
 <div class="app">
-  <app-admin-sidebar [activePage]="activePage()" (pageChange)="onPageChange($event)"></app-admin-sidebar>
+  <app-admin-sidebar [activePage]="activePage" (pageChange)="onPageChange($event)"></app-admin-sidebar>
 
   <div class="main">
     <div class="content">
-      @if (activePage() === 'medecins') {
+      @if (activePage === 'medecins') {
         <app-admin-medecins></app-admin-medecins>
       }
     </div>

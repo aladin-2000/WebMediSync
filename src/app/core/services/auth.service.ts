@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../config/api.config';
@@ -10,7 +10,7 @@ const STORAGE_KEY = 'currentUser';
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly currentUser = signal<UserResponse | null>(this.readStoredUser());
+  private currentUser: UserResponse | null = this.readStoredUser();
 
   constructor(private http: HttpClient) {}
 
@@ -20,24 +20,24 @@ export class AuthService {
 
   setCurrentUser(user: UserResponse): void {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-    this.currentUser.set(user);
+    this.currentUser = user;
   }
 
   logout(): void {
     localStorage.removeItem(STORAGE_KEY);
-    this.currentUser.set(null);
+    this.currentUser = null;
   }
 
   isAuthenticated(): boolean {
-    return this.currentUser() !== null;
+    return this.currentUser !== null;
   }
 
   getCurrentUser(): UserResponse | null {
-    return this.currentUser();
+    return this.currentUser;
   }
 
   get currentUserRole(): Role | null {
-    return this.currentUser()?.role ?? null;
+    return this.currentUser?.role ?? null;
   }
 
   private readStoredUser(): UserResponse | null {

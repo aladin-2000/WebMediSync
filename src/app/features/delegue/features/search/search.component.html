@@ -1,7 +1,7 @@
 <div class="search-page">
 
   <!-- Si aucun médecin n'est sélectionné: afficher la liste -->
-  @if (!selectedDoctor()) {
+  @if (!selectedDoctor) {
     <div class="search-section">
       <!-- En-tête -->
       <div class="section-header">
@@ -64,7 +64,7 @@
   }
 
   <!-- Si un médecin EST sélectionné: afficher ses disponibilités -->
-  @if (selectedDoctor()) {
+  @if (selectedDoctor) {
     <div class="details-section">
       <!-- En-tête avec bouton retour -->
       <div class="details-header">
@@ -72,13 +72,13 @@
           <i class="ti ti-chevron-left"></i> Retour
         </button>
         <div class="details-title">
-          <h2>{{ selectedDoctor()!.name }}</h2>
-          <p>{{ selectedDoctor()!.specialty }} • {{ selectedDoctor()!.city }}</p>
+          <h2>{{ selectedDoctor!.name }}</h2>
+          <p>{{ selectedDoctor!.specialty }} • {{ selectedDoctor!.city }}</p>
         </div>
       </div>
 
       <!-- Disponibilités -->
-      @if (availabilities().length === 0) {
+      @if (availabilities.length === 0) {
         <div class="empty-state">
           <i class="ti ti-calendar-x"></i>
           Aucune disponibilité pour le moment
@@ -87,7 +87,7 @@
         <div class="availabilities">
           <div class="avail-title">Créneaux disponibles</div>
           <div class="slots-list">
-            @for (slot of availabilities(); track slot.id) {
+            @for (slot of availabilities; track slot.id) {
               <div class="slot-card" (click)="selectAvailability(slot)">
                 <div class="slot-date">{{ formatDate(slot.date) }}</div>
                 <div class="slot-time">
@@ -112,32 +112,32 @@
      ==================================================== -->
 <app-modal 
   title="Confirmer la réservation" 
-  [visible]="showConfirmModal()" 
+  [visible]="showConfirmModal" 
   (close)="cancelReservation()">
   
   <div class="modal-body">
-    @if (selectedDoctor() && selectedAvailability()) {
+    @if (selectedDoctor && selectedAvailability) {
       <!-- Détails du rendez-vous -->
       <div class="reservation-details">
         <div class="detail-row">
           <span class="label">Médecin</span>
-          <span class="value">{{ selectedDoctor()!.name }}</span>
+          <span class="value">{{ selectedDoctor!.name }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Spécialité</span>
-          <span class="value">{{ selectedDoctor()!.specialty }}</span>
+          <span class="value">{{ selectedDoctor!.specialty }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Date</span>
-          <span class="value">{{ formatDate(selectedAvailability()!.date) }}</span>
+          <span class="value">{{ formatDate(selectedAvailability!.date) }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Heure</span>
-          <span class="value">{{ selectedAvailability()!.time }}</span>
+          <span class="value">{{ selectedAvailability!.time }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Durée</span>
-          <span class="value">{{ selectedAvailability()!.duration }} minutes</span>
+          <span class="value">{{ selectedAvailability!.duration }} minutes</span>
         </div>
       </div>
 

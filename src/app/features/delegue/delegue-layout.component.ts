@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
 import { SearchComponent } from './features/search/search.component';
@@ -15,9 +15,9 @@ export type DeleguePageName = 'search' | 'planning' | 'history';
   styleUrls: ['./delegue-layout.component.css'],
 })
 export class DelegueLayoutComponent {
-  activePage = signal<DeleguePageName>('search');
+  activePage: DeleguePageName = 'search';
 
   onPageChange(page: any): void {
-    this.activePage.set(page as DeleguePageName);
+    this.activePage = page as DeleguePageName;
   }
 }

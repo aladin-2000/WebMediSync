@@ -3,15 +3,15 @@
   <!-- Stats -->
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-num">{{ stats().total }}</div>
+      <div class="stat-num">{{ stats.total }}</div>
       <div class="stat-label">Créneaux ce mois</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num">{{ stats().reserves }}</div>
+      <div class="stat-num">{{ stats.reserves }}</div>
       <div class="stat-label">Déjà réservés</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num">{{ stats().taux }}%</div>
+      <div class="stat-num">{{ stats.taux }}%</div>
       <div class="stat-label">Taux remplissage</div>
     </div>
   </div>
@@ -22,7 +22,7 @@
     <button class="btn" (click)="changeMonth(-1)" aria-label="Mois précédent" icon="ti ti-chevron-left">
       <i class="fa-solid fa-angle-right"></i>
     </button>
-    <div class="month-label">{{ monthLabel() }}</div>
+    <div class="month-label">{{ monthLabel }}</div>
     <button class="btn" (click)="changeMonth(1)" aria-label="Mois suivant">
       <i class="ti ti-chevron-right"></i>
     </button>
@@ -34,11 +34,11 @@
   </div>
   <!-- End Month navigation -->
   <!-- Calendar grid -->
-  <div class="cal-grid" [style.grid-template-rows]="'auto repeat(' + weeksCount() + ', 1fr)'">
+  <div class="cal-grid" [style.grid-template-rows]="'auto repeat(' + weeksCount + ', 1fr)'">
     @for (day of daysLabels; track day) {
       <div class="cal-head">{{ day }}</div>
     }
-    @for (cell of cells(); track cell.key || $index) {
+    @for (cell of cells; track cell.key || $index) {
       <div
         class="cal-cell"
         [class.other-month]="cell.otherMonth"

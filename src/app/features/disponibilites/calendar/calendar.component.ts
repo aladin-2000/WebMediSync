@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, signal, computed } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../shared/modal/modal.component';
@@ -35,8 +35,8 @@ const JOURS_LONGS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendred
 export class CalendarComponent {
   @Output() navigateTo = new EventEmitter<string>();
 
-  currentDate = signal(new Date());
-  activeModal = signal<ModalType>(null);
+  currentDate = new Date();
+  activeModal: ModalType = null;
   selectedKey: string | null = null;
 
   constructor() {
@@ -51,12 +51,12 @@ export class CalendarComponent {
   selectedDays: string[] = [];
 
 
-  readonly monthLabel = computed(() => {
-    const d = this.currentDate();
+  get monthLabel(): string {
+    const d = this.currentDate;
     return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
-  });
+  }
 
-  readonly stats = computed(() => {
+  get stats() {
     let total = 0, reserves = 0;
     Object.values(SLOT_DATA).forEach(s => { total += s.avail; reserves += s.taken; });
     return {
@@ -65,14 +65,14 @@ export class CalendarComponent {
       libres: total - reserves,
       taux: total ? Math.round((reserves / total) * 100) : 0,
     };
-  });
+  }
 
-  readonly cells = computed((): CalendarCell[] => {
-    const d = this.currentDate();
+  get cells(): CalendarCell[] {
+    const d = this.currentDate;
     const y = d.getFullYear(), m = d.getMonth();
     const numberfirstDayInMounth = new Date(y, m, 1).getDay();
     const numberdaysInMonth = new Date(y, m + 1, 0).getDate();
-    const today = this.currentDate();
+    const today = this.currentDate;
     today.setHours(0, 0, 0, 0);
     const cells: CalendarCell[] = [];
 
@@ -99,9 +99,11 @@ export class CalendarComponent {
       });
     }
     return cells;
-  });
+  }
 
-  readonly weeksCount = computed(() => Math.ceil(this.cells().length / 7));
+  get weeksCount(): number {
+    return Math.ceil(this.cells.length / 7);
+  }
 
   readonly daysLabels = DAYS_LABELS;
 
@@ -113,7 +115,7 @@ export class CalendarComponent {
   }
 
 changeMonth(dir: number): void {
-  const current = this.currentDate();
+  const current = this.currentDate;
   const today = new Date();
 
   const newDate = new Date(
@@ -136,14 +138,14 @@ changeMonth(dir: number): void {
     newDate.getFullYear() === today.getFullYear() &&
     newDate.getMonth() === today.getMonth()
   ) {
-    this.currentDate.set(today);
+    this.currentDate = today;
   } else {
-    this.currentDate.set(newDate);
+    this.currentDate = newDate;
   }
 }
 
   goToday(): void {
-    this.currentDate.set(new Date());
+    this.currentDate = new Date();
   }
 
 

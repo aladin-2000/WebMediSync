@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../disponibilites/shared/sidebar/sidebar.component';
 import { CalendarComponent } from '../disponibilites/calendar/calendar.component';
@@ -15,9 +15,9 @@ export type ViewName = 'calendar' | 'recurrences' | 'creneaux' | 'stats';
   styleUrls: ['./medecin-layout.component.css'],
 })
 export class MedecinLayoutComponent {
-  activeView = signal<ViewName>('calendar');
+  activeView: ViewName = 'calendar';
 
   onViewChange(view: any): void {
-    this.activeView.set(view as ViewName);
+    this.activeView = view as ViewName;
   }
 }

@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MONTHS, DAYS_LABELS, RESERVATIONS } from '../../data/mock-data';
 
@@ -19,7 +19,7 @@ export class PlanningComponent {
   // ========== ETATS ==========
 
   // Le mois/année affiché
-  currentDate = signal(new Date(2025, 6, 1)); // Juillet 2025
+  currentDate = new Date(2025, 6, 1); // Juillet 2025
 
   // Les rendez-vous confirmés
   reservations = RESERVATIONS.filter(r => r.status === 'confirmed');
@@ -28,17 +28,17 @@ export class PlanningComponent {
   readonly monthLabels = MONTHS;
   readonly dayLabels = DAYS_LABELS;
 
-  // ========== CALCULS REACTIFS ==========
+  // ========== CALCULS ==========
 
   // Affiche "Juillet 2025"
-  monthLabel = computed(() => {
-    const d = this.currentDate();
+  get monthLabel(): string {
+    const d = this.currentDate;
     return `${this.monthLabels[d.getMonth()]} ${d.getFullYear()}`;
-  });
+  }
 
   // Crée les cellules du calendrier
-  cells = computed(() => {
-    const d = this.currentDate();
+  get cells() {
+    const d = this.currentDate;
     const year = d.getFullYear();
     const month = d.getMonth();
 
@@ -65,19 +65,19 @@ export class PlanningComponent {
     }
 
     return cells;
-  });
+  }
 
   // ========== METHODES ==========
 
   // Changer de mois
   changeMonth(direction: number): void {
-    const d = this.currentDate();
-    this.currentDate.set(new Date(d.getFullYear(), d.getMonth() + direction, 1));
+    const d = this.currentDate;
+    this.currentDate = new Date(d.getFullYear(), d.getMonth() + direction, 1);
   }
 
   // Retourner au mois actuel
   goToday(): void {
-    this.currentDate.set(new Date(2025, 6, 1));
+    this.currentDate = new Date(2025, 6, 1);
   }
 
   // Formater une date
