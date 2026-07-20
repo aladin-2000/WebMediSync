@@ -331,15 +331,49 @@
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .hint { font-size: 11px; color: #adb5bd; }
 
-.slots-preview {
-  background: #dbe4ff; border-radius: 8px;
-  padding: 10px 12px; font-size: 12px; color: #1971c2;
-  display: flex; align-items: center; gap: 6px;
+.info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  border: 1px solid transparent;
 }
 
-.slots-preview.danger {
+.info-banner i {
+  font-size: 16px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.info-banner.info {
+  background: #eaf4ff;
+  border-color: #bcdcff;
+  color: #1971c2;
+}
+
+.info-banner.success {
+  background: #ebfbee;
+  border-color: #b2f2bb;
+  color: #2f9e44;
+}
+
+.info-banner.warning {
+  background: #fff4e6;
+  border-color: #ffd8a8;
+  color: #d9700e;
+}
+
+.info-banner.danger {
   background: #fff5f5;
+  border-color: #ffc9c9;
   color: #c92a2a;
+}
+
+.info-banner strong {
+  font-weight: 600;
 }
 
 .template-row { display: flex; gap: 6px; flex-wrap: wrap; }

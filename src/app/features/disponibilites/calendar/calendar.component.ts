@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../shared/modal/modal.component';
 import { SLOT_DATA, MONTHS, DAYS_LABELS } from '../data/mock-data';
+import { CreneauResponse, PlageCreneauxRequest } from '../models/disponibilite.models';
+import { CreneauService } from '../services/creneau.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 export interface CalendarCell {
   day: number;
@@ -39,7 +42,7 @@ export class CalendarComponent {
   activeModal: ModalType = null;
   selectedKey: string | null = null;
 
-  constructor() {
+  constructor(private creneauService: CreneauService, private authService: AuthService) {
     const today = new Date();
     this.selectedKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
   }
@@ -208,6 +211,32 @@ changeMonth(dir: number): void {
     return `${String(h).padStart(2, '0')}h${String(m).padStart(2, '0')}`;
   }
 
+  private formatDatePlage(dateDebut: string, dateFin: string): string {
+    const [y1, m1, d1] = dateDebut.split('-').map(Number);
+    const [y2, m2, d2] = dateFin.split('-').map(Number);
+    const mois1 = MONTHS[m1 - 1].toLowerCase();
+    const mois2 = MONTHS[m2 - 1].toLowerCase();
+
+    if (dateDebut === dateFin) {
+      return `le ${d1} ${mois1} ${y1}`;
+    }
+    if (y1 === y2 && m1 === m2) {
+      return `du ${d1} au ${d2} ${mois2} ${y2}`;
+    }
+    if (y1 === y2) {
+      return `du ${d1} ${mois1} au ${d2} ${mois2} ${y1}`;
+    }
+    return `du ${d1} ${mois1} ${y1} au ${d2} ${mois2} ${y2}`;
+  }
+
+  get resumePlageAjout(): string {
+    return `${this.formatDatePlage(this.dateDebut, this.dateFin)}, de ${this.dispoDebut} à ${this.dispoFin}.`;
+  }
+
+  get resumePlageSuppression(): string {
+    return `${this.formatDatePlage(this.suppDateDebut, this.suppDateFin)}, de ${this.suppHeureDebut} à ${this.suppHeureFin}.`;
+  }
+
   planifierCreneaux(): void {
     if (this.selectedKey) {
       const [year, month, day] = this.selectedKey.split('-').map(Number);
@@ -222,10 +251,29 @@ changeMonth(dir: number): void {
     if (!this.selectedKey) {
       return;
     }
-    const slot = SLOT_DATA[this.selectedKey];
-    if (slot) {
-      slot.avail = slot.taken;
+    const medecinId = this.authService.getMedecinId();
+    if (!medecinId) {
+      return;
     }
+    const [year, month, day] = this.selectedKey.split('-').map(Number);
+    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const body: PlageCreneauxRequest = {
+      dateDebut: dateStr,
+      dateFin: dateStr,
+      heureDebut: '00:00:00',
+      heureFin: '23:59:59',
+    };
+    this.creneauService.supprimerPlage(medecinId, body).subscribe({
+      next: (response) => {
+        if (response.success && this.selectedKey) {
+          const slot = SLOT_DATA[this.selectedKey];
+          if (slot) {
+            slot.avail = slot.taken;
+          }
+        }
+      },
+      error: (err) => console.error('Erreur lors de la suppression des créneaux du jour:', err),
+    });
   }
 
   showModalSupprimerPlage: boolean = false;
@@ -233,12 +281,15 @@ changeMonth(dir: number): void {
   suppDateFin = new Date().toISOString().split('T')[0];
   suppHeureDebut = '09:00';
   suppHeureFin = '12:00';
+  suppPlageError = '';
+  isDeletingPlage = false;
 
   openModalSupprimerPlage(): void {
     this.suppDateDebut = new Date().toISOString().split('T')[0];
     this.suppDateFin = new Date().toISOString().split('T')[0];
     this.suppHeureDebut = '09:00';
     this.suppHeureFin = '12:00';
+    this.suppPlageError = '';
     this.showModalSupprimerPlage = true;
   }
 
@@ -246,9 +297,54 @@ changeMonth(dir: number): void {
     this.showModalSupprimerPlage = false;
   }
 
+  showConfirmSuppressionPlage = false;
+
+  demanderConfirmationSuppression(): void {
+    this.showConfirmSuppressionPlage = true;
+  }
+
+  annulerConfirmationSuppression(): void {
+    this.showConfirmSuppressionPlage = false;
+  }
+
   confirmerSuppressionPlage(): void {
-    const debut = new Date(this.suppDateDebut);
-    const fin = new Date(this.suppDateFin);
+    const medecinId = this.authService.getMedecinId();
+    if (!medecinId) {
+      this.suppPlageError = 'Profil médecin introuvable.';
+      this.showConfirmSuppressionPlage = false;
+      return;
+    }
+
+    this.showConfirmSuppressionPlage = false;
+    this.suppPlageError = '';
+    this.isDeletingPlage = true;
+    const body: PlageCreneauxRequest = {
+      dateDebut: this.suppDateDebut,
+      dateFin: this.suppDateFin,
+      heureDebut: `${this.suppHeureDebut}:00`,
+      heureFin: `${this.suppHeureFin}:00`,
+    };
+
+    this.creneauService.supprimerPlage(medecinId, body).subscribe({
+      next: (response) => {
+        this.isDeletingPlage = false;
+        if (response.success) {
+          this.clearLibresLocalement(this.suppDateDebut, this.suppDateFin);
+          this.showModalSupprimerPlage = false;
+        } else {
+          this.suppPlageError = response.message;
+        }
+      },
+      error: (err) => {
+        this.isDeletingPlage = false;
+        this.suppPlageError = err?.error?.message ?? 'Erreur lors de la suppression des créneaux.';
+      },
+    });
+  }
+
+  private clearLibresLocalement(dateDebut: string, dateFin: string): void {
+    const debut = new Date(dateDebut);
+    const fin = new Date(dateFin);
     Object.keys(SLOT_DATA).forEach((key) => {
       const [y, m, d] = key.split('-').map(Number);
       const date = new Date(y, m - 1, d);
@@ -256,17 +352,76 @@ changeMonth(dir: number): void {
         SLOT_DATA[key].avail = SLOT_DATA[key].taken;
       }
     });
-    this.showModalSupprimerPlage = false;
   }
+
+  addPlageError = '';
+  isSavingPlage = false;
 
    openModalAddDisponibilite(): void {
     this.dateDebut = new Date().toISOString().split('T')[0]; // Default to today's date in YYYY-MM-DD format
     this.dateFin = new Date().toISOString().split('T')[0]; // Default to today's date in YYYY-MM-DD format
+    this.addPlageError = '';
     this.showModalAddDisponibilite = true;
   }
 
    closeModalAddDisponibilite() {
     this.showModalAddDisponibilite = false;
+  }
+
+  showConfirmAjoutPlage = false;
+
+  demanderConfirmationAjout(): void {
+    this.showConfirmAjoutPlage = true;
+  }
+
+  annulerConfirmationAjout(): void {
+    this.showConfirmAjoutPlage = false;
+  }
+
+  confirmerAjoutPlage(): void {
+    const medecinId = this.authService.getMedecinId();
+    if (!medecinId) {
+      this.addPlageError = 'Profil médecin introuvable.';
+      this.showConfirmAjoutPlage = false;
+      return;
+    }
+
+    this.showConfirmAjoutPlage = false;
+    this.addPlageError = '';
+    this.isSavingPlage = true;
+    const body: PlageCreneauxRequest = {
+      dateDebut: this.dateDebut,
+      dateFin: this.dateFin,
+      heureDebut: `${this.dispoDebut}:00`,
+      heureFin: `${this.dispoFin}:00`,
+    };
+
+    this.creneauService.ajouterPlage(medecinId, body).subscribe({
+      next: (response) => {
+        this.isSavingPlage = false;
+        if (response.success) {
+          this.ajouterSlotsLocalement(response.data);
+          this.showModalAddDisponibilite = false;
+        } else {
+          this.addPlageError = response.message;
+        }
+      },
+      error: (err) => {
+        this.isSavingPlage = false;
+        this.addPlageError = err?.error?.message ?? 'Erreur lors de la création des créneaux.';
+      },
+    });
+  }
+
+  private ajouterSlotsLocalement(creneaux: CreneauResponse[]): void {
+    creneaux.forEach((c) => {
+      const [y, m, d] = c.date.split('-').map(Number);
+      const key = `${y}-${m}-${d}`;
+      if (!SLOT_DATA[key]) {
+        SLOT_DATA[key] = { avail: 0, taken: 0 };
+      }
+      SLOT_DATA[key].avail += 1;
+    });
   }
 
   toggleDay(key: string): void {

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { roleHomePath } from '../../core/guards/role.guard';
+import { MedecinService } from '../admin/services/medecin.service';
 
 @Component({
   selector: 'app-auth',
@@ -18,7 +19,11 @@ export class AuthComponent {
   errorMessage = '';
   isLoading = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private medecinService: MedecinService,
+    private router: Router
+  ) {}
 
   onLogin() {
     this.errorMessage = '';
@@ -30,12 +35,32 @@ export class AuthComponent {
     this.isLoading = true;
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        this.isLoading = false;
-        if (response.success) {
-          this.authService.setCurrentUser(response.data);
-          this.router.navigateByUrl(roleHomePath[response.data.role]);
-        } else {
+        if (!response.success) {
+          this.isLoading = false;
           this.errorMessage = response.message;
+          return;
+        }
+
+        this.authService.setCurrentUser(response.data);
+
+        if (response.data.role === 'MEDECIN') {
+          this.medecinService.getByUserId(response.data.id).subscribe({
+            next: (medecinResponse) => {
+              this.isLoading = false;
+              if (medecinResponse.success) {
+                this.authService.setMedecinId(medecinResponse.data.id);
+              }
+              this.router.navigateByUrl(roleHomePath[response.data.role]);
+            },
+            error: (err) => {
+              this.isLoading = false;
+              console.error('Récupération du profil médecin échouée:', err);
+              this.router.navigateByUrl(roleHomePath[response.data.role]);
+            },
+          });
+        } else {
+          this.isLoading = false;
+          this.router.navigateByUrl(roleHomePath[response.data.role]);
         }
       },
       error: (err) => {

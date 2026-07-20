@@ -19,8 +19,8 @@
 
   <!-- Month navigation -->
   <div class="month-nav">
-    <button class="btn" (click)="changeMonth(-1)" aria-label="Mois précédent" icon="ti ti-chevron-left">
-      <i class="fa-solid fa-angle-right"></i>
+    <button class="btn" (click)="changeMonth(-1)" aria-label="Mois précédent">
+      <i class="ti ti-chevron-left"></i>
     </button>
     <div class="month-label">{{ monthLabel }}</div>
     <button class="btn" (click)="changeMonth(1)" aria-label="Mois suivant">
@@ -154,15 +154,38 @@
         <input type="time" [(ngModel)]="dispoFin">
       </div>
     </div>
-    <div class="slots-preview">
+    <div class="info-banner info">
       <i class="ti ti-info-circle"></i>
-      Cette plage génèrera <strong>{{ slotsCount }} créneau{{ slotsCount > 1 ? 'x' : '' }}</strong> de 15 min
+      <span>Cette plage génèrera <strong>{{ slotsCount }} créneau{{ slotsCount > 1 ? 'x' : '' }}</strong> de 15 min</span>
     </div>
+    @if (addPlageError) {
+      <div class="info-banner danger">
+        <i class="ti ti-alert-triangle"></i>
+        <span>{{ addPlageError }}</span>
+      </div>
+    }
   </div>
   <div class="modal-footer">
     <button class="btn" (click)="closeModalAddDisponibilite()">Annuler</button>
-    <button class="btn primary" (click)="closeModalAddDisponibilite()">
-      <i class="ti ti-check"></i> Confirmer
+    <button class="btn primary" [disabled]="isSavingPlage" (click)="demanderConfirmationAjout()">
+      <i class="ti ti-check"></i> {{ isSavingPlage ? 'Création...' : 'Confirmer' }}
+    </button>
+  </div>
+</app-modal>
+
+<!-- Modal: Confirmation de création -->
+<app-modal title="Confirmer la création" [visible]="showConfirmAjoutPlage" (close)="annulerConfirmationAjout()">
+  <div class="modal-body">
+    <p>Confirmez-vous la planification de ces créneaux ?</p>
+    <div class="info-banner success">
+      <i class="ti ti-calendar-plus"></i>
+      <span>{{ resumePlageAjout }}</span>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" (click)="annulerConfirmationAjout()">Annuler</button>
+    <button class="btn primary" [disabled]="isSavingPlage" (click)="confirmerAjoutPlage()">
+      <i class="ti ti-check"></i> {{ isSavingPlage ? 'Création...' : 'Confirmer' }}
     </button>
   </div>
 </app-modal>
@@ -186,15 +209,38 @@
         <input type="time" [(ngModel)]="suppHeureFin">
       </div>
     </div>
-    <div class="slots-preview danger">
+    <div class="info-banner danger">
       <i class="ti ti-alert-triangle"></i>
-      Tous les créneaux <strong>libres</strong> de cette plage seront supprimés. Les créneaux réservés ne sont jamais supprimés.
+      <span>Tous les créneaux <strong>libres</strong> de cette plage seront supprimés. Les créneaux <strong>réservés</strong> ne sont jamais supprimés.</span>
     </div>
+    @if (suppPlageError) {
+      <div class="info-banner danger">
+        <i class="ti ti-alert-triangle"></i>
+        <span>{{ suppPlageError }}</span>
+      </div>
+    }
   </div>
   <div class="modal-footer">
     <button class="btn" (click)="closeModalSupprimerPlage()">Annuler</button>
-    <button class="btn danger" (click)="confirmerSuppressionPlage()">
-      <i class="ti ti-trash"></i> Supprimer
+    <button class="btn danger" [disabled]="isDeletingPlage" (click)="demanderConfirmationSuppression()">
+      <i class="ti ti-trash"></i> {{ isDeletingPlage ? 'Suppression...' : 'Supprimer' }}
+    </button>
+  </div>
+</app-modal>
+
+<!-- Modal: Confirmation de suppression -->
+<app-modal title="Confirmer la suppression" [visible]="showConfirmSuppressionPlage" (close)="annulerConfirmationSuppression()">
+  <div class="modal-body">
+    <p>Confirmez-vous la suppression de ces créneaux ?</p>
+    <div class="info-banner danger">
+      <i class="ti ti-trash"></i>
+      <span>Créneaux <strong>libres</strong> {{ resumePlageSuppression }} Les créneaux <strong>réservés</strong> ne seront pas touchés.</span>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" (click)="annulerConfirmationSuppression()">Annuler</button>
+    <button class="btn danger" [disabled]="isDeletingPlage" (click)="confirmerSuppressionPlage()">
+      <i class="ti ti-trash"></i> {{ isDeletingPlage ? 'Suppression...' : 'Supprimer' }}
     </button>
   </div>
 </app-modal>

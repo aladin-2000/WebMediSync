@@ -17,6 +17,10 @@ export class MedecinService {
     return this.http.get<ApiResponse<MedecinResponse[]>>(this.baseUrl);
   }
 
+  getByUserId(userId: string): Observable<ApiResponse<MedecinResponse>> {
+    return this.http.get<ApiResponse<MedecinResponse>>(`${this.baseUrl}/by-user/${userId}`);
+  }
+
   create(body: CreerMedecinRequest): Observable<ApiResponse<MedecinResponse>> {
     return this.http.post<ApiResponse<MedecinResponse>>(`${this.baseUrl}/creer-medecin-complet`, body);
   }

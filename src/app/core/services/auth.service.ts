@@ -5,12 +5,14 @@ import { API_BASE_URL } from '../config/api.config';
 import { ApiResponse, Role, UserResponse } from '../models/user.model';
 
 const STORAGE_KEY = 'currentUser';
+const MEDECIN_ID_STORAGE_KEY = 'medecinId';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private currentUser: UserResponse | null = this.readStoredUser();
+  private medecinId: string | null = localStorage.getItem(MEDECIN_ID_STORAGE_KEY);
 
   constructor(private http: HttpClient) {}
 
@@ -23,9 +25,20 @@ export class AuthService {
     this.currentUser = user;
   }
 
+  setMedecinId(medecinId: string): void {
+    localStorage.setItem(MEDECIN_ID_STORAGE_KEY, medecinId);
+    this.medecinId = medecinId;
+  }
+
+  getMedecinId(): string | null {
+    return this.medecinId;
+  }
+
   logout(): void {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(MEDECIN_ID_STORAGE_KEY);
     this.currentUser = null;
+    this.medecinId = null;
   }
 
   isAuthenticated(): boolean {
