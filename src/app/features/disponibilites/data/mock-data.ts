@@ -1,19 +1,5 @@
 import { RegleRecurrence, JourSemaineView, StatMois, StatJour } from '../models/disponibilite.models';
 
-export const SLOT_DATA: Record<string, { avail: number; taken: number }> = {
-  '2026-7-2':  { avail: 8,  taken: 6  },
-  '2026-7-3':  { avail: 12, taken: 12 },
-  '2026-7-7':  { avail: 8,  taken: 5  },
-  '2026-7-8':  { avail: 12, taken: 8  },
-  '2026-7-9':  { avail: 8,  taken: 8  },
-  '2026-7-10': { avail: 12, taken: 3  },
-  '2026-7-14': { avail: 8,  taken: 7  },
-  '2026-7-15': { avail: 12, taken: 10 },
-  '2026-7-16': { avail: 8,  taken: 2  },
-  '2026-7-21': { avail: 12, taken: 12 },
-  '2026-7-22': { avail: 8,  taken: 4  },
-};
-
 export const MOCK_REGLES: RegleRecurrence[] = [
   {
     id: '1',

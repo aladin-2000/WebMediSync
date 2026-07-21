@@ -8,7 +8,7 @@
   height: 100%;
   display: flex;
   gap: 20px;
-  align-items: flex-start;
+  align-items: stretch;
   box-sizing: border-box;
 }
 
@@ -26,8 +26,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  position: sticky;
-  top: 20px;
 }
 
 .actions-panel {
@@ -42,11 +40,11 @@
 }
 
 .day-panel {
+  flex: 1;
   background: #eef4fb;
   border: 1px solid #dbe4ff;
   border-radius: 12px;
   padding: 14px;
-  margin-top: 70px;   /* ← ajoute cette ligne, augmente la valeur pour descendre plus */
   display: flex;
   flex-direction: column;
 }
@@ -63,22 +61,73 @@
   margin-bottom: 12px;
 }
 
-.slot-box {
-  max-height: 200px;
+.slot-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
   margin-top: 12px;
-  background: #ffffff;
-  border: 1px solid #dbe4ff;
-  border-radius: 8px;
-  padding: 10px;
-  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: filter 0.15s, box-shadow 0.15s;
+}
+
+.summary-card:hover {
+  filter: brightness(0.97);
+}
+
+.summary-card.active {
+  box-shadow: 0 0 0 2px currentColor;
+}
+
+.summary-card i {
+  font-size: 20px;
+}
+
+.summary-card.libre {
+  background: #eaf4ff;
+  border-color: #bcdcff;
+  color: #1971c2;
+}
+
+.summary-card.reserve {
+  background: #ebfbee;
+  border-color: #b2f2bb;
+  color: #2f9e44;
+}
+
+.summary-num {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.summary-label {
+  font-size: 11px;
+  opacity: 0.85;
 }
 
 .slot-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 8px;
+}
+
+.slot-list.detail {
+  max-height: 340px;
   overflow-y: auto;
+  margin-top: 4px;
 }
 
 .slot-row {
@@ -92,12 +141,6 @@
 
 .slot-row.reserve { background: #d3f9d8; color: #2f9e44; }
 .slot-row.libre    { background: #dbe4ff; color: #1971c2; }
-
-.slot-extra {
-  font-size: 12px;
-  color: #868e96;
-  margin-bottom: 4px;
-}
 
 .day-panel-section {
   margin-top: 16px;
@@ -147,7 +190,7 @@
 
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin-bottom: 16px;
 }
@@ -330,6 +373,10 @@
 .field input:focus, .field select:focus { outline: none; border-color: #1971c2; }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .hint { font-size: 11px; color: #adb5bd; }
+
+.calendar-main > .info-banner {
+  margin-bottom: 16px;
+}
 
 .info-banner {
   display: flex;

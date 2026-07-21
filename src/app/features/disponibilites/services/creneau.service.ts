@@ -26,4 +26,10 @@ export class CreneauService {
       { body }
     );
   }
+
+  getPeriode(medecinId: string, dateDebut: string, dateFin: string): Observable<ApiResponse<CreneauResponse[]>> {
+    return this.http.get<ApiResponse<CreneauResponse[]>>(
+      `${this.baseUrl}/periode?medecinId=${medecinId}&dateDebut=${dateDebut}&dateFin=${dateFin}`
+    );
+  }
 }

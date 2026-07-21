@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../shared/modal/modal.component';
-import { SLOT_DATA, MONTHS, DAYS_LABELS } from '../data/mock-data';
+import { MONTHS, DAYS_LABELS } from '../data/mock-data';
 import { CreneauResponse, PlageCreneauxRequest } from '../models/disponibilite.models';
 import { CreneauService } from '../services/creneau.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -35,16 +35,24 @@ const JOURS_LONGS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendred
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css'],
 })
-export class CalendarComponent {
+export class CalendarComponent implements OnInit {
   @Output() navigateTo = new EventEmitter<string>();
 
   currentDate = new Date();
   activeModal: ModalType = null;
   selectedKey: string | null = null;
 
+  creneaux: CreneauResponse[] = [];
+  isLoadingCreneaux = false;
+  creneauxError = '';
+
   constructor(private creneauService: CreneauService, private authService: AuthService) {
     const today = new Date();
     this.selectedKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+  }
+
+  ngOnInit(): void {
+    this.chargerCreneauxDuMois();
   }
 
   dispoDebut = '09:00';
@@ -59,23 +67,80 @@ export class CalendarComponent {
     return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
   }
 
-  get stats() {
-    let total = 0, reserves = 0;
-    Object.values(SLOT_DATA).forEach(s => { total += s.avail; reserves += s.taken; });
-    return {
+  chargerCreneauxDuMois(): void {
+    const medecinId = this.authService.getMedecinId();
+    if (!medecinId) {
+      return;
+    }
+    const y = this.currentDate.getFullYear();
+    const m = this.currentDate.getMonth();
+    const dateDebut = `${y}-${String(m + 1).padStart(2, '0')}-01`;
+    const dernierJour = new Date(y, m + 1, 0).getDate();
+    const dateFin = `${y}-${String(m + 1).padStart(2, '0')}-${String(dernierJour).padStart(2, '0')}`;
+
+    this.isLoadingCreneaux = true;
+    this.creneauxError = '';
+    this.creneauService.getPeriode(medecinId, dateDebut, dateFin).subscribe({
+      next: (response) => {
+        this.isLoadingCreneaux = false;
+        if (response.success) {
+          this.creneaux = response.data;
+          this.recalculerCalendrier();
+          this.recalculerJourSelectionne();
+        } else {
+          this.creneauxError = response.message;
+        }
+      },
+      error: (err) => {
+        this.isLoadingCreneaux = false;
+        this.creneauxError = err?.error?.message ?? 'Erreur lors du chargement des créneaux.';
+      },
+    });
+  }
+
+  private toSlotKey(dateStr: string): string {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return `${y}-${m}-${d}`;
+  }
+
+  private creneauxPourJour(key: string): CreneauResponse[] {
+    return this.creneaux.filter((c) => this.toSlotKey(c.date) === key);
+  }
+
+  stats = { total: 0, reserves: 0, libres: 0, taux: 0, effectues: 0 };
+  cells: CalendarCell[] = [];
+
+  private recalculerCalendrier(): void {
+    let total = 0, reserves = 0, effectues = 0;
+    const maintenant = new Date();
+    this.creneaux.forEach((c) => {
+      if (c.statut === 'ANNULE') {
+        return;
+      }
+      total++;
+      if (c.statut === 'RESERVE') {
+        reserves++;
+        const [y, m, d] = c.date.split('-').map(Number);
+        const [h, min] = c.heureDebut.split(':').map(Number);
+        const dateHeure = new Date(y, m - 1, d, h, min);
+        if (dateHeure < maintenant) {
+          effectues++;
+        }
+      }
+    });
+    this.stats = {
       total,
       reserves,
       libres: total - reserves,
       taux: total ? Math.round((reserves / total) * 100) : 0,
+      effectues,
     };
-  }
 
-  get cells(): CalendarCell[] {
     const d = this.currentDate;
     const y = d.getFullYear(), m = d.getMonth();
     const numberfirstDayInMounth = new Date(y, m, 1).getDay();
     const numberdaysInMonth = new Date(y, m + 1, 0).getDate();
-    const today = this.currentDate;
+    const today = new Date();
     today.setHours(0, 0, 0, 0);
     const cells: CalendarCell[] = [];
 
@@ -85,7 +150,9 @@ export class CalendarComponent {
 
     for (let day = 1; day <= numberdaysInMonth; day++) {
       const key = `${y}-${m + 1}-${day}`;
-      const slot = SLOT_DATA[key];
+      const dayCreneaux = this.creneauxPourJour(key);
+      const taken = dayCreneaux.filter((c) => c.statut === 'RESERVE').length;
+      const available = dayCreneaux.filter((c) => c.statut === 'DISPONIBLE').length;
       const isToday = y === today.getFullYear() && m === today.getMonth() && day === today.getDate();
       const cellDate = new Date(y, m, day);
       const isPast = cellDate < today;
@@ -94,14 +161,14 @@ export class CalendarComponent {
         otherMonth: false,
         isToday,
         isPast,
-        hasFull: !!slot && slot.taken >= slot.avail,
-        hasSlots: !!slot && slot.taken < slot.avail,
-        available: slot ? slot.avail - slot.taken : 0,
-        taken: slot ? slot.taken : 0,
+        hasFull: dayCreneaux.length > 0 && available === 0,
+        hasSlots: available > 0,
+        available,
+        taken,
         key,
       });
     }
-    return cells;
+    this.cells = cells;
   }
 
   get weeksCount(): number {
@@ -145,10 +212,12 @@ changeMonth(dir: number): void {
   } else {
     this.currentDate = newDate;
   }
+  this.chargerCreneauxDuMois();
 }
 
   goToday(): void {
     this.currentDate = new Date();
+    this.chargerCreneauxDuMois();
   }
 
 
@@ -156,6 +225,7 @@ changeMonth(dir: number): void {
 
   selectDay(cell: CalendarCell): void {
     this.selectedKey = cell.key;
+    this.recalculerJourSelectionne();
   }
 
   get selectedDayLabel(): string {
@@ -167,48 +237,72 @@ changeMonth(dir: number): void {
     return `${JOURS_LONGS[date.getDay()]} ${day} ${MONTHS[month - 1].toLowerCase()}`;
   }
 
-  get selectedDaySlots(): DaySlot[] {
+  selectedDaySlots: DaySlot[] = [];
+
+  private recalculerJourSelectionne(): void {
     if (!this.selectedKey) {
-      return [];
+      this.selectedDaySlots = [];
+      return;
     }
-    const slot = SLOT_DATA[this.selectedKey];
-    if (!slot) {
-      return [];
+    this.selectedDaySlots = this.creneauxPourJour(this.selectedKey)
+      .filter((c) => c.statut !== 'ANNULE')
+      .sort((a, b) => a.heureDebut.localeCompare(b.heureDebut))
+      .map((c) => ({
+        heure: this.formatHeureFromString(c.heureDebut),
+        statut: c.statut === 'RESERVE' ? 'reserve' : 'libre',
+      }));
+  }
+
+  get nbLibres(): number {
+    return this.selectedDaySlots.filter((s) => s.statut === 'libre').length;
+  }
+
+  get nbReserves(): number {
+    return this.selectedDaySlots.filter((s) => s.statut === 'reserve').length;
+  }
+
+  showDetailJour = false;
+  detailFiltre: 'libre' | 'reserve' | null = null;
+
+  get slotsAffiches(): DaySlot[] {
+    if (!this.detailFiltre) {
+      return this.selectedDaySlots;
     }
-    const libres = Math.max(0, slot.avail - slot.taken);
-    const list: DaySlot[] = [];
-    let h = 9, m = 0;
-    for (let i = 0; i < slot.taken; i++) {
-      list.push({ heure: this.formatHeure(h, m), statut: 'reserve' });
-      m += 15; if (m >= 60) { m -= 60; h++; }
+    return this.selectedDaySlots.filter((s) => s.statut === this.detailFiltre);
+  }
+
+  get detailTitre(): string {
+    if (this.detailFiltre === 'libre') {
+      return 'Créneaux libres';
     }
-    for (let i = 0; i < libres; i++) {
-      list.push({ heure: this.formatHeure(h, m), statut: 'libre' });
-      m += 15; if (m >= 60) { m -= 60; h++; }
+    if (this.detailFiltre === 'reserve') {
+      return 'Créneaux réservés';
     }
-    return list;
+    return 'Créneaux';
   }
 
-  get visibleDaySlots(): DaySlot[] {
-    return this.selectedDaySlots.slice(0, 4);
+  get detailMessageVide(): string {
+    if (this.detailFiltre === 'libre') {
+      return 'Aucun créneau libre pour ce jour.';
+    }
+    if (this.detailFiltre === 'reserve') {
+      return 'Aucun créneau réservé pour ce jour.';
+    }
+    return 'Aucun créneau pour ce jour.';
   }
 
-  get extraReserveCount(): number {
-    return this.countExtra('reserve');
+  ouvrirDetailJour(filtre: 'libre' | 'reserve' | null = null): void {
+    this.detailFiltre = filtre;
+    this.showDetailJour = true;
   }
 
-  get extraLibreCount(): number {
-    return this.countExtra('libre');
+  fermerDetailJour(): void {
+    this.showDetailJour = false;
   }
 
-  private countExtra(statut: 'reserve' | 'libre'): number {
-    const all = this.selectedDaySlots;
-    const hidden = all.slice(4);
-    return hidden.filter((s) => s.statut === statut).length;
-  }
-
-  private formatHeure(h: number, m: number): string {
-    return `${String(h).padStart(2, '0')}h${String(m).padStart(2, '0')}`;
+  private formatHeureFromString(heure: string): string {
+    const [h, m] = heure.split(':');
+    return `${h}h${m}`;
   }
 
   private formatDatePlage(dateDebut: string, dateFin: string): string {
@@ -238,6 +332,7 @@ changeMonth(dir: number): void {
   }
 
   planifierCreneaux(): void {
+    this.resetFormAjout();
     if (this.selectedKey) {
       const [year, month, day] = this.selectedKey.split('-').map(Number);
       const cellDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -247,10 +342,42 @@ changeMonth(dir: number): void {
     this.showModalAddDisponibilite = true;
   }
 
-  supprimerCreneauxLibres(): void {
+  supprimerJourError = '';
+  showErreurSuppressionJour = false;
+  showSuccesSuppressionJour = false;
+  showConfirmSuppressionJour = false;
+
+  fermerSuccesSuppressionJour(): void {
+    this.showSuccesSuppressionJour = false;
+  }
+
+  fermerErreurSuppressionJour(): void {
+    this.showErreurSuppressionJour = false;
+  }
+
+  demanderConfirmationSuppressionJour(): void {
     if (!this.selectedKey) {
       return;
     }
+    const [year, month, day] = this.selectedKey.split('-').map(Number);
+    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    if (dateStr < this.todayISO) {
+      this.supprimerJourError = "Cette journée est déjà passée, ses créneaux ne peuvent plus être supprimés.";
+      this.showErreurSuppressionJour = true;
+      return;
+    }
+    this.showConfirmSuppressionJour = true;
+  }
+
+  annulerConfirmationSuppressionJour(): void {
+    this.showConfirmSuppressionJour = false;
+  }
+
+  confirmerSuppressionJour(): void {
+    if (!this.selectedKey) {
+      return;
+    }
+    this.showConfirmSuppressionJour = false;
     const medecinId = this.authService.getMedecinId();
     if (!medecinId) {
       return;
@@ -265,14 +392,18 @@ changeMonth(dir: number): void {
     };
     this.creneauService.supprimerPlage(medecinId, body).subscribe({
       next: (response) => {
-        if (response.success && this.selectedKey) {
-          const slot = SLOT_DATA[this.selectedKey];
-          if (slot) {
-            slot.avail = slot.taken;
-          }
+        if (response.success) {
+          this.chargerCreneauxDuMois();
+          this.showSuccesSuppressionJour = true;
+        } else {
+          this.supprimerJourError = response.message;
+          this.showErreurSuppressionJour = true;
         }
       },
-      error: (err) => console.error('Erreur lors de la suppression des créneaux du jour:', err),
+      error: (err) => {
+        this.supprimerJourError = err?.error?.message ?? 'Erreur lors de la suppression des créneaux du jour.';
+        this.showErreurSuppressionJour = true;
+      },
     });
   }
 
@@ -285,11 +416,12 @@ changeMonth(dir: number): void {
   isDeletingPlage = false;
 
   openModalSupprimerPlage(): void {
-    this.suppDateDebut = new Date().toISOString().split('T')[0];
-    this.suppDateFin = new Date().toISOString().split('T')[0];
+    this.suppDateDebut = this.todayISO;
+    this.suppDateFin = this.todayISO;
     this.suppHeureDebut = '09:00';
     this.suppHeureFin = '12:00';
     this.suppPlageError = '';
+    this.isDeletingPlage = false;
     this.showModalSupprimerPlage = true;
   }
 
@@ -299,7 +431,34 @@ changeMonth(dir: number): void {
 
   showConfirmSuppressionPlage = false;
 
+  private validerPlageSuppression(): string {
+    const maintenant = new Date();
+    const aujourdHui = this.todayISO;
+
+    if (this.suppDateDebut < aujourdHui) {
+      return "Cette date est déjà passée, ses créneaux ne peuvent plus être supprimés.";
+    }
+
+    if (this.suppDateDebut === aujourdHui) {
+      const [h, m] = this.suppHeureDebut.split(':').map(Number);
+      const heureDebutMinutes = h * 60 + m;
+      const heureActuelleMinutes = maintenant.getHours() * 60 + maintenant.getMinutes();
+      if (heureDebutMinutes < heureActuelleMinutes) {
+        const heureActuelle = `${String(maintenant.getHours()).padStart(2, '0')}:${String(maintenant.getMinutes()).padStart(2, '0')}`;
+        return `Pour aujourd'hui, l'heure de début doit être ${heureActuelle} ou plus tard.`;
+      }
+    }
+
+    return '';
+  }
+
   demanderConfirmationSuppression(): void {
+    const erreur = this.validerPlageSuppression();
+    if (erreur) {
+      this.suppPlageError = erreur;
+      return;
+    }
+    this.suppPlageError = '';
     this.showConfirmSuppressionPlage = true;
   }
 
@@ -329,7 +488,7 @@ changeMonth(dir: number): void {
       next: (response) => {
         this.isDeletingPlage = false;
         if (response.success) {
-          this.clearLibresLocalement(this.suppDateDebut, this.suppDateFin);
+          this.chargerCreneauxDuMois();
           this.showModalSupprimerPlage = false;
         } else {
           this.suppPlageError = response.message;
@@ -342,26 +501,28 @@ changeMonth(dir: number): void {
     });
   }
 
-  private clearLibresLocalement(dateDebut: string, dateFin: string): void {
-    const debut = new Date(dateDebut);
-    const fin = new Date(dateFin);
-    Object.keys(SLOT_DATA).forEach((key) => {
-      const [y, m, d] = key.split('-').map(Number);
-      const date = new Date(y, m - 1, d);
-      if (date >= debut && date <= fin) {
-        SLOT_DATA[key].avail = SLOT_DATA[key].taken;
-      }
-    });
-  }
-
   addPlageError = '';
   isSavingPlage = false;
+  showSuccesAjout = false;
+  messageSuccesAjout = '';
+
+  fermerSuccesAjout(): void {
+    this.showSuccesAjout = false;
+  }
 
    openModalAddDisponibilite(): void {
-    this.dateDebut = new Date().toISOString().split('T')[0]; // Default to today's date in YYYY-MM-DD format
-    this.dateFin = new Date().toISOString().split('T')[0]; // Default to today's date in YYYY-MM-DD format
-    this.addPlageError = '';
+    this.resetFormAjout();
+    this.dateDebut = this.todayISO;
+    this.dateFin = this.todayISO;
     this.showModalAddDisponibilite = true;
+  }
+
+  private resetFormAjout(): void {
+    this.dispoDebut = '09:00';
+    this.dispoFin = '12:00';
+    this.selectedTemplate = null;
+    this.addPlageError = '';
+    this.isSavingPlage = false;
   }
 
    closeModalAddDisponibilite() {
@@ -370,7 +531,39 @@ changeMonth(dir: number): void {
 
   showConfirmAjoutPlage = false;
 
+  get todayISO(): string {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  private validerPlageAjout(): string {
+    const maintenant = new Date();
+    const aujourdHui = this.todayISO;
+
+    if (this.dateDebut < aujourdHui) {
+      return "Impossible de planifier des créneaux pour une date déjà passée.";
+    }
+
+    if (this.dateDebut === aujourdHui) {
+      const [h, m] = this.dispoDebut.split(':').map(Number);
+      const heureDebutMinutes = h * 60 + m;
+      const heureActuelleMinutes = maintenant.getHours() * 60 + maintenant.getMinutes();
+      if (heureDebutMinutes < heureActuelleMinutes) {
+        const heureActuelle = `${String(maintenant.getHours()).padStart(2, '0')}:${String(maintenant.getMinutes()).padStart(2, '0')}`;
+        return `Pour aujourd'hui, l'heure de début doit être ${heureActuelle} ou plus tard.`;
+      }
+    }
+
+    return '';
+  }
+
   demanderConfirmationAjout(): void {
+    const erreur = this.validerPlageAjout();
+    if (erreur) {
+      this.addPlageError = erreur;
+      return;
+    }
+    this.addPlageError = '';
     this.showConfirmAjoutPlage = true;
   }
 
@@ -400,8 +593,10 @@ changeMonth(dir: number): void {
       next: (response) => {
         this.isSavingPlage = false;
         if (response.success) {
-          this.ajouterSlotsLocalement(response.data);
+          this.messageSuccesAjout = this.resumePlageAjout;
+          this.chargerCreneauxDuMois();
           this.showModalAddDisponibilite = false;
+          this.showSuccesAjout = true;
         } else {
           this.addPlageError = response.message;
         }
@@ -410,17 +605,6 @@ changeMonth(dir: number): void {
         this.isSavingPlage = false;
         this.addPlageError = err?.error?.message ?? 'Erreur lors de la création des créneaux.';
       },
-    });
-  }
-
-  private ajouterSlotsLocalement(creneaux: CreneauResponse[]): void {
-    creneaux.forEach((c) => {
-      const [y, m, d] = c.date.split('-').map(Number);
-      const key = `${y}-${m}-${d}`;
-      if (!SLOT_DATA[key]) {
-        SLOT_DATA[key] = { avail: 0, taken: 0 };
-      }
-      SLOT_DATA[key].avail += 1;
     });
   }
 
