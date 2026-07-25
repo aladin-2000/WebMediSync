@@ -1,27 +1,58 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { API_BASE_URL } from '../config/api.config';
-import { ApiResponse, Role, UserResponse } from '../models/user.model';
+import { ApiResponse, LoginResponse, Role, UserResponse } from '../models/user.model';
 
-const STORAGE_KEY = 'currentUser';
+const TOKEN_STORAGE_KEY = 'authToken';
+const USER_STORAGE_KEY = 'currentUser';
 const MEDECIN_ID_STORAGE_KEY = 'medecinId';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private token: string | null = localStorage.getItem(TOKEN_STORAGE_KEY);
   private currentUser: UserResponse | null = this.readStoredUser();
   private medecinId: string | null = localStorage.getItem(MEDECIN_ID_STORAGE_KEY);
 
   constructor(private http: HttpClient) {}
 
-  login(email: string, password: string): Observable<ApiResponse<UserResponse>> {
-    return this.http.post<ApiResponse<UserResponse>>(`${API_BASE_URL}/auth/login`, { email, password });
+  login(email: string, password: string): Observable<ApiResponse<LoginResponse>> {
+    return this.http.post<ApiResponse<LoginResponse>>(`${API_BASE_URL}/auth/login`, { email, password });
+  }
+
+  me(): Observable<ApiResponse<UserResponse>> {
+    return this.http.get<ApiResponse<UserResponse>>(`${API_BASE_URL}/auth/me`).pipe(
+      tap((response) => {
+        if (response.success) {
+          this.setCurrentUser(response.data);
+        }
+      })
+    );
+  }
+
+  changePassword(currentPassword: string, newPassword: string): Observable<ApiResponse<null>> {
+    return this.http.put<ApiResponse<null>>(`${API_BASE_URL}/auth/changer-mot-de-passe`, {
+      currentPassword,
+      newPassword,
+    }).pipe(
+      tap((response) => {
+        if (response.success && this.currentUser) {
+          this.setCurrentUser({ ...this.currentUser, mustChangePassword: false });
+        }
+      })
+    );
+  }
+
+  setSession(token: string, user: UserResponse): void {
+    localStorage.setItem(TOKEN_STORAGE_KEY, token);
+    this.token = token;
+    this.setCurrentUser(user);
   }
 
   setCurrentUser(user: UserResponse): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
     this.currentUser = user;
   }
 
@@ -35,14 +66,20 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    localStorage.removeItem(USER_STORAGE_KEY);
     localStorage.removeItem(MEDECIN_ID_STORAGE_KEY);
+    this.token = null;
     this.currentUser = null;
     this.medecinId = null;
   }
 
+  getToken(): string | null {
+    return this.token;
+  }
+
   isAuthenticated(): boolean {
-    return this.currentUser !== null;
+    return this.token !== null;
   }
 
   getCurrentUser(): UserResponse | null {
@@ -53,8 +90,12 @@ export class AuthService {
     return this.currentUser?.role ?? null;
   }
 
+  get mustChangePassword(): boolean {
+    return this.currentUser?.mustChangePassword ?? false;
+  }
+
   private readStoredUser(): UserResponse | null {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(USER_STORAGE_KEY);
     if (!raw) {
       return null;
     }

@@ -1,0 +1,46 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="logo-box">
+        <i class="ti ti-lock"></i>
+      </div>
+      <h2>Changement requis</h2>
+      <p>Vous devez changer votre mot de passe avant de continuer</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="currentPassword">Mot de passe actuel</label>
+        <div class="input-icon">
+          <i class="ti ti-lock"></i>
+          <input type="password" id="currentPassword" name="currentPassword" [(ngModel)]="currentPassword" placeholder="Mot de passe fourni par l'admin" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="newPassword">Nouveau mot de passe</label>
+        <div class="input-icon">
+          <i class="ti ti-lock"></i>
+          <input type="password" id="newPassword" name="newPassword" [(ngModel)]="newPassword" placeholder="Choisissez un nouveau mot de passe" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <div class="input-icon">
+          <i class="ti ti-lock"></i>
+          <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" placeholder="Retapez le nouveau mot de passe" required>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-banner">
+        <i class="ti ti-alert-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <button type="submit" class="btn-login" [disabled]="isLoading">
+        {{ isLoading ? 'Changement...' : 'Changer le mot de passe' }}
+      </button>
+    </form>
+  </div>
+</div>

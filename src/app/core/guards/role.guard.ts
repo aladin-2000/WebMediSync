@@ -10,6 +10,8 @@ export const roleHomePath: Record<Role, string> = {
   LABO: '/labo',
 };
 
+export const CHANGE_PASSWORD_PATH = '/changer-mot-de-passe';
+
 export function roleGuard(allowedRoles: Role[]): CanActivateFn {
   return () => {
     const authService = inject(AuthService);
@@ -17,6 +19,10 @@ export function roleGuard(allowedRoles: Role[]): CanActivateFn {
 
     if (!authService.isAuthenticated()) {
       return router.parseUrl('/login');
+    }
+
+    if (authService.mustChangePassword) {
+      return router.parseUrl(CHANGE_PASSWORD_PATH);
     }
 
     const role = authService.currentUserRole;
@@ -28,12 +34,27 @@ export function roleGuard(allowedRoles: Role[]): CanActivateFn {
   };
 }
 
+export const changePasswordGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (!authService.isAuthenticated()) {
+    return router.parseUrl('/login');
+  }
+
+  return true;
+};
+
 export const guestGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
   if (!authService.isAuthenticated()) {
     return true;
+  }
+
+  if (authService.mustChangePassword) {
+    return router.parseUrl(CHANGE_PASSWORD_PATH);
   }
 
   const role = authService.currentUserRole;

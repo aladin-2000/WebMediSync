@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-import { roleHomePath } from '../../core/guards/role.guard';
+import { roleHomePath, CHANGE_PASSWORD_PATH } from '../../core/guards/role.guard';
 import { MedecinService } from '../admin/services/medecin.service';
 
 @Component({
@@ -41,26 +41,33 @@ export class AuthComponent {
           return;
         }
 
-        this.authService.setCurrentUser(response.data);
+        const { token, user } = response.data;
+        this.authService.setSession(token, user);
 
-        if (response.data.role === 'MEDECIN') {
-          this.medecinService.getByUserId(response.data.id).subscribe({
+        if (user.mustChangePassword) {
+          this.isLoading = false;
+          this.router.navigateByUrl(CHANGE_PASSWORD_PATH);
+          return;
+        }
+
+        if (user.role === 'MEDECIN') {
+          this.medecinService.getByUserId(user.id).subscribe({
             next: (medecinResponse) => {
               this.isLoading = false;
               if (medecinResponse.success) {
                 this.authService.setMedecinId(medecinResponse.data.id);
               }
-              this.router.navigateByUrl(roleHomePath[response.data.role]);
+              this.router.navigateByUrl(roleHomePath[user.role]);
             },
             error: (err) => {
               this.isLoading = false;
               console.error('Récupération du profil médecin échouée:', err);
-              this.router.navigateByUrl(roleHomePath[response.data.role]);
+              this.router.navigateByUrl(roleHomePath[user.role]);
             },
           });
         } else {
           this.isLoading = false;
-          this.router.navigateByUrl(roleHomePath[response.data.role]);
+          this.router.navigateByUrl(roleHomePath[user.role]);
         }
       },
       error: (err) => {

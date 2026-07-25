@@ -5,7 +5,13 @@ export interface UserResponse {
   email: string;
   role: Role;
   isActive: boolean;
+  mustChangePassword: boolean;
   createdAt: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  user: UserResponse;
 }
 
 export interface ApiResponse<T> {
