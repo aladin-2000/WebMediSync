@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { roleHomePath } from '../../../core/guards/role.guard';
+import { MedecinService } from '../../admin/services/medecin.service';
 
 @Component({
   selector: 'app-changer-mot-de-passe',
@@ -19,7 +20,11 @@ export class ChangerMotDePasseComponent {
   errorMessage = '';
   isLoading = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private medecinService: MedecinService,
+    private router: Router
+  ) {}
 
   onSubmit() {
     this.errorMessage = '';
@@ -42,8 +47,28 @@ export class ChangerMotDePasseComponent {
           this.errorMessage = response.message;
           return;
         }
-        const role = this.authService.currentUserRole;
-        this.router.navigateByUrl(role ? roleHomePath[role] : '/login');
+        const user = this.authService.getCurrentUser();
+        if (!user) {
+          this.router.navigateByUrl('/login');
+          return;
+        }
+
+        if (user.role === 'MEDECIN') {
+          this.medecinService.getByUserId(user.id).subscribe({
+            next: (medecinResponse) => {
+              if (medecinResponse.success) {
+                this.authService.setMedecinId(medecinResponse.data.id);
+              }
+              this.router.navigateByUrl(roleHomePath[user.role]);
+            },
+            error: (err) => {
+              console.error('Récupération du profil médecin échouée:', err);
+              this.router.navigateByUrl(roleHomePath[user.role]);
+            },
+          });
+        } else {
+          this.router.navigateByUrl(roleHomePath[user.role]);
+        }
       },
       error: (err) => {
         this.isLoading = false;

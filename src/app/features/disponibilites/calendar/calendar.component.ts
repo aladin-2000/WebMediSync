@@ -6,6 +6,7 @@ import { MONTHS, DAYS_LABELS } from '../data/mock-data';
 import { CreneauResponse, PlageCreneauxRequest } from '../models/disponibilite.models';
 import { CreneauService } from '../services/creneau.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { MedecinService } from '../../admin/services/medecin.service';
 
 export interface CalendarCell {
   day: number;
@@ -46,7 +47,11 @@ export class CalendarComponent implements OnInit {
   isLoadingCreneaux = false;
   creneauxError = '';
 
-  constructor(private creneauService: CreneauService, private authService: AuthService) {
+  constructor(
+    private creneauService: CreneauService,
+    private authService: AuthService,
+    private medecinService: MedecinService
+  ) {
     const today = new Date();
     this.selectedKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
   }
@@ -70,8 +75,36 @@ export class CalendarComponent implements OnInit {
   chargerCreneauxDuMois(): void {
     const medecinId = this.authService.getMedecinId();
     if (!medecinId) {
+      this.resoudreMedecinId();
       return;
     }
+    this.chargerCreneauxAvecMedecinId(medecinId);
+  }
+
+  private resoudreMedecinId(): void {
+    const user = this.authService.getCurrentUser();
+    if (!user) {
+      return;
+    }
+    this.isLoadingCreneaux = true;
+    this.medecinService.getByUserId(user.id).subscribe({
+      next: (response) => {
+        this.isLoadingCreneaux = false;
+        if (response.success) {
+          this.authService.setMedecinId(response.data.id);
+          this.chargerCreneauxDuMois();
+        } else {
+          this.creneauxError = response.message;
+        }
+      },
+      error: (err) => {
+        this.isLoadingCreneaux = false;
+        this.creneauxError = err?.error?.message ?? 'Impossible de récupérer votre profil médecin.';
+      },
+    });
+  }
+
+  private chargerCreneauxAvecMedecinId(medecinId: string): void {
     const y = this.currentDate.getFullYear();
     const m = this.currentDate.getMonth();
     const dateDebut = `${y}-${String(m + 1).padStart(2, '0')}-01`;
