@@ -21,6 +21,29 @@ export class MedecinService {
     return this.http.get<ApiResponse<MedecinResponse>>(`${this.baseUrl}/by-user/${userId}`);
   }
 
+  rechercher(params: {
+    date: string;
+    nom?: string;
+    specialite?: string;
+    heureDebut?: string;
+    heureFin?: string;
+  }): Observable<ApiResponse<MedecinResponse[]>> {
+    let query = `date=${encodeURIComponent(params.date)}`;
+    if (params.nom) {
+      query += `&nom=${encodeURIComponent(params.nom)}`;
+    }
+    if (params.specialite) {
+      query += `&specialite=${encodeURIComponent(params.specialite)}`;
+    }
+    if (params.heureDebut) {
+      query += `&heureDebut=${encodeURIComponent(params.heureDebut)}`;
+    }
+    if (params.heureFin) {
+      query += `&heureFin=${encodeURIComponent(params.heureFin)}`;
+    }
+    return this.http.get<ApiResponse<MedecinResponse[]>>(`${this.baseUrl}/recherche?${query}`);
+  }
+
   create(body: CreerMedecinRequest): Observable<ApiResponse<MedecinResponse>> {
     return this.http.post<ApiResponse<MedecinResponse>>(`${this.baseUrl}/creer-medecin-complet`, body);
   }

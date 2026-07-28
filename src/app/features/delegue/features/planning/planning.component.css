@@ -1,22 +1,42 @@
 .planning-page {
-  padding: 20px;
-  max-width: 1000px;
-  margin: 0 auto;
+  padding: 24px;
+  max-width: 1600px;
 }
 
-.page-header {
+/* Hero */
+.hero {
+  position: relative;
+  background: linear-gradient(120deg, #1971c2 0%, #4263eb 55%, #7048e8 100%);
+  border-radius: 16px;
+  padding: 24px 28px;
   margin-bottom: 20px;
+  overflow: hidden;
+  color: #fff;
 }
 
-.page-header h1 {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 4px;
+.hero-text h1 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.page-header p {
-  font-size: 13px;
-  color: #868e96;
+.hero-text p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.88);
+  margin: 0;
+}
+
+.hero-deco {
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-8deg);
+  font-size: 100px;
+  color: rgba(255, 255, 255, 0.12);
+  pointer-events: none;
 }
 
 .month-nav {
@@ -27,12 +47,12 @@
 }
 
 .btn-nav {
-  padding: 6px 12px;
+  padding: 7px 14px;
   background: #f8f9fa;
   border: 1px solid #dee2e6;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   transition: background 0.15s;
 }
 
@@ -41,81 +61,302 @@
 }
 
 .month-label {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
-  min-width: 150px;
+  min-width: 240px;
   text-align: center;
 }
 
-/* Grille calendrier */
-.cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
-  background: #dee2e6;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.cal-head {
-  background: #f8f9fa;
-  padding: 8px 4px;
+.empty-state {
   text-align: center;
-  font-size: 11px;
-  font-weight: 600;
+  padding: 48px 20px;
   color: #868e96;
 }
 
-.cal-cell {
-  background: #fff;
-  padding: 8px;
-  min-height: 100px;
-  display: flex;
-  flex-direction: column;
+.empty-state i {
+  font-size: 36px;
+  display: block;
+  margin-bottom: 10px;
+  color: #1971c2;
 }
 
-.cal-cell.empty {
+.empty-state i.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+.info-banner {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #856404;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.info-banner.danger {
+  background: #ffe3e3;
+  border-color: #ffa8a8;
+  color: #c92a2a;
+}
+
+/* Grille semaine */
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+.week-col {
   background: #f8f9fa;
-  opacity: 0.5;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  padding: 12px;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.week-col.today {
+  border-color: #1971c2;
+  background: linear-gradient(180deg, #eaf4ff, #f8f9fa 60%);
+  box-shadow: 0 4px 14px rgba(25, 113, 194, 0.12);
 }
 
 .day-num {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
-  margin-bottom: 6px;
   color: #212529;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.reservations {
+.today-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #1971c2;
+  display: inline-block;
+}
+
+.no-reservation {
+  font-size: 12px;
+  color: #adb5bd;
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 4px;
-  flex: 1;
 }
 
-.reservation-badge {
-  background: #dbe4ff;
-  border: 1px solid #1971c2;
-  border-radius: 4px;
-  padding: 4px 6px;
-  font-size: 10px;
-  color: #1971c2;
+.no-reservation i {
+  font-size: 18px;
+  opacity: 0.7;
+}
+
+.reservation-card {
+  background: #fff;
+  border: 1px solid #dbe4ff;
+  border-left: 3px solid #1971c2;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+  animation: fade-in-up 0.3s ease backwards;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.reservation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(25, 113, 194, 0.12);
+}
+
+.reservation-card.statut-realise {
+  border-left-color: #2b8a3e;
+}
+
+.reservation-card.statut-absent {
+  border-left-color: #e8590c;
+}
+
+.reservation-card.statut-annule {
+  border-left-color: #adb5bd;
+  opacity: 0.7;
 }
 
 .res-time {
   font-weight: 600;
-  margin-bottom: 1px;
+  color: #212529;
+  margin-bottom: 2px;
 }
 
 .res-doctor {
-  font-size: 9px;
-  opacity: 0.8;
+  font-weight: 500;
+  color: #1971c2;
 }
 
-.no-reservation {
-  font-size: 11px;
-  color: #adb5bd;
-  text-align: center;
-  margin-top: auto;
+.res-specialty {
+  color: #868e96;
+  margin-bottom: 6px;
+}
+
+.res-status {
+  margin-bottom: 8px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.badge.confirme {
+  background: #dbe4ff;
+  color: #1971c2;
+}
+
+.badge.realise {
+  background: #d3f9d8;
+  color: #2b8a3e;
+}
+
+.badge.absent {
+  background: #ffe8cc;
+  color: #e8590c;
+}
+
+.badge.annule {
+  background: #f1f3f5;
+  color: #868e96;
+}
+
+.res-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-action {
+  flex: 1;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 4px;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s, filter 0.15s;
+}
+
+.btn-action:hover {
+  filter: brightness(0.95);
+}
+
+.btn-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-action.realise {
+  background: #d3f9d8;
+  color: #2b8a3e;
+}
+
+.btn-action.absent {
+  background: #ffe8cc;
+  color: #e8590c;
+}
+
+.btn-action.annuler {
+  background: #ffe3e3;
+  color: #c92a2a;
+}
+
+/* Modal */
+.modal-body {
+  padding: 20px;
+  font-size: 14px;
+}
+
+.modal-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn-cancel,
+.btn-confirm {
+  padding: 7px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.btn-cancel {
+  background: #f8f9fa;
+  color: #212529;
+  border: 1px solid #dee2e6;
+}
+
+.btn-cancel:hover {
+  background: #e9ecef;
+}
+
+.btn-confirm {
+  background: #1971c2;
+  color: #fff;
+}
+
+.btn-confirm:hover {
+  background: #1864ab;
+}
+
+.btn-confirm.danger {
+  background: #e03131;
+}
+
+.btn-confirm.danger:hover {
+  background: #c92a2a;
+}
+
+/* Écrans étroits : la grille 7 colonnes devient trop compressée avant le
+   point de bascule habituel des tablettes, donc on descend le seuil ici. */
+@media (max-width: 1100px) {
+  .week-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

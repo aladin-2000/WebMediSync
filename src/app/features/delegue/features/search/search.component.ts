@@ -2,14 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../shared/modal/modal.component';
-import { DOCTORS, AVAILABILITIES, RESERVATIONS, Availability, Reservation } from '../../data/mock-data';
-
-// ============================================
-// PAGE: RECHERCHE ET RESERVATION
-// - Chercher un médecin
-// - Voir ses disponibilités
-// - Réserver un créneau
-// ============================================
+import { MedecinService } from '../../../admin/services/medecin.service';
+import { MedecinResponse } from '../../../admin/models/medecin.model';
+import { CreneauService } from '../../../disponibilites/services/creneau.service';
+import { CreneauResponse } from '../../../disponibilites/models/disponibilite.models';
+import { RendezVousService } from '../../services/rendezvous.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-search',
@@ -19,99 +17,145 @@ import { DOCTORS, AVAILABILITIES, RESERVATIONS, Availability, Reservation } from
   styleUrls: ['./search.component.css'],
 })
 export class SearchComponent {
+  readonly todayISO = new Date().toISOString().split('T')[0];
 
-  // ========== ETATS ==========
+  searchNom = '';
+  searchSpecialite = '';
+  searchDate = this.todayISO;
+  searchHeureDebut = '';
+  searchHeureFin = '';
 
-  // Liste de tous les médecins
-  doctors = DOCTORS;
+  doctors: MedecinResponse[] = [];
+  isSearching = false;
+  searchError = '';
+  hasSearched = false;
 
-  // Réservations existantes
-  reservations: Reservation[] = RESERVATIONS;
+  selectedDoctor: MedecinResponse | null = null;
+  creneaux: CreneauResponse[] = [];
+  isLoadingCreneaux = false;
+  creneauxError = '';
 
-  // Texte de recherche
-  searchText = '';
-
-  // Médecin sélectionné
-  selectedDoctor: typeof DOCTORS[0] | null = null;
-
-  // Disponibilités du médecin sélectionné
-  availabilities: Availability[] = [];
-
-  // Modal pour confirmer la réservation
+  selectedCreneau: CreneauResponse | null = null;
   showConfirmModal = false;
+  isReserving = false;
+  reserveError = '';
+  showSuccessModal = false;
 
-  // Disponibilité choisie pour réserver
-  selectedAvailability: Availability | null = null;
-
-  // ========== METHODES ==========
-
-  // Chercher un médecin par nom ou spécialité
-  get filteredDoctors() {
-    const text = this.searchText.toLowerCase();
-    return this.doctors.filter(doc =>
-      doc.name.toLowerCase().includes(text) ||
-      doc.specialty.toLowerCase().includes(text) ||
-      doc.city.toLowerCase().includes(text)
-    );
+  constructor(
+    private medecinService: MedecinService,
+    private creneauService: CreneauService,
+    private rendezVousService: RendezVousService,
+    private authService: AuthService
+  ) {
+    this.rechercher();
   }
 
-  // Quand on clique sur un médecin
-  selectDoctor(doctor: typeof DOCTORS[0]): void {
+  rechercher(): void {
+    this.searchError = '';
+    this.isSearching = true;
+    this.hasSearched = true;
+    this.medecinService.rechercher({
+      date: this.searchDate,
+      nom: this.searchNom || undefined,
+      specialite: this.searchSpecialite || undefined,
+      heureDebut: this.searchHeureDebut ? `${this.searchHeureDebut}:00` : undefined,
+      heureFin: this.searchHeureFin ? `${this.searchHeureFin}:00` : undefined,
+    }).subscribe({
+      next: (response) => {
+        this.isSearching = false;
+        if (response.success) {
+          this.doctors = response.data;
+        } else {
+          this.doctors = [];
+          this.searchError = response.message;
+        }
+      },
+      error: (err) => {
+        this.isSearching = false;
+        this.doctors = [];
+        this.searchError = err?.error?.message ?? 'Erreur lors de la recherche des médecins.';
+      },
+    });
+  }
+
+  selectDoctor(doctor: MedecinResponse): void {
     this.selectedDoctor = doctor;
+    this.creneaux = [];
+    this.creneauxError = '';
+    this.isLoadingCreneaux = true;
 
-    // Charger les disponibilités de ce médecin
-    this.availabilities = AVAILABILITIES.filter(a => a.doctorId === doctor.id);
+    this.creneauService.getPeriode(doctor.id, this.searchDate, this.searchDate).subscribe({
+      next: (response) => {
+        this.isLoadingCreneaux = false;
+        if (response.success) {
+          this.creneaux = response.data.filter((c) => c.statut === 'DISPONIBLE');
+        } else {
+          this.creneauxError = response.message;
+        }
+      },
+      error: (err) => {
+        this.isLoadingCreneaux = false;
+        this.creneauxError = err?.error?.message ?? 'Erreur lors du chargement des créneaux.';
+      },
+    });
   }
 
-  // Fermer la sélection du médecin
   closeDoctor(): void {
     this.selectedDoctor = null;
-    this.availabilities = [];
+    this.creneaux = [];
+    this.creneauxError = '';
   }
 
-  // Quand on clique sur une disponibilité
-  selectAvailability(avail: Availability): void {
-    this.selectedAvailability = avail;
+  selectCreneau(creneau: CreneauResponse): void {
+    this.selectedCreneau = creneau;
+    this.reserveError = '';
     this.showConfirmModal = true;
   }
 
-  // Confirmer la réservation
-  confirmReservation(): void {
-    const doc = this.selectedDoctor;
-    const avail = this.selectedAvailability;
-
-    if (!doc || !avail) return;
-
-    // Créer la nouvelle réservation
-    const newReservation: Reservation = {
-      id: 'r' + Date.now(),
-      doctorId: doc.id,
-      doctorName: doc.name,
-      date: avail.date,
-      time: avail.time,
-      status: 'confirmed',
-    };
-
-    // L'ajouter à la liste
-    this.reservations = [...this.reservations, newReservation];
-
-    // Retirer cette disponibilité de la liste
-    this.availabilities = this.availabilities.filter(a => a.id !== avail.id);
-
-    console.log('✅ Rendez-vous réservé:', newReservation);
-
-    // Fermer la modal
+  annulerConfirmation(): void {
     this.showConfirmModal = false;
-    this.closeDoctor();
+    this.selectedCreneau = null;
   }
 
-  // Annuler la réservation
-  cancelReservation(): void {
-    this.showConfirmModal = false;
-    this.selectedAvailability = null;
+  confirmerReservation(): void {
+    const doctor = this.selectedDoctor;
+    const creneau = this.selectedCreneau;
+    const delegueId = this.authService.getDelegueId();
+
+    if (!doctor || !creneau || !delegueId) {
+      this.reserveError = 'Profil délégué introuvable.';
+      return;
+    }
+
+    this.isReserving = true;
+    this.reserveError = '';
+    this.rendezVousService.reserver({
+      creneauId: creneau.id,
+      delegueId,
+      medecinId: doctor.id,
+    }).subscribe({
+      next: (response) => {
+        this.isReserving = false;
+        if (!response.success) {
+          this.reserveError = response.message;
+          return;
+        }
+        this.creneaux = this.creneaux.filter((c) => c.id !== creneau.id);
+        this.showConfirmModal = false;
+        this.showSuccessModal = true;
+      },
+      error: (err) => {
+        this.isReserving = false;
+        this.reserveError = err?.error?.message ?? 'Erreur lors de la réservation.';
+      },
+    });
   }
 
-  // Formater une date pour l'affichage
+  fermerSucces(): void {
+    this.showSuccessModal = false;
+    this.selectedCreneau = null;
+  }
+
   formatDate(dateStr: string): string {
     const date = new Date(dateStr + 'T00:00:00');
     const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
@@ -122,10 +166,27 @@ export class SearchComponent {
     return `${day} ${num} ${month}`;
   }
 
-  // Compter les réservations pour un médecin
-  countReservations(doctorId: string): number {
-    return this.reservations.filter(r =>
-      r.doctorId === doctorId && r.status === 'confirmed'
-    ).length;
+  formatHeure(heure: string): string {
+    return heure.slice(0, 5);
+  }
+
+  private readonly avatarPalette = [
+    'linear-gradient(135deg, #4dabf7, #1971c2)',
+    'linear-gradient(135deg, #63e6be, #12b886)',
+    'linear-gradient(135deg, #da77f2, #9c36b5)',
+    'linear-gradient(135deg, #ffa8a8, #e03131)',
+    'linear-gradient(135deg, #ffd43b, #f08c00)',
+    'linear-gradient(135deg, #66d9e8, #0c8599)',
+    'linear-gradient(135deg, #b197fc, #7048e8)',
+    'linear-gradient(135deg, #ff8787, #e8590c)',
+  ];
+
+  avatarGradient(doctor: MedecinResponse): string {
+    const hash = [...doctor.id].reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    return this.avatarPalette[hash % this.avatarPalette.length];
+  }
+
+  initials(doctor: MedecinResponse): string {
+    return `${doctor.prenom?.[0] ?? ''}${doctor.nom?.[0] ?? ''}`.toUpperCase();
   }
 }

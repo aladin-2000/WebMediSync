@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RESERVATIONS } from '../../data/mock-data';
+import { RendezVousService } from '../../services/rendezvous.service';
+import { RendezVousEnrichmentService } from '../../services/rendezvous-enrichment.service';
+import { RendezVousEnrichi } from '../../models/rendezvous-enrichi.model';
+import { AuthService } from '../../../../core/services/auth.service';
+import { toISODate, lundiDeLaSemaine, dimancheDeLaSemaine } from '../../shared/semaine.util';
 
-// ============================================
-// PAGE: HISTORIQUE
-// Affiche l'historique des rendez-vous
-// - Visites réalisées
-// - Annulations
-// - Scores
-// ============================================
+const MONTHS = [
+  'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+  'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
+];
 
 @Component({
   selector: 'app-history',
@@ -17,36 +18,58 @@ import { RESERVATIONS } from '../../data/mock-data';
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.css'],
 })
-export class HistoryComponent {
+export class HistoryComponent implements OnInit {
+  currentDate = new Date();
 
-  // ========== DONNEES ==========
+  rendezvous: RendezVousEnrichi[] = [];
+  isLoading = false;
+  error = '';
 
-  // Tous les rendez-vous (passés et présents)
-  allReservations = RESERVATIONS;
+  constructor(
+    private rendezVousService: RendezVousService,
+    private enrichmentService: RendezVousEnrichmentService,
+    private authService: AuthService
+  ) {}
 
-  // Filtrer les visites réalisées
-  completedVisits = this.allReservations.filter(r => r.status === 'done');
-
-  // Filtrer les annulations
-  cancellations = this.allReservations.filter(r => r.status === 'cancelled');
-
-  // ========== METHODES ==========
-
-  // Formater une date
-  formatDate(dateStr: string): string {
-    const date = new Date(dateStr + 'T00:00:00');
-    const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-    const day = days[date.getDay()];
-    const num = date.getDate();
-    const months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-                    'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
-    const month = months[date.getMonth()];
-    return `${day} ${num} ${month}`;
+  ngOnInit(): void {
+    this.chargerSemaine();
   }
 
-  // Compter les statistiques
+  get weekLabel(): string {
+    const lundi = lundiDeLaSemaine(this.currentDate);
+    const dimanche = dimancheDeLaSemaine(this.currentDate);
+    const moisLundi = MONTHS[lundi.getMonth()];
+    const moisDimanche = MONTHS[dimanche.getMonth()];
+    if (lundi.getMonth() === dimanche.getMonth()) {
+      return `${lundi.getDate()} - ${dimanche.getDate()} ${moisDimanche} ${dimanche.getFullYear()}`;
+    }
+    return `${lundi.getDate()} ${moisLundi} - ${dimanche.getDate()} ${moisDimanche} ${dimanche.getFullYear()}`;
+  }
+
+  get completedVisits(): RendezVousEnrichi[] {
+    return this.rendezvous
+      .filter((r) => r.statut === 'REALISE')
+      .sort((a, b) => (a.date + a.heureDebut).localeCompare(b.date + b.heureDebut));
+  }
+
+  get absences(): RendezVousEnrichi[] {
+    return this.rendezvous
+      .filter((r) => r.statut === 'ABSENT')
+      .sort((a, b) => (a.date + a.heureDebut).localeCompare(b.date + b.heureDebut));
+  }
+
+  get cancellations(): RendezVousEnrichi[] {
+    return this.rendezvous
+      .filter((r) => r.statut === 'ANNULE')
+      .sort((a, b) => (a.date + a.heureDebut).localeCompare(b.date + b.heureDebut));
+  }
+
   getTotalVisits(): number {
     return this.completedVisits.length;
+  }
+
+  getTotalAbsences(): number {
+    return this.absences.length;
   }
 
   getTotalCancellations(): number {
@@ -54,7 +77,73 @@ export class HistoryComponent {
   }
 
   getCancellationRate(): number {
-    const total = this.allReservations.length;
-    return total > 0 ? Math.round((this.cancellations.length / total) * 100) : 0;
+    const total = this.rendezvous.length;
+    return total ? Math.round((this.cancellations.length / total) * 100) : 0;
+  }
+
+  chargerSemaine(): void {
+    const delegueId = this.authService.getDelegueId();
+    if (!delegueId) {
+      this.error = 'Profil délégué introuvable.';
+      return;
+    }
+
+    this.isLoading = true;
+    this.error = '';
+    const semaine = toISODate(this.currentDate);
+
+    this.rendezVousService.listeSemaine(delegueId, semaine).subscribe({
+      next: (response) => {
+        if (!response.success) {
+          this.isLoading = false;
+          this.error = response.message;
+          return;
+        }
+        const dateDebut = toISODate(lundiDeLaSemaine(this.currentDate));
+        const dateFin = toISODate(dimancheDeLaSemaine(this.currentDate));
+        this.enrichmentService.enrichir(response.data, dateDebut, dateFin).subscribe({
+          next: (enrichis) => {
+            this.isLoading = false;
+            this.rendezvous = enrichis;
+          },
+          error: () => {
+            this.isLoading = false;
+            this.rendezvous = [];
+            this.error = 'Erreur lors du chargement des détails des rendez-vous.';
+          },
+        });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.error = err?.error?.message ?? "Erreur lors du chargement de l'historique.";
+      },
+    });
+  }
+
+  changeWeek(direction: number): void {
+    const d = this.currentDate;
+    this.currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate() + direction * 7);
+    this.chargerSemaine();
+  }
+
+  goToday(): void {
+    this.currentDate = new Date();
+    this.chargerSemaine();
+  }
+
+  formatHeure(heure: string): string {
+    return heure ? heure.slice(0, 5) : '';
+  }
+
+  formatDate(dateStr: string): string {
+    if (!dateStr) {
+      return '';
+    }
+    const date = new Date(dateStr + 'T00:00:00');
+    const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    const day = days[date.getDay()];
+    const num = date.getDate();
+    const month = MONTHS[date.getMonth()];
+    return `${day} ${num} ${month}`;
   }
 }

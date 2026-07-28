@@ -7,6 +7,7 @@ import { ApiResponse, LoginResponse, Role, UserResponse } from '../models/user.m
 const TOKEN_STORAGE_KEY = 'authToken';
 const USER_STORAGE_KEY = 'currentUser';
 const MEDECIN_ID_STORAGE_KEY = 'medecinId';
+const DELEGUE_ID_STORAGE_KEY = 'delegueId';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class AuthService {
   private token: string | null = localStorage.getItem(TOKEN_STORAGE_KEY);
   private currentUser: UserResponse | null = this.readStoredUser();
   private medecinId: string | null = localStorage.getItem(MEDECIN_ID_STORAGE_KEY);
+  private delegueId: string | null = localStorage.getItem(DELEGUE_ID_STORAGE_KEY);
 
   constructor(private http: HttpClient) {}
 
@@ -65,13 +67,24 @@ export class AuthService {
     return this.medecinId;
   }
 
+  setDelegueId(delegueId: string): void {
+    localStorage.setItem(DELEGUE_ID_STORAGE_KEY, delegueId);
+    this.delegueId = delegueId;
+  }
+
+  getDelegueId(): string | null {
+    return this.delegueId;
+  }
+
   logout(): void {
     localStorage.removeItem(TOKEN_STORAGE_KEY);
     localStorage.removeItem(USER_STORAGE_KEY);
     localStorage.removeItem(MEDECIN_ID_STORAGE_KEY);
+    localStorage.removeItem(DELEGUE_ID_STORAGE_KEY);
     this.token = null;
     this.currentUser = null;
     this.medecinId = null;
+    this.delegueId = null;
   }
 
   getToken(): string | null {

@@ -1,61 +1,91 @@
 <div class="search-page">
 
-  <!-- Si aucun médecin n'est sélectionné: afficher la liste -->
+  <!-- Si aucun médecin n'est sélectionné: afficher la recherche + liste -->
   @if (!selectedDoctor) {
     <div class="search-section">
-      <!-- En-tête -->
-      <div class="section-header">
-        <h1>Trouver un médecin</h1>
-        <p class="subtitle">Recherchez et réservez un rendez-vous jusqu'à 1 mois à l'avance</p>
+
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-text">
+          <h1><i class="ti ti-stethoscope"></i> Trouver un médecin</h1>
+          <p class="subtitle">Recherchez un médecin disponible et réservez un rendez-vous en quelques clics</p>
+        </div>
+        <div class="hero-deco">
+          <i class="ti ti-calendar-heart"></i>
+        </div>
       </div>
 
-      <!-- Champ de recherche -->
-      <div class="search-box">
-        <i class="ti ti-search"></i>
-        <input
-          type="text"
-          [(ngModel)]="searchText"
-          placeholder="Nom du médecin, spécialité, ville...">
+      <!-- Formulaire de recherche -->
+      <div class="search-form">
+        <div class="field">
+          <label><i class="ti ti-user"></i> Nom</label>
+          <input type="text" [(ngModel)]="searchNom" placeholder="Nom du médecin">
+        </div>
+        <div class="field">
+          <label><i class="ti ti-stethoscope"></i> Spécialité</label>
+          <input type="text" [(ngModel)]="searchSpecialite" placeholder="Cardiologue, généraliste...">
+        </div>
+        <div class="field">
+          <label><i class="ti ti-calendar"></i> Date</label>
+          <input type="date" [min]="todayISO" [(ngModel)]="searchDate">
+        </div>
+        <div class="field">
+          <label><i class="ti ti-clock"></i> Début</label>
+          <input type="time" [(ngModel)]="searchHeureDebut">
+        </div>
+        <div class="field">
+          <label><i class="ti ti-clock"></i> Fin</label>
+          <input type="time" [(ngModel)]="searchHeureFin">
+        </div>
+        <button class="btn-search" [disabled]="isSearching" (click)="rechercher()">
+          <i class="ti ti-search"></i> {{ isSearching ? 'Recherche...' : 'Rechercher' }}
+        </button>
       </div>
+
+      @if (searchError) {
+        <div class="info-banner danger">
+          <i class="ti ti-alert-triangle"></i>
+          <span>{{ searchError }}</span>
+        </div>
+      }
 
       <!-- Résultats -->
+      @if (hasSearched && !isSearching && doctors.length > 0) {
+        <div class="results-count">{{ doctors.length }} médecin{{ doctors.length > 1 ? 's' : '' }} trouvé{{ doctors.length > 1 ? 's' : '' }}</div>
+      }
+
       <div class="results">
-        @if (filteredDoctors.length === 0) {
+        @if (isSearching) {
           <div class="empty-state">
-            <i class="ti ti-search-off"></i>
-            Aucun médecin trouvé
+            <i class="ti ti-loader-2 spin"></i>
+            <p>Recherche en cours...</p>
+          </div>
+        } @else if (hasSearched && doctors.length === 0 && !searchError) {
+          <div class="empty-state">
+            <i class="ti ti-mood-empty"></i>
+            <p>Aucun médecin trouvé</p>
+            <span>Essayez d'élargir vos critères de recherche</span>
           </div>
         } @else {
-          @for (doctor of filteredDoctors; track doctor.id) {
-            <div class="doctor-card" (click)="selectDoctor(doctor)">
-              <!-- Photo (placeholder) -->
-              <div class="doctor-avatar">
-                <i class="ti ti-user-md"></i>
+          @for (doctor of doctors; track doctor.id; let i = $index) {
+            <div class="doctor-card" [style.animation-delay]="(i * 40) + 'ms'" (click)="selectDoctor(doctor)">
+              <div class="doctor-avatar" [style.background]="avatarGradient(doctor)">
+                {{ initials(doctor) }}
               </div>
 
-              <!-- Infos du médecin -->
               <div class="doctor-info">
-                <div class="doctor-name">{{ doctor.name }}</div>
-                <div class="doctor-specialty">{{ doctor.specialty }}</div>
-                <div class="doctor-city">
-                  <i class="ti ti-map-pin"></i> {{ doctor.city }}
-                </div>
+                <div class="doctor-name">Dr. {{ doctor.prenom }} {{ doctor.nom }}</div>
+                <span class="specialty-chip">{{ doctor.specialite }}</span>
+                @if (doctor.adresseCabinet) {
+                  <div class="doctor-city">
+                    <i class="ti ti-map-pin"></i> {{ doctor.adresseCabinet }}
+                  </div>
+                }
               </div>
 
-              <!-- Score + Dispo -->
-              <div class="doctor-stats">
-                <div class="score">
-                  <div class="score-badge">{{ doctor.score }}</div>
-                  <div class="score-label">Score</div>
-                </div>
-                <div class="reservations">
-                  <i class="ti ti-calendar-check"></i>
-                  {{ countReservations(doctor.id) }}
-                </div>
+              <div class="doctor-arrow">
+                <i class="ti ti-chevron-right"></i>
               </div>
-
-              <!-- Bouton suivant -->
-              <i class="ti ti-chevron-right"></i>
             </div>
           }
         }
@@ -66,36 +96,47 @@
   <!-- Si un médecin EST sélectionné: afficher ses disponibilités -->
   @if (selectedDoctor) {
     <div class="details-section">
-      <!-- En-tête avec bouton retour -->
-      <div class="details-header">
+      <!-- Bandeau du médecin -->
+      <div class="doctor-banner" [style.background]="avatarGradient(selectedDoctor)">
         <button class="btn-back" (click)="closeDoctor()">
           <i class="ti ti-chevron-left"></i> Retour
         </button>
+        <div class="doctor-banner-avatar">{{ initials(selectedDoctor) }}</div>
         <div class="details-title">
-          <h2>{{ selectedDoctor!.name }}</h2>
-          <p>{{ selectedDoctor!.specialty }} • {{ selectedDoctor!.city }}</p>
+          <h2>Dr. {{ selectedDoctor.prenom }} {{ selectedDoctor.nom }}</h2>
+          <span class="specialty-chip light">{{ selectedDoctor.specialite }}</span>
         </div>
       </div>
 
+      @if (creneauxError) {
+        <div class="info-banner danger">
+          <i class="ti ti-alert-triangle"></i>
+          <span>{{ creneauxError }}</span>
+        </div>
+      }
+
       <!-- Disponibilités -->
-      @if (availabilities.length === 0) {
+      @if (isLoadingCreneaux) {
+        <div class="empty-state">
+          <i class="ti ti-loader-2 spin"></i>
+          <p>Chargement des créneaux...</p>
+        </div>
+      } @else if (creneaux.length === 0) {
         <div class="empty-state">
           <i class="ti ti-calendar-x"></i>
-          Aucune disponibilité pour le moment
+          <p>Aucune disponibilité pour {{ formatDate(searchDate) }}</p>
         </div>
       } @else {
         <div class="availabilities">
-          <div class="avail-title">Créneaux disponibles</div>
+          <div class="avail-title"><i class="ti ti-calendar-check"></i> Créneaux disponibles · {{ formatDate(searchDate) }}</div>
           <div class="slots-list">
-            @for (slot of availabilities; track slot.id) {
-              <div class="slot-card" (click)="selectAvailability(slot)">
-                <div class="slot-date">{{ formatDate(slot.date) }}</div>
+            @for (slot of creneaux; track slot.id; let i = $index) {
+              <div class="slot-card" [style.animation-delay]="(i * 30) + 'ms'" (click)="selectCreneau(slot)">
                 <div class="slot-time">
-                  <i class="ti ti-clock"></i> {{ slot.time }}
+                  <i class="ti ti-clock"></i> {{ formatHeure(slot.heureDebut) }} - {{ formatHeure(slot.heureFin) }}
                 </div>
-                <div class="slot-duration">{{ slot.duration }} min</div>
                 <button class="btn-reserve">
-                  Réserver
+                  Réserver <i class="ti ti-arrow-right"></i>
                 </button>
               </div>
             }
@@ -110,36 +151,39 @@
 <!-- ====================================================
      MODAL: Confirmer la réservation
      ==================================================== -->
-<app-modal 
-  title="Confirmer la réservation" 
-  [visible]="showConfirmModal" 
-  (close)="cancelReservation()">
-  
+<app-modal
+  title="Confirmer la réservation"
+  [visible]="showConfirmModal"
+  (close)="annulerConfirmation()">
+
   <div class="modal-body">
-    @if (selectedDoctor && selectedAvailability) {
+    @if (selectedDoctor && selectedCreneau) {
       <!-- Détails du rendez-vous -->
       <div class="reservation-details">
         <div class="detail-row">
           <span class="label">Médecin</span>
-          <span class="value">{{ selectedDoctor!.name }}</span>
+          <span class="value">Dr. {{ selectedDoctor.prenom }} {{ selectedDoctor.nom }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Spécialité</span>
-          <span class="value">{{ selectedDoctor!.specialty }}</span>
+          <span class="value">{{ selectedDoctor.specialite }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Date</span>
-          <span class="value">{{ formatDate(selectedAvailability!.date) }}</span>
+          <span class="value">{{ formatDate(searchDate) }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Heure</span>
-          <span class="value">{{ selectedAvailability!.time }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">Durée</span>
-          <span class="value">{{ selectedAvailability!.duration }} minutes</span>
+          <span class="value">{{ formatHeure(selectedCreneau.heureDebut) }} - {{ formatHeure(selectedCreneau.heureFin) }}</span>
         </div>
       </div>
+
+      @if (reserveError) {
+        <div class="info-banner danger">
+          <i class="ti ti-alert-triangle"></i>
+          <span>{{ reserveError }}</span>
+        </div>
+      }
 
       <!-- Info: annulation affecte le score -->
       <div class="info-banner">
@@ -151,9 +195,34 @@
 
   <!-- Boutons -->
   <div class="modal-footer">
-    <button class="btn-cancel" (click)="cancelReservation()">Annuler</button>
-    <button class="btn-confirm" (click)="confirmReservation()">
-      <i class="ti ti-check"></i> Confirmer
+    <button class="btn-cancel" (click)="annulerConfirmation()">Annuler</button>
+    <button class="btn-confirm" [disabled]="isReserving" (click)="confirmerReservation()">
+      <i class="ti ti-check"></i> {{ isReserving ? 'Réservation...' : 'Confirmer' }}
+    </button>
+  </div>
+
+</app-modal>
+
+<!-- ====================================================
+     MODAL: Succès de la réservation
+     ==================================================== -->
+<app-modal
+  title="Rendez-vous réservé"
+  [visible]="showSuccessModal"
+  (close)="fermerSucces()">
+
+  <div class="modal-body">
+    <div class="success-check">
+      <i class="ti ti-circle-check"></i>
+    </div>
+    <div class="info-banner success">
+      <span>Votre rendez-vous a été réservé avec succès.</span>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn-confirm" (click)="fermerSucces()">
+      <i class="ti ti-check"></i> OK
     </button>
   </div>
 

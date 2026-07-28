@@ -1,89 +1,215 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MONTHS, DAYS_LABELS, RESERVATIONS } from '../../data/mock-data';
+import { ModalComponent } from '../../shared/modal/modal.component';
+import { RendezVousService } from '../../services/rendezvous.service';
+import { RendezVousEnrichmentService } from '../../services/rendezvous-enrichment.service';
+import { RendezVousEnrichi } from '../../models/rendezvous-enrichi.model';
+import { AuthService } from '../../../../core/services/auth.service';
+import { toISODate, lundiDeLaSemaine, dimancheDeLaSemaine } from '../../shared/semaine.util';
 
-// ============================================
-// PAGE: PLANNING
-// Affiche le calendrier avec les rendez-vous
-// ============================================
+const DAYS_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+const MONTHS = [
+  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+];
+
+interface PlanningCell {
+  date: Date;
+  dateISO: string;
+  label: string;
+  isToday: boolean;
+  rendezvous: RendezVousEnrichi[];
+}
 
 @Component({
   selector: 'app-planning',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ModalComponent],
   templateUrl: './planning.component.html',
   styleUrls: ['./planning.component.css'],
 })
-export class PlanningComponent {
+export class PlanningComponent implements OnInit {
+  currentDate = new Date();
 
-  // ========== ETATS ==========
+  rendezvous: RendezVousEnrichi[] = [];
+  isLoading = false;
+  error = '';
 
-  // Le mois/année affiché
-  currentDate = new Date(2025, 6, 1); // Juillet 2025
+  processingId: string | null = null;
+  actionError = '';
 
-  // Les rendez-vous confirmés
-  reservations = RESERVATIONS.filter(r => r.status === 'confirmed');
+  showAnnulerModal = false;
+  rdvAAnnuler: RendezVousEnrichi | null = null;
 
-  // ========== CONSTANTES ==========
-  readonly monthLabels = MONTHS;
   readonly dayLabels = DAYS_LABELS;
 
-  // ========== CALCULS ==========
+  constructor(
+    private rendezVousService: RendezVousService,
+    private enrichmentService: RendezVousEnrichmentService,
+    private authService: AuthService
+  ) {}
 
-  // Affiche "Juillet 2025"
-  get monthLabel(): string {
-    const d = this.currentDate;
-    return `${this.monthLabels[d.getMonth()]} ${d.getFullYear()}`;
+  ngOnInit(): void {
+    this.chargerSemaine();
   }
 
-  // Crée les cellules du calendrier
-  get cells() {
-    const d = this.currentDate;
-    const year = d.getFullYear();
-    const month = d.getMonth();
-
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    const cells: any[] = [];
-
-    // Jours vides au début
-    for (let i = 0; i < firstDay; i++) {
-      cells.push({ day: 0, otherMonth: true, reservations: [] });
+  get weekLabel(): string {
+    const lundi = lundiDeLaSemaine(this.currentDate);
+    const dimanche = dimancheDeLaSemaine(this.currentDate);
+    const moisLundi = MONTHS[lundi.getMonth()];
+    const moisDimanche = MONTHS[dimanche.getMonth()];
+    if (lundi.getMonth() === dimanche.getMonth()) {
+      return `${lundi.getDate()} - ${dimanche.getDate()} ${moisDimanche} ${dimanche.getFullYear()}`;
     }
+    return `${lundi.getDate()} ${moisLundi} - ${dimanche.getDate()} ${moisDimanche} ${dimanche.getFullYear()}`;
+  }
 
-    // Jours du mois
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      const dayReservations = this.reservations.filter(r => r.date === dateStr);
-
+  get cells(): PlanningCell[] {
+    const lundi = lundiDeLaSemaine(this.currentDate);
+    const today = toISODate(new Date());
+    const cells: PlanningCell[] = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(lundi);
+      date.setDate(date.getDate() + i);
+      const dateISO = toISODate(date);
       cells.push({
-        day,
-        otherMonth: false,
-        reservations: dayReservations,
+        date,
+        dateISO,
+        label: `${this.dayLabels[i]} ${date.getDate()}`,
+        isToday: dateISO === today,
+        rendezvous: this.rendezvous
+          .filter((r) => r.date === dateISO)
+          .sort((a, b) => a.heureDebut.localeCompare(b.heureDebut)),
       });
     }
-
     return cells;
   }
 
-  // ========== METHODES ==========
+  chargerSemaine(): void {
+    const delegueId = this.authService.getDelegueId();
+    if (!delegueId) {
+      this.error = 'Profil délégué introuvable.';
+      return;
+    }
 
-  // Changer de mois
-  changeMonth(direction: number): void {
+    this.isLoading = true;
+    this.error = '';
+    const semaine = toISODate(this.currentDate);
+
+    this.rendezVousService.listeSemaine(delegueId, semaine).subscribe({
+      next: (response) => {
+        if (!response.success) {
+          this.isLoading = false;
+          this.error = response.message;
+          return;
+        }
+        const dateDebut = toISODate(lundiDeLaSemaine(this.currentDate));
+        const dateFin = toISODate(dimancheDeLaSemaine(this.currentDate));
+        this.enrichmentService.enrichir(response.data, dateDebut, dateFin).subscribe({
+          next: (enrichis) => {
+            this.isLoading = false;
+            this.rendezvous = enrichis;
+          },
+          error: () => {
+            this.isLoading = false;
+            this.rendezvous = [];
+            this.error = 'Erreur lors du chargement des détails des rendez-vous.';
+          },
+        });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.error = err?.error?.message ?? 'Erreur lors du chargement du planning.';
+      },
+    });
+  }
+
+  changeWeek(direction: number): void {
     const d = this.currentDate;
-    this.currentDate = new Date(d.getFullYear(), d.getMonth() + direction, 1);
+    this.currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate() + direction * 7);
+    this.chargerSemaine();
   }
 
-  // Retourner au mois actuel
   goToday(): void {
-    this.currentDate = new Date(2025, 6, 1);
+    this.currentDate = new Date();
+    this.chargerSemaine();
   }
 
-  // Formater une date
-  formatDate(dateStr: string): string {
-    const date = new Date(dateStr + 'T00:00:00');
-    const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
-    return `${days[date.getDay()]} ${date.getDate()}`;
+  formatHeure(heure: string): string {
+    return heure ? heure.slice(0, 5) : '';
+  }
+
+  marquerRealise(rdv: RendezVousEnrichi): void {
+    this.actionError = '';
+    this.processingId = rdv.id;
+    this.rendezVousService.marquerRealise(rdv.id).subscribe({
+      next: (response) => {
+        this.processingId = null;
+        if (response.success) {
+          this.chargerSemaine();
+        } else {
+          this.actionError = response.message;
+        }
+      },
+      error: (err) => {
+        this.processingId = null;
+        this.actionError = err?.error?.message ?? 'Erreur lors de la mise à jour du rendez-vous.';
+      },
+    });
+  }
+
+  marquerAbsent(rdv: RendezVousEnrichi): void {
+    this.actionError = '';
+    this.processingId = rdv.id;
+    this.rendezVousService.marquerAbsent(rdv.id).subscribe({
+      next: (response) => {
+        this.processingId = null;
+        if (response.success) {
+          this.chargerSemaine();
+        } else {
+          this.actionError = response.message;
+        }
+      },
+      error: (err) => {
+        this.processingId = null;
+        this.actionError = err?.error?.message ?? 'Erreur lors de la mise à jour du rendez-vous.';
+      },
+    });
+  }
+
+  demanderAnnulation(rdv: RendezVousEnrichi): void {
+    this.rdvAAnnuler = rdv;
+    this.showAnnulerModal = true;
+  }
+
+  annulerAnnulation(): void {
+    this.showAnnulerModal = false;
+    this.rdvAAnnuler = null;
+  }
+
+  confirmerAnnulation(): void {
+    const rdv = this.rdvAAnnuler;
+    if (!rdv) {
+      return;
+    }
+    this.showAnnulerModal = false;
+    this.actionError = '';
+    this.processingId = rdv.id;
+    this.rendezVousService.annulerDelegue(rdv.id).subscribe({
+      next: (response) => {
+        this.processingId = null;
+        this.rdvAAnnuler = null;
+        if (response.success) {
+          this.chargerSemaine();
+        } else {
+          this.actionError = response.message;
+        }
+      },
+      error: (err) => {
+        this.processingId = null;
+        this.rdvAAnnuler = null;
+        this.actionError = err?.error?.message ?? "Erreur lors de l'annulation du rendez-vous.";
+      },
+    });
   }
 }

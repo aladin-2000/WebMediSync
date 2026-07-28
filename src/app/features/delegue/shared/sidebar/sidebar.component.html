@@ -1,7 +1,7 @@
 <aside class="sidebar">
   <!-- Logo -->
   <div class="logo">
-    <i class="ti ti-heartbeat"></i>
+    <span class="logo-badge"><i class="ti ti-heartbeat"></i></span>
     MediSync
   </div>
 
@@ -40,12 +40,30 @@
 
   <!-- Profil en bas -->
   <div class="profile-section">
-    <div class="profile-name">
-      <i class="ti ti-user"></i>
-      <span>Jean Dupont</span>
-    </div>
-    <div class="profile-score">
-      Score: <strong>92/100</strong>
+    <div class="profile-avatar">{{ initiales }}</div>
+    <div class="profile-info">
+      <div class="profile-name">{{ nomComplet }}</div>
+      @if (score !== null) {
+        <div class="profile-score">
+          <i class="ti ti-shield-check"></i> {{ score }}/100
+        </div>
+      }
     </div>
   </div>
+
+  <div class="nav-item logout" (click)="askLogout()">
+    <i class="ti ti-logout"></i> Déconnexion
+  </div>
 </aside>
+
+<app-modal title="Déconnexion" [visible]="showLogoutConfirm" (close)="cancelLogout()">
+  <div class="modal-body">
+    <p>Voulez-vous vraiment vous déconnecter ?</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn-cancel" (click)="cancelLogout()">Annuler</button>
+    <button class="btn-confirm danger" (click)="confirmLogout()">
+      <i class="ti ti-logout"></i> Se déconnecter
+    </button>
+  </div>
+</app-modal>

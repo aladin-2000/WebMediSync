@@ -1,94 +1,163 @@
 <div class="history-page">
 
   <!-- En-tête -->
-  <div class="page-header">
-    <h1>Historique de mes visites</h1>
-    <p>Consultez le détail de toutes vos visites réalisées, annulations et scores</p>
+  <div class="hero">
+    <div class="hero-text">
+      <h1><i class="ti ti-history"></i> Historique de mes visites</h1>
+      <p>Consultez le détail de vos visites réalisées, absences et annulations, semaine par semaine</p>
+    </div>
+    <div class="hero-deco"><i class="ti ti-report-analytics"></i></div>
   </div>
 
-  <!-- Statistiques -->
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-num">{{ getTotalVisits() }}</div>
-      <div class="stat-label">Visites réalisées</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">{{ getTotalCancellations() }}</div>
-      <div class="stat-label">Annulations</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">{{ getCancellationRate() }}%</div>
-      <div class="stat-label">Taux d'annulation</div>
-    </div>
+  <!-- Navigation de la semaine -->
+  <div class="month-nav">
+    <button class="btn-nav" (click)="changeWeek(-1)">
+      <i class="ti ti-chevron-left"></i>
+    </button>
+    <div class="month-label">{{ weekLabel }}</div>
+    <button class="btn-nav" (click)="changeWeek(1)">
+      <i class="ti ti-chevron-right"></i>
+    </button>
+    <button class="btn-nav" (click)="goToday()">Cette semaine</button>
   </div>
 
-  <!-- VISITES REALISEES -->
-  <div class="history-section">
-    <div class="section-title">
-      <i class="ti ti-calendar-check"></i> Visites réalisées ({{ getTotalVisits() }})
+  @if (error) {
+    <div class="info-banner danger">
+      <i class="ti ti-alert-triangle"></i>
+      <span>{{ error }}</span>
     </div>
+  }
 
-    @if (completedVisits.length === 0) {
-      <div class="empty-state">Aucune visite réalisée</div>
-    } @else {
-      <div class="visits-list">
-        @for (visit of completedVisits; track visit.id) {
-          <div class="visit-card">
-            <div class="visit-header">
-              <div class="visit-doctor">{{ visit.doctorName }}</div>
-              <div class="visit-status done">
-                <i class="ti ti-check"></i> Réalisée
-              </div>
-            </div>
-            <div class="visit-details">
-              <div class="detail">
-                <i class="ti ti-calendar"></i> {{ formatDate(visit.date) }}
-              </div>
-              <div class="detail">
-                <i class="ti ti-clock"></i> {{ visit.time }}
-              </div>
-            </div>
-          </div>
-        }
+  @if (isLoading) {
+    <div class="empty-state"><i class="ti ti-loader-2 spin"></i><p>Chargement de l'historique...</p></div>
+  } @else {
+    <!-- Statistiques -->
+    <div class="stats-row">
+      <div class="stat-card done">
+        <i class="ti ti-calendar-check"></i>
+        <div class="stat-num">{{ getTotalVisits() }}</div>
+        <div class="stat-label">Visites réalisées</div>
       </div>
-    }
-  </div>
-
-  <!-- ANNULATIONS -->
-  <div class="history-section">
-    <div class="section-title">
-      <i class="ti ti-alert-circle"></i> Annulations ({{ getTotalCancellations() }})
+      <div class="stat-card absent">
+        <i class="ti ti-user-x"></i>
+        <div class="stat-num">{{ getTotalAbsences() }}</div>
+        <div class="stat-label">Absences</div>
+      </div>
+      <div class="stat-card cancelled">
+        <i class="ti ti-alert-circle"></i>
+        <div class="stat-num">{{ getTotalCancellations() }}</div>
+        <div class="stat-label">Annulations</div>
+      </div>
+      <div class="stat-card rate">
+        <i class="ti ti-percentage"></i>
+        <div class="stat-num">{{ getCancellationRate() }}%</div>
+        <div class="stat-label">Taux d'annulation</div>
+      </div>
     </div>
 
-    @if (cancellations.length === 0) {
-      <div class="empty-state">Aucune annulation</div>
-    } @else {
-      <div class="visits-list">
-        @for (cancellation of cancellations; track cancellation.id) {
-          <div class="visit-card cancelled">
-            <div class="visit-header">
-              <div class="visit-doctor">{{ cancellation.doctorName }}</div>
-              <div class="visit-status cancelled">
-                <i class="ti ti-x"></i> Annulée
-              </div>
-            </div>
-            <div class="visit-details">
-              <div class="detail">
-                <i class="ti ti-calendar"></i> {{ formatDate(cancellation.date) }}
-              </div>
-              <div class="detail">
-                <i class="ti ti-clock"></i> {{ cancellation.time }}
-              </div>
-              @if (cancellation.cancellationReason) {
-                <div class="detail reason">
-                  <i class="ti ti-alert-triangle"></i> Raison: {{ cancellation.cancellationReason }}
+    <!-- VISITES REALISEES -->
+    <div class="history-section">
+      <div class="section-title">
+        <i class="ti ti-calendar-check"></i> Visites réalisées ({{ getTotalVisits() }})
+      </div>
+
+      @if (completedVisits.length === 0) {
+        <div class="empty-state">Aucune visite réalisée cette semaine</div>
+      } @else {
+        <div class="visits-list">
+          @for (visit of completedVisits; track visit.id) {
+            <div class="visit-card">
+              <div class="visit-header">
+                <div class="visit-doctor">Dr. {{ visit.medecinPrenom }} {{ visit.medecinNom }}</div>
+                <div class="visit-status done">
+                  <i class="ti ti-check"></i> Réalisée
                 </div>
-              }
+              </div>
+              <div class="visit-details">
+                <div class="detail">
+                  <i class="ti ti-calendar"></i> {{ formatDate(visit.date) }}
+                </div>
+                <div class="detail">
+                  <i class="ti ti-clock"></i> {{ formatHeure(visit.heureDebut) }}
+                </div>
+                <div class="detail">
+                  <i class="ti ti-stethoscope"></i> {{ visit.medecinSpecialite }}
+                </div>
+              </div>
             </div>
-          </div>
-        }
+          }
+        </div>
+      }
+    </div>
+
+    <!-- ABSENCES -->
+    <div class="history-section">
+      <div class="section-title">
+        <i class="ti ti-user-x"></i> Absences ({{ getTotalAbsences() }})
       </div>
-    }
-  </div>
+
+      @if (absences.length === 0) {
+        <div class="empty-state">Aucune absence cette semaine</div>
+      } @else {
+        <div class="visits-list">
+          @for (absence of absences; track absence.id) {
+            <div class="visit-card absent">
+              <div class="visit-header">
+                <div class="visit-doctor">Dr. {{ absence.medecinPrenom }} {{ absence.medecinNom }}</div>
+                <div class="visit-status absent">
+                  <i class="ti ti-user-x"></i> Absent
+                </div>
+              </div>
+              <div class="visit-details">
+                <div class="detail">
+                  <i class="ti ti-calendar"></i> {{ formatDate(absence.date) }}
+                </div>
+                <div class="detail">
+                  <i class="ti ti-clock"></i> {{ formatHeure(absence.heureDebut) }}
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- ANNULATIONS -->
+    <div class="history-section">
+      <div class="section-title">
+        <i class="ti ti-alert-circle"></i> Annulations ({{ getTotalCancellations() }})
+      </div>
+
+      @if (cancellations.length === 0) {
+        <div class="empty-state">Aucune annulation cette semaine</div>
+      } @else {
+        <div class="visits-list">
+          @for (cancellation of cancellations; track cancellation.id) {
+            <div class="visit-card cancelled">
+              <div class="visit-header">
+                <div class="visit-doctor">Dr. {{ cancellation.medecinPrenom }} {{ cancellation.medecinNom }}</div>
+                <div class="visit-status cancelled">
+                  <i class="ti ti-x"></i> Annulée{{ cancellation.annulePar === 'MEDECIN' ? ' par le médecin' : '' }}
+                </div>
+              </div>
+              <div class="visit-details">
+                <div class="detail">
+                  <i class="ti ti-calendar"></i> {{ formatDate(cancellation.date) }}
+                </div>
+                <div class="detail">
+                  <i class="ti ti-clock"></i> {{ formatHeure(cancellation.heureDebut) }}
+                </div>
+                @if (cancellation.motifAnnulation) {
+                  <div class="detail reason">
+                    <i class="ti ti-alert-triangle"></i> Raison: {{ cancellation.motifAnnulation }}
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
 
 </div>

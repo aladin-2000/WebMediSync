@@ -1,52 +1,105 @@
 <div class="planning-page">
 
   <!-- En-tête -->
-  <div class="page-header">
-    <h1>Mon Planning</h1>
-    <p>Consultez vos rendez-vous pour les semaines à venir</p>
+  <div class="hero">
+    <div class="hero-text">
+      <h1><i class="ti ti-calendar-event"></i> Mon Planning</h1>
+      <p>Consultez et gérez vos rendez-vous de la semaine</p>
+    </div>
+    <div class="hero-deco"><i class="ti ti-calendar-week"></i></div>
   </div>
 
-  <!-- Navigation du mois -->
+  <!-- Navigation de la semaine -->
   <div class="month-nav">
-    <button class="btn-nav" (click)="changeMonth(-1)">
+    <button class="btn-nav" (click)="changeWeek(-1)">
       <i class="ti ti-chevron-left"></i>
     </button>
-    <div class="month-label">{{ monthLabel }}</div>
-    <button class="btn-nav" (click)="changeMonth(1)">
+    <div class="month-label">{{ weekLabel }}</div>
+    <button class="btn-nav" (click)="changeWeek(1)">
       <i class="ti ti-chevron-right"></i>
     </button>
-    <button class="btn-nav" (click)="goToday()">Aujourd'hui</button>
+    <button class="btn-nav" (click)="goToday()">Cette semaine</button>
   </div>
 
-  <!-- Calendrier -->
-  <div class="cal-grid">
-    <!-- En-têtes (Lun, Mar...) -->
-    @for (day of dayLabels; track day) {
-      <div class="cal-head">{{ day }}</div>
-    }
+  @if (error) {
+    <div class="info-banner danger">
+      <i class="ti ti-alert-triangle"></i>
+      <span>{{ error }}</span>
+    </div>
+  }
 
-    <!-- Cellules du calendrier -->
-    @for (cell of cells; track $index) {
-      <div class="cal-cell" [class.empty]="cell.otherMonth">
-        @if (!cell.otherMonth) {
-          <div class="day-num">{{ cell.day }}</div>
+  @if (actionError) {
+    <div class="info-banner danger">
+      <i class="ti ti-alert-triangle"></i>
+      <span>{{ actionError }}</span>
+    </div>
+  }
 
-          <!-- Rendez-vous pour ce jour -->
-          @if (cell.reservations.length > 0) {
-            <div class="reservations">
-              @for (res of cell.reservations; track res.id) {
-                <div class="reservation-badge">
-                  <div class="res-time">{{ res.time }}</div>
-                  <div class="res-doctor">{{ res.doctorName }}</div>
-                </div>
-              }
-            </div>
+  @if (isLoading) {
+    <div class="empty-state"><i class="ti ti-loader-2 spin"></i><p>Chargement du planning...</p></div>
+  } @else {
+    <!-- Calendrier semaine -->
+    <div class="week-grid">
+      @for (cell of cells; track cell.dateISO) {
+        <div class="week-col" [class.today]="cell.isToday">
+          <div class="day-num">{{ cell.label }} @if (cell.isToday) { <span class="today-dot"></span> }</div>
+
+          @if (cell.rendezvous.length === 0) {
+            <div class="no-reservation"><i class="ti ti-moon-stars"></i> Libre</div>
           } @else {
-            <div class="no-reservation">Libre</div>
+            @for (rdv of cell.rendezvous; track rdv.id; let i = $index) {
+              <div class="reservation-card" [style.animation-delay]="(i * 40) + 'ms'" [class.statut-annule]="rdv.statut === 'ANNULE'" [class.statut-realise]="rdv.statut === 'REALISE'" [class.statut-absent]="rdv.statut === 'ABSENT'">
+                <div class="res-time">{{ formatHeure(rdv.heureDebut) }} - {{ formatHeure(rdv.heureFin) }}</div>
+                <div class="res-doctor">Dr. {{ rdv.medecinPrenom }} {{ rdv.medecinNom }}</div>
+                <div class="res-specialty">{{ rdv.medecinSpecialite }}</div>
+
+                <div class="res-status">
+                  @switch (rdv.statut) {
+                    @case ('CONFIRME') { <span class="badge confirme">Confirmé</span> }
+                    @case ('REALISE') { <span class="badge realise">Réalisé</span> }
+                    @case ('ABSENT') { <span class="badge absent">Absent</span> }
+                    @case ('ANNULE') { <span class="badge annule">Annulé{{ rdv.annulePar === 'MEDECIN' ? ' (médecin)' : '' }}</span> }
+                  }
+                </div>
+
+                @if (rdv.statut === 'CONFIRME') {
+                  <div class="res-actions">
+                    <button class="btn-action realise" title="Marquer réalisé" [disabled]="processingId === rdv.id" (click)="marquerRealise(rdv)">
+                      <i class="ti ti-check"></i>
+                    </button>
+                    <button class="btn-action absent" title="Marquer absent" [disabled]="processingId === rdv.id" (click)="marquerAbsent(rdv)">
+                      <i class="ti ti-user-x"></i>
+                    </button>
+                    <button class="btn-action annuler" title="Annuler" [disabled]="processingId === rdv.id" (click)="demanderAnnulation(rdv)">
+                      <i class="ti ti-x"></i>
+                    </button>
+                  </div>
+                }
+              </div>
+            }
           }
-        }
+        </div>
+      }
+    </div>
+  }
+
+</div>
+
+<!-- Modal: Confirmer l'annulation -->
+<app-modal title="Annuler le rendez-vous" [visible]="showAnnulerModal" (close)="annulerAnnulation()">
+  <div class="modal-body">
+    @if (rdvAAnnuler) {
+      <p>Voulez-vous annuler ce rendez-vous avec Dr. {{ rdvAAnnuler.medecinPrenom }} {{ rdvAAnnuler.medecinNom }} du {{ formatHeure(rdvAAnnuler.heureDebut) }} ?</p>
+      <div class="info-banner">
+        <i class="ti ti-info-circle"></i>
+        Cette annulation affectera votre score de fiabilité.
       </div>
     }
   </div>
-
-</div>
+  <div class="modal-footer">
+    <button class="btn-cancel" (click)="annulerAnnulation()">Retour</button>
+    <button class="btn-confirm danger" (click)="confirmerAnnulation()">
+      <i class="ti ti-x"></i> Confirmer l'annulation
+    </button>
+  </div>
+</app-modal>

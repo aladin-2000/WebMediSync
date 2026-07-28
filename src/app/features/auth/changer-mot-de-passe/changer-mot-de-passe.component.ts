@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { roleHomePath } from '../../../core/guards/role.guard';
 import { MedecinService } from '../../admin/services/medecin.service';
+import { DelegueService } from '../../delegue/services/delegue.service';
 
 @Component({
   selector: 'app-changer-mot-de-passe',
@@ -23,6 +24,7 @@ export class ChangerMotDePasseComponent {
   constructor(
     private authService: AuthService,
     private medecinService: MedecinService,
+    private delegueService: DelegueService,
     private router: Router
   ) {}
 
@@ -63,6 +65,19 @@ export class ChangerMotDePasseComponent {
             },
             error: (err) => {
               console.error('Récupération du profil médecin échouée:', err);
+              this.router.navigateByUrl(roleHomePath[user.role]);
+            },
+          });
+        } else if (user.role === 'DELEGUE') {
+          this.delegueService.getByUserId(user.id).subscribe({
+            next: (delegueResponse) => {
+              if (delegueResponse.success) {
+                this.authService.setDelegueId(delegueResponse.data.id);
+              }
+              this.router.navigateByUrl(roleHomePath[user.role]);
+            },
+            error: (err) => {
+              console.error('Récupération du profil délégué échouée:', err);
               this.router.navigateByUrl(roleHomePath[user.role]);
             },
           });
