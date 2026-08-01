@@ -7,7 +7,7 @@ import { RendezVousEnrichi } from '../../models/rendezvous-enrichi.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { toISODate, lundiDeLaSemaine, dimancheDeLaSemaine } from '../../shared/semaine.util';
 
-const DAYS_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+const DAYS_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven'];
 const MONTHS = [
   'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
   'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
@@ -55,20 +55,21 @@ export class PlanningComponent implements OnInit {
 
   get weekLabel(): string {
     const lundi = lundiDeLaSemaine(this.currentDate);
-    const dimanche = dimancheDeLaSemaine(this.currentDate);
+    const vendredi = new Date(lundi);
+    vendredi.setDate(vendredi.getDate() + 4);
     const moisLundi = MONTHS[lundi.getMonth()];
-    const moisDimanche = MONTHS[dimanche.getMonth()];
-    if (lundi.getMonth() === dimanche.getMonth()) {
-      return `${lundi.getDate()} - ${dimanche.getDate()} ${moisDimanche} ${dimanche.getFullYear()}`;
+    const moisVendredi = MONTHS[vendredi.getMonth()];
+    if (lundi.getMonth() === vendredi.getMonth()) {
+      return `${lundi.getDate()} - ${vendredi.getDate()} ${moisVendredi} ${vendredi.getFullYear()}`;
     }
-    return `${lundi.getDate()} ${moisLundi} - ${dimanche.getDate()} ${moisDimanche} ${dimanche.getFullYear()}`;
+    return `${lundi.getDate()} ${moisLundi} - ${vendredi.getDate()} ${moisVendredi} ${vendredi.getFullYear()}`;
   }
 
   get cells(): PlanningCell[] {
     const lundi = lundiDeLaSemaine(this.currentDate);
     const today = toISODate(new Date());
     const cells: PlanningCell[] = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 5; i++) {
       const date = new Date(lundi);
       date.setDate(date.getDate() + i);
       const dateISO = toISODate(date);
