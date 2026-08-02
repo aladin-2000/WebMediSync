@@ -21,6 +21,12 @@ export class RendezVousService {
     return this.http.patch<ApiResponse<RendezVousResponse>>(`${this.baseUrl}/${id}/annuler-delegue`, {});
   }
 
+  annulerMedecin(id: string, motifAnnulation: string): Observable<ApiResponse<RendezVousResponse>> {
+    return this.http.patch<ApiResponse<RendezVousResponse>>(`${this.baseUrl}/${id}/annuler-medecin`, {
+      motifAnnulation,
+    });
+  }
+
   marquerRealise(id: string): Observable<ApiResponse<RendezVousResponse>> {
     return this.http.patch<ApiResponse<RendezVousResponse>>(`${this.baseUrl}/${id}/realise`, {});
   }
@@ -39,6 +45,23 @@ export class RendezVousService {
     const query = semaine ? `?semaine=${semaine}` : '';
     return this.http.get<ApiResponse<RendezVousResponse[]>>(
       `${this.baseUrl}/delegue/${delegueId}/semaine${query}`
+    );
+  }
+
+  listeMedecin(medecinId: string): Observable<ApiResponse<RendezVousResponse[]>> {
+    return this.http.get<ApiResponse<RendezVousResponse[]>>(`${this.baseUrl}/medecin/${medecinId}`);
+  }
+
+  listeMedecinJour(medecinId: string, date: string): Observable<ApiResponse<RendezVousResponse[]>> {
+    return this.http.get<ApiResponse<RendezVousResponse[]>>(
+      `${this.baseUrl}/medecin/${medecinId}/jour?date=${date}`
+    );
+  }
+
+  listeMedecinSemaine(medecinId: string, semaine?: string): Observable<ApiResponse<RendezVousResponse[]>> {
+    const query = semaine ? `?semaine=${semaine}` : '';
+    return this.http.get<ApiResponse<RendezVousResponse[]>>(
+      `${this.baseUrl}/medecin/${medecinId}/semaine${query}`
     );
   }
 }

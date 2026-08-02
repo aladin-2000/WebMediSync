@@ -6,6 +6,7 @@ export interface RendezVousResponse {
   creneauId: string;
   delegueId: string;
   medecinId: string;
+  laboratoireId: string | null;
   statut: StatutRendezVous;
   annulePar: AnnulePar;
   motifAnnulation: string | null;
