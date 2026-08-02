@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../shared/modal/modal.component';
 import { MedecinService } from '../../../admin/services/medecin.service';
 import { MedecinResponse } from '../../../admin/models/medecin.model';
-import { CreneauService } from '../../../disponibilites/services/creneau.service';
-import { CreneauResponse } from '../../../disponibilites/models/disponibilite.models';
+import { CreneauService } from '../../../medecin/services/creneau.service';
+import { CreneauResponse } from '../../../medecin/models/disponibilite.models';
 import { RendezVousService } from '../../services/rendezvous.service';
 import { AuthService } from '../../../../core/services/auth.service';
 

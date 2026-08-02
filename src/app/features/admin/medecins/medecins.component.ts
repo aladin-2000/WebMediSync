@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ModalComponent } from '../../disponibilites/shared/modal/modal.component';
+import { ModalComponent } from '../../medecin/shared/modal/modal.component';
 import { MedecinService } from '../services/medecin.service';
 import { MedecinResponse } from '../models/medecin.model';
 

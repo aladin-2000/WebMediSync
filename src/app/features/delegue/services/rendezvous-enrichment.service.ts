@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MedecinService } from '../../admin/services/medecin.service';
-import { CreneauService } from '../../disponibilites/services/creneau.service';
+import { CreneauService } from '../../medecin/services/creneau.service';
 import { RendezVousResponse } from '../models/rendezvous.model';
 import { RendezVousEnrichi } from '../models/rendezvous-enrichi.model';
 

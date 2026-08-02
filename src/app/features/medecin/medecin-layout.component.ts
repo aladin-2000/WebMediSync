@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SidebarComponent } from '../disponibilites/shared/sidebar/sidebar.component';
-import { CalendarComponent } from '../disponibilites/calendar/calendar.component';
-import { CreneauxComponent } from '../disponibilites/creneaux/creneaux.component';
-import { StatsComponent } from '../disponibilites/stats/stats.component';
+import { SidebarComponent } from './shared/sidebar/sidebar.component';
+import { CalendarComponent } from './calendar/calendar.component';
+import { CreneauxComponent } from './creneaux/creneaux.component';
+import { StatsComponent } from './stats/stats.component';
 
 export type ViewName = 'calendar' | 'recurrences' | 'creneaux' | 'stats';
 

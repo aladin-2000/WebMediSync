@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
-import { ModalComponent } from '../../../disponibilites/shared/modal/modal.component';
+import { ModalComponent } from '../../../medecin/shared/modal/modal.component';
 
 export type AdminPageName = 'medecins';
 
