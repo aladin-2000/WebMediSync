@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../shared/modal/modal.component';
-import { MONTHS, DAYS_LABELS } from '../data/mock-data';
+import { MONTHS, DAYS_LABELS } from '../shared/date-labels.constants';
 import { CreneauResponse, PlageCreneauxRequest } from '../models/disponibilite.models';
 import { CreneauService } from '../services/creneau.service';
 import { AuthService } from '../../../core/services/auth.service';
