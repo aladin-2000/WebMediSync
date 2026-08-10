@@ -11,6 +11,9 @@
           <i class="ti ti-shield-check"></i> Score {{ score }}/100
         </div>
       }
+      <button class="btn-icon" (click)="refresh()" title="Rafraîchir" aria-label="Rafraîchir">
+        <i class="ti ti-refresh"></i>
+      </button>
       <button class="btn-confirm" (click)="go('search')">
         <i class="ti ti-search"></i> Chercher un médecin
       </button>

@@ -73,6 +73,14 @@
   background: #1864ab;
 }
 
+.btn.icon-only {
+  padding: 9px 11px;
+}
+
+.btn.icon-only i {
+  font-size: 14px;
+}
+
 .info-banner {
   display: flex;
   align-items: flex-start;

@@ -6,6 +6,9 @@
       <p class="hero-subtitle">Voici un aperçu de votre activité aujourd'hui.</p>
     </div>
     <div class="hero-actions">
+      <button class="btn icon-only" (click)="refresh()" title="Rafraîchir" aria-label="Rafraîchir">
+        <i class="ti ti-refresh"></i>
+      </button>
       <button class="btn primary" (click)="go('creneaux')">
         <i class="ti ti-calendar-event"></i> Voir mes rendez-vous
       </button>

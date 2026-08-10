@@ -126,6 +126,21 @@
   background: #1864ab;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn.icon-only {
+  padding: 8px 10px;
+}
+
+.btn.icon-only i {
+  font-size: 14px;
+}
+
 .notif-list {
   display: flex;
   flex-direction: column;

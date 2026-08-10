@@ -150,6 +150,11 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  refresh(): void {
+    this.chargerSemaine();
+    this.chargerNotifications();
+  }
+
   chargerNotifications(): void {
     this.notificationService.getMesNotifications().subscribe({
       next: (response) => {

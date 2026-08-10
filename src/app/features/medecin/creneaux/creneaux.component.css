@@ -232,6 +232,14 @@
   background: #1864ab;
 }
 
+.btn.icon-only {
+  padding: 6px 9px;
+}
+
+.btn.icon-only i {
+  font-size: 14px;
+}
+
 .btn.danger {
   color: #c92a2a;
   border-color: #ffc9c9;

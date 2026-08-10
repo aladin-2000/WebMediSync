@@ -61,6 +61,16 @@
   background: #e9ecef;
 }
 
+.btn-nav.icon-only {
+  padding: 7px 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-nav.icon-only i {
+  font-size: 14px;
+}
+
 .month-label {
   font-size: 15px;
   font-weight: 600;

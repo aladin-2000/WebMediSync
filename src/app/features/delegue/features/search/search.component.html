@@ -64,9 +64,14 @@
       }
 
       <!-- Résultats -->
-      @if (hasSearched && !isSearching && doctors.length > 0) {
-        <div class="results-count">{{ doctors.length }} médecin{{ doctors.length > 1 ? 's' : '' }} trouvé{{ doctors.length > 1 ? 's' : '' }}</div>
-      }
+      <div class="results-header">
+        @if (hasSearched && !isSearching && doctors.length > 0) {
+          <div class="results-count">{{ doctors.length }} médecin{{ doctors.length > 1 ? 's' : '' }} trouvé{{ doctors.length > 1 ? 's' : '' }}</div>
+        }
+        <button class="btn-icon" (click)="rafraichir()" title="Rafraîchir" aria-label="Rafraîchir">
+          <i class="ti ti-refresh"></i>
+        </button>
+      </div>
 
       <div class="results">
         @if (isSearching) {
@@ -120,6 +125,9 @@
           <h2>Dr. {{ selectedDoctor.prenom }} {{ selectedDoctor.nom }}</h2>
           <span class="specialty-chip light">{{ specialiteLibelle(selectedDoctor.specialite) }}</span>
         </div>
+        <button class="btn-icon light" (click)="selectDoctor(selectedDoctor)" title="Rafraîchir" aria-label="Rafraîchir">
+          <i class="ti ti-refresh"></i>
+        </button>
       </div>
 
       @if (creneauxError) {

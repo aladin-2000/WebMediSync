@@ -116,6 +116,35 @@
   filter: brightness(1.05);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  background: #ffffff;
+  color: #495057;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-icon:hover {
+  background: #f5f0ff;
+}
+
+.btn-icon i {
+  font-size: 14px;
+}
+
 .notif-list {
   display: flex;
   flex-direction: column;

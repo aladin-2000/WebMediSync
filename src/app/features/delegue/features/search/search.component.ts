@@ -112,6 +112,13 @@ export class SearchComponent {
     });
   }
 
+  rafraichir(): void {
+    this.rechercher();
+    if (this.selectedDoctor) {
+      this.selectDoctor(this.selectedDoctor);
+    }
+  }
+
   selectDoctor(doctor: MedecinResponse): void {
     this.selectedDoctor = doctor;
     this.creneaux = [];

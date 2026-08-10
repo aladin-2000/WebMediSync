@@ -19,6 +19,9 @@
       <i class="ti ti-chevron-right"></i>
     </button>
     <button class="btn-nav" (click)="goToday()">Cette semaine</button>
+    <button class="btn-nav icon-only" (click)="chargerSemaine()" title="Rafraîchir" aria-label="Rafraîchir">
+      <i class="ti ti-refresh"></i>
+    </button>
   </div>
 
   @if (error) {

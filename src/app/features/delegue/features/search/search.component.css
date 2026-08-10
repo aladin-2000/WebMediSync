@@ -203,11 +203,53 @@
   cursor: not-allowed;
 }
 
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
 .results-count {
   font-size: 13px;
   font-weight: 600;
   color: #868e96;
-  margin-bottom: 12px;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  background: #ffffff;
+  color: #495057;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.btn-icon:hover {
+  background: #f1f3f5;
+}
+
+.btn-icon i {
+  font-size: 14px;
+}
+
+.btn-icon.light {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+  margin-left: auto;
+}
+
+.btn-icon.light:hover {
+  background: rgba(255, 255, 255, 0.32);
 }
 
 /* Résultats : grille responsive de cartes */

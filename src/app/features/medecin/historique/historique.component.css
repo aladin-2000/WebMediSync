@@ -62,6 +62,14 @@
   background: #f1f3f5;
 }
 
+.btn.icon-only {
+  padding: 6px 9px;
+}
+
+.btn.icon-only i {
+  font-size: 14px;
+}
+
 /* Statistiques (memes valeurs que calendar.component.css) */
 .stats-row {
   display: grid;
