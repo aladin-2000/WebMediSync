@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MedecinService } from '../../../admin/services/medecin.service';
-import { MedecinResponse } from '../../../admin/models/medecin.model';
+import { MedecinResponse, SpecialiteOption } from '../../../admin/models/medecin.model';
 import { ModalComponent } from '../modal/modal.component';
 
 export type ViewName = 'calendar' | 'recurrences' | 'creneaux' | 'historique';
@@ -25,6 +25,7 @@ export class SidebarComponent implements OnInit {
   initiales = '';
 
   medecin: MedecinResponse | null = null;
+  specialites: SpecialiteOption[] = [];
 
   showEditProfil = false;
   formNom = '';
@@ -60,6 +61,17 @@ export class SidebarComponent implements OnInit {
         }
       },
     });
+    this.medecinService.getSpecialites().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.specialites = response.data;
+        }
+      },
+    });
+  }
+
+  specialiteLibelle(valeur: string): string {
+    return this.specialites.find((s) => s.valeur === valeur)?.libelle ?? valeur;
   }
 
   navigate(view: ViewName): void {

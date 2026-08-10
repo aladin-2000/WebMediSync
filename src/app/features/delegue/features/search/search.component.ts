@@ -122,7 +122,9 @@ export class SearchComponent {
       next: (response) => {
         this.isLoadingCreneaux = false;
         if (response.success) {
-          this.creneaux = response.data.filter((c) => c.statut === 'DISPONIBLE');
+          this.creneaux = response.data
+            .filter((c) => c.statut === 'DISPONIBLE')
+            .sort((a, b) => a.heureDebut.localeCompare(b.heureDebut));
         } else {
           this.creneauxError = response.message;
         }

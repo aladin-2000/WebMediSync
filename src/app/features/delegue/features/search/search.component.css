@@ -60,7 +60,7 @@
   gap: 4px;
 }
 
-.search-form .field label {
+.search-form .field > label {
   font-size: 12px;
   font-weight: 600;
   color: #495057;
@@ -69,12 +69,12 @@
   gap: 4px;
 }
 
-.search-form .field label i {
+.search-form .field > label i {
   font-size: 13px;
   color: #1971c2;
 }
 
-.search-form .field input {
+.search-form .field > input {
   padding: 8px 10px;
   border: 1px solid #dee2e6;
   border-radius: 8px;
@@ -83,7 +83,7 @@
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.search-form .field input:focus {
+.search-form .field > input:focus {
   outline: none;
   border-color: #1971c2;
   box-shadow: 0 0 0 3px rgba(25, 113, 194, 0.12);
@@ -119,23 +119,28 @@
   color: #868e96;
 }
 
+.specialite-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+}
+
 .specialite-dropdown {
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
-  right: 0;
   z-index: 20;
   background: #fff;
   border: 1px solid #e9ecef;
   border-radius: 10px;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
   padding: 8px;
+  width: 260px;
   max-height: 260px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 240px;
 }
 
 .specialite-option {
@@ -145,9 +150,21 @@
   padding: 7px 8px;
   border-radius: 6px;
   font-size: 13px;
+  font-weight: 400;
   color: #495057;
   cursor: pointer;
   transition: background 0.15s;
+  text-align: left;
+}
+
+.specialite-option input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  min-width: 0;
+  flex-shrink: 0;
+  padding: 0;
+  margin: 0;
+  border-radius: 3px;
 }
 
 .specialite-option:hover {

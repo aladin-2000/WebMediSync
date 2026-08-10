@@ -52,31 +52,52 @@
 </app-modal>
 
 <app-modal title="Modifier mon profil" [visible]="showEditProfil" (close)="fermerEditProfil()">
-  <div class="modal-body">
-    <div class="field">
-      <label>Nom</label>
-      <input type="text" [(ngModel)]="formNom">
+  <div class="modal-body edit-profil-body">
+    <div class="edit-profil-preview">
+      <div class="preview-avatar">{{ (formPrenom[0] ?? '') + (formNom[0] ?? '') | uppercase }}</div>
+      <div>
+        <div class="preview-name">Dr. {{ formPrenom || '…' }} {{ formNom || '' }}</div>
+        <div class="preview-specialite">{{ formSpecialite ? specialiteLibelle(formSpecialite) : 'Spécialité non définie' }}</div>
+      </div>
     </div>
-    <div class="field">
-      <label>Prénom</label>
-      <input type="text" [(ngModel)]="formPrenom">
+
+    <div class="field-row">
+      <div class="field">
+        <label><i class="ti ti-user"></i> Nom</label>
+        <input type="text" [(ngModel)]="formNom">
+      </div>
+      <div class="field">
+        <label><i class="ti ti-user"></i> Prénom</label>
+        <input type="text" [(ngModel)]="formPrenom">
+      </div>
     </div>
+
     <div class="field">
-      <label>Spécialité</label>
-      <input type="text" [(ngModel)]="formSpecialite">
+      <label><i class="ti ti-stethoscope"></i> Spécialité</label>
+      <select [(ngModel)]="formSpecialite">
+        <option value="" disabled>Choisir une spécialité</option>
+        @for (opt of specialites; track opt.valeur) {
+          <option [value]="opt.valeur">{{ opt.libelle }}</option>
+        }
+      </select>
     </div>
+
     <div class="field">
-      <label>Adresse du cabinet</label>
+      <label><i class="ti ti-map-pin"></i> Adresse du cabinet</label>
       <input type="text" [(ngModel)]="formAdresseCabinet">
     </div>
-    <div class="field">
-      <label>Téléphone</label>
-      <input type="tel" [(ngModel)]="formTelephone">
+
+    <div class="field-row">
+      <div class="field">
+        <label><i class="ti ti-phone"></i> Téléphone</label>
+        <input type="tel" [(ngModel)]="formTelephone">
+      </div>
+      <div class="field">
+        <label><i class="ti ti-shield-check"></i> Score minimum accepté</label>
+        <input type="number" min="0" max="100" [(ngModel)]="formScoreFiabiliteMin">
+      </div>
     </div>
-    <div class="field">
-      <label>Score de fiabilité minimum accepté</label>
-      <input type="number" min="0" max="100" [(ngModel)]="formScoreFiabiliteMin">
-    </div>
+
     @if (editProfilError) {
       <div class="info-banner danger">
         <i class="ti ti-alert-triangle"></i>

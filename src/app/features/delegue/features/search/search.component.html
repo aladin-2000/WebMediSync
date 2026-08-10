@@ -28,6 +28,7 @@
             <i class="ti" [class.ti-chevron-down]="!showSpecialiteDropdown" [class.ti-chevron-up]="showSpecialiteDropdown"></i>
           </button>
           @if (showSpecialiteDropdown) {
+            <div class="specialite-backdrop" (click)="showSpecialiteDropdown = false"></div>
             <div class="specialite-dropdown">
               @for (opt of specialites; track opt.valeur) {
                 <label class="specialite-option">
