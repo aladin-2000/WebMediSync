@@ -40,6 +40,7 @@
                 [class.statut-annule]="rdv.statut === 'ANNULE'"
                 [class.statut-realise]="rdv.statut === 'REALISE'"
                 [class.statut-absent]="rdv.statut === 'ABSENT_MEDECIN' || rdv.statut === 'ABSENT_DELEGUE'"
+                [class.statut-conflit]="rdv.statut === 'CONFLIT'"
                 (click)="ouvrirDetail(rdv)">
                 <div class="res-time">{{ formatHeure(rdv.heureDebut) }} - {{ formatHeure(rdv.heureFin) }}</div>
                 <div class="res-doctor"><i class="ti ti-id-badge-2"></i> {{ delegueLabel(rdv) }}</div>
@@ -57,6 +58,7 @@
                     @case ('ABSENT_MEDECIN') { <span class="badge warning">Vous étiez absent</span> }
                     @case ('ABSENT_DELEGUE') { <span class="badge warning">Délégué absent</span> }
                     @case ('ANNULE') { <span class="badge neutral">Annulé{{ rdv.annulePar === 'DELEGUE' ? ' (délégué)' : '' }}</span> }
+                    @case ('CONFLIT') { <span class="badge danger"><i class="ti ti-alert-triangle"></i> En litige</span> }
                   }
                 </div>
 
@@ -110,6 +112,7 @@
                 @case ('ABSENT_MEDECIN') { <span class="badge warning">Vous étiez absent</span> }
                 @case ('ABSENT_DELEGUE') { <span class="badge warning">Délégué absent</span> }
                 @case ('ANNULE') { <span class="badge neutral">Annulé{{ selectedRdv.annulePar === 'DELEGUE' ? ' (délégué)' : '' }}</span> }
+                @case ('CONFLIT') { <span class="badge danger"><i class="ti ti-alert-triangle"></i> En litige</span> }
               }
             </span>
           </div>

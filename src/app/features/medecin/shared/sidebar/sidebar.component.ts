@@ -1,13 +1,17 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationResponse } from '../../../../core/models/notification.model';
 import { MedecinService } from '../../../admin/services/medecin.service';
 import { MedecinResponse, SpecialiteOption } from '../../../admin/models/medecin.model';
 import { ModalComponent } from '../modal/modal.component';
 
 export type ViewName = 'calendar' | 'recurrences' | 'creneaux' | 'historique';
+
+const NOTIF_POLL_INTERVAL_MS = 30000;
 
 @Component({
   selector: 'app-sidebar',
@@ -16,7 +20,7 @@ export type ViewName = 'calendar' | 'recurrences' | 'creneaux' | 'historique';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
   @Input() activeView: ViewName = 'calendar';
   @Output() viewChange = new EventEmitter<ViewName>();
 
@@ -37,9 +41,15 @@ export class SidebarComponent implements OnInit {
   isSavingProfil = false;
   editProfilError = '';
 
+  notifications: NotificationResponse[] = [];
+  unreadCount = 0;
+  showNotifPanel = false;
+  private notifPollHandle: ReturnType<typeof setInterval> | null = null;
+
   constructor(
     private authService: AuthService,
     private medecinService: MedecinService,
+    private notificationService: NotificationService,
     private router: Router
   ) {
     const user = this.authService.getCurrentUser();
@@ -68,6 +78,96 @@ export class SidebarComponent implements OnInit {
         }
       },
     });
+
+    this.loadNotifications();
+    this.notifPollHandle = setInterval(() => this.loadNotifications(), NOTIF_POLL_INTERVAL_MS);
+  }
+
+  ngOnDestroy(): void {
+    if (this.notifPollHandle) {
+      clearInterval(this.notifPollHandle);
+    }
+  }
+
+  loadNotifications(): void {
+    this.notificationService.getMesNotifications().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.notifications = response.data;
+          this.unreadCount = response.data.filter((n) => !n.isRead).length;
+        }
+      },
+    });
+  }
+
+  toggleNotifPanel(event: Event): void {
+    event.stopPropagation();
+    this.showNotifPanel = !this.showNotifPanel;
+    if (this.showNotifPanel) {
+      this.loadNotifications();
+    }
+  }
+
+  @HostListener('document:click')
+  closeNotifPanel(): void {
+    this.showNotifPanel = false;
+  }
+
+  marquerNotifLue(notif: NotificationResponse, event: Event): void {
+    event.stopPropagation();
+    if (notif.isRead) {
+      return;
+    }
+    this.notificationService.marquerLue(notif.id).subscribe({
+      next: () => {
+        notif.isRead = true;
+        this.unreadCount = Math.max(0, this.unreadCount - 1);
+      },
+    });
+  }
+
+  marquerToutesLues(event: Event): void {
+    event.stopPropagation();
+    if (this.unreadCount === 0) {
+      return;
+    }
+    this.notificationService.marquerToutesLues().subscribe({
+      next: () => {
+        this.notifications.forEach((n) => (n.isRead = true));
+        this.unreadCount = 0;
+      },
+    });
+  }
+
+  notifIcon(type: NotificationResponse['type']): string {
+    switch (type) {
+      case 'REALISATION':
+        return 'ti-circle-check';
+      case 'ANNULATION':
+        return 'ti-circle-x';
+      case 'ABSENCE':
+        return 'ti-user-off';
+      case 'CONFLIT':
+        return 'ti-alert-triangle';
+      case 'RESERVATION':
+        return 'ti-calendar-plus';
+      case 'PROPOSITION':
+        return 'ti-replace';
+      default:
+        return 'ti-bell';
+    }
+  }
+
+  notifTimeAgo(dateStr: string): string {
+    const diffMs = Date.now() - new Date(dateStr).getTime();
+    const minutes = Math.floor(diffMs / 60000);
+    if (minutes < 1) return "à l'instant";
+    if (minutes < 60) return `il y a ${minutes} min`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `il y a ${hours} h`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `il y a ${days} j`;
+    return new Date(dateStr).toLocaleDateString('fr-FR');
   }
 
   specialiteLibelle(valeur: string): string {

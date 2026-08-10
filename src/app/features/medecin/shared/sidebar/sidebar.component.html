@@ -17,9 +17,48 @@
     <div class="nav-item" [class.active]="activeView === 'historique'" (click)="navigate('historique')">
       <i class="ti ti-history"></i> Historique
     </div>
-    <div class="nav-item">
+    <div class="nav-item notif-trigger" (click)="toggleNotifPanel($event)">
       <i class="ti ti-bell"></i> Notifications
-      <span class="badge-notif">3</span>
+      @if (unreadCount > 0) {
+        <span class="badge-notif">{{ unreadCount }}</span>
+      }
+
+      @if (showNotifPanel) {
+        <div class="notif-panel" (click)="$event.stopPropagation()">
+          <div class="notif-panel-header">
+            <span>Notifications</span>
+            @if (unreadCount > 0) {
+              <button class="notif-mark-all" (click)="marquerToutesLues($event)">
+                <i class="ti ti-checks"></i> Tout marquer lu
+              </button>
+            }
+          </div>
+          <div class="notif-panel-body">
+            @if (notifications.length === 0) {
+              <div class="notif-empty">
+                <i class="ti ti-bell-off"></i>
+                <span>Aucune notification pour le moment.</span>
+              </div>
+            }
+            @for (notif of notifications; track notif.id) {
+              <div
+                class="notif-item"
+                [class.unread]="!notif.isRead"
+                [class]="'type-' + notif.type.toLowerCase()"
+                (click)="marquerNotifLue(notif, $event)">
+                <div class="notif-icon"><i class="ti" [class]="notifIcon(notif.type)"></i></div>
+                <div class="notif-content">
+                  <div class="notif-text">{{ notif.contenu }}</div>
+                  <div class="notif-time">{{ notifTimeAgo(notif.createdAt) }}</div>
+                </div>
+                @if (!notif.isRead) {
+                  <span class="notif-dot"></span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
     </div>
   </nav>
 

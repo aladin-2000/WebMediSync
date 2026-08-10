@@ -48,7 +48,7 @@
             <div class="no-reservation"><i class="ti ti-moon-stars"></i> Libre</div>
           } @else {
             @for (rdv of cell.rendezvous; track rdv.id; let i = $index) {
-              <div class="reservation-card" [style.animation-delay]="(i * 40) + 'ms'" [class.statut-annule]="rdv.statut === 'ANNULE'" [class.statut-realise]="rdv.statut === 'REALISE'" [class.statut-absent]="rdv.statut === 'ABSENT_MEDECIN' || rdv.statut === 'ABSENT_DELEGUE'">
+              <div class="reservation-card" [style.animation-delay]="(i * 40) + 'ms'" [class.statut-annule]="rdv.statut === 'ANNULE'" [class.statut-realise]="rdv.statut === 'REALISE'" [class.statut-absent]="rdv.statut === 'ABSENT_MEDECIN' || rdv.statut === 'ABSENT_DELEGUE'" [class.statut-conflit]="rdv.statut === 'CONFLIT'">
                 <div class="res-time">{{ formatHeure(rdv.heureDebut) }} - {{ formatHeure(rdv.heureFin) }}</div>
                 <div class="res-doctor">Dr. {{ rdv.medecinPrenom }} {{ rdv.medecinNom }}</div>
                 <div class="res-specialty">{{ rdv.medecinSpecialite }}</div>
@@ -66,6 +66,7 @@
                     @case ('ABSENT_MEDECIN') { <span class="badge absent">Médecin absent</span> }
                     @case ('ABSENT_DELEGUE') { <span class="badge absent">Vous étiez absent</span> }
                     @case ('ANNULE') { <span class="badge annule">Annulé{{ rdv.annulePar === 'MEDECIN' ? ' (médecin)' : '' }}</span> }
+                    @case ('CONFLIT') { <span class="badge conflit"><i class="ti ti-alert-triangle"></i> En litige</span> }
                   }
                 </div>
 

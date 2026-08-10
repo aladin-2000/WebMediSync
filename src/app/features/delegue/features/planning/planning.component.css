@@ -191,6 +191,11 @@
   opacity: 0.7;
 }
 
+.reservation-card.statut-conflit {
+  border-left-color: #e03131;
+  background: #fff5f5;
+}
+
 .res-time {
   font-weight: 600;
   color: #212529;
@@ -237,6 +242,14 @@
 .badge.annule {
   background: #f1f3f5;
   color: #868e96;
+}
+
+.badge.conflit {
+  background: #ffe3e3;
+  color: #c92a2a;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .badge.pending {

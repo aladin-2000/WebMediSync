@@ -1,4 +1,4 @@
-export type StatutRendezVous = 'RESERVE' | 'ANNULE' | 'REALISE' | 'ABSENT_MEDECIN' | 'ABSENT_DELEGUE';
+export type StatutRendezVous = 'RESERVE' | 'ANNULE' | 'REALISE' | 'ABSENT_MEDECIN' | 'ABSENT_DELEGUE' | 'CONFLIT';
 export type AnnulePar = 'DELEGUE' | 'MEDECIN' | null;
 
 export interface RendezVousResponse {

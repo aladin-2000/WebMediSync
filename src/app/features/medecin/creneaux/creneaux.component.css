@@ -102,6 +102,11 @@
   opacity: 0.7;
 }
 
+.reservation-card.statut-conflit {
+  border-left-color: #c92a2a;
+  background: #fff5f5;
+}
+
 .res-time {
   font-weight: 500;
   color: #212529;
@@ -184,6 +189,7 @@
 .badge.success { background: #d3f9d8; color: #2f9e44; }
 .badge.warning { background: #fff4e6; color: #d9700e; }
 .badge.neutral { background: #f1f3f5; color: #868e96; }
+.badge.danger { background: #ffe3e3; color: #c92a2a; display: inline-flex; align-items: center; gap: 4px; }
 
 .dot-badge {
   display: inline-block;
