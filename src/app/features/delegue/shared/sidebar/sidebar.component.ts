@@ -14,7 +14,7 @@ import { ModalComponent } from '../modal/modal.component';
 // 3 pages: Recherche, Planning, Historique
 // ============================================
 
-export type PageName = 'search' | 'planning' | 'history';
+export type PageName = 'search' | 'planning' | 'history' | 'notifications';
 
 const NOTIF_POLL_INTERVAL_MS = 30000;
 
@@ -134,6 +134,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
         this.unreadCount = 0;
       },
     });
+  }
+
+  voirToutesLesNotifications(event: Event): void {
+    event.stopPropagation();
+    this.showNotifPanel = false;
+    this.navigate('notifications');
   }
 
   notifIcon(type: NotificationResponse['type']): string {

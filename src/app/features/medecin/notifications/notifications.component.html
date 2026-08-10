@@ -1,0 +1,63 @@
+<div class="notifications-view">
+  <div class="page-header">
+    <div>
+      <h1><i class="ti ti-bell"></i> Notifications</h1>
+      <p class="subtitle">
+        @if (unreadCount > 0) {
+          {{ unreadCount }} notification{{ unreadCount > 1 ? 's' : '' }} non lue{{ unreadCount > 1 ? 's' : '' }}
+        } @else {
+          Vous êtes à jour
+        }
+      </p>
+    </div>
+    @if (unreadCount > 0) {
+      <button class="btn primary" (click)="marquerToutesLues()">
+        <i class="ti ti-checks"></i> Tout marquer comme lu
+      </button>
+    }
+  </div>
+
+  <div class="filter-tabs">
+    <button class="tab" [class.active]="filtre === 'toutes'" (click)="setFiltre('toutes')">
+      Toutes ({{ notifications.length }})
+    </button>
+    <button class="tab" [class.active]="filtre === 'non-lues'" (click)="setFiltre('non-lues')">
+      Non lues ({{ unreadCount }})
+    </button>
+  </div>
+
+  @if (error) {
+    <div class="info-banner danger">
+      <i class="ti ti-alert-triangle"></i>
+      <span>{{ error }}</span>
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="empty-state">Chargement des notifications...</div>
+  } @else if (notificationsAffichees.length === 0) {
+    <div class="empty-state">
+      <i class="ti ti-bell-off"></i>
+      <span>{{ filtre === 'non-lues' ? 'Aucune notification non lue.' : 'Aucune notification pour le moment.' }}</span>
+    </div>
+  } @else {
+    <div class="notif-list">
+      @for (notif of notificationsAffichees; track notif.id) {
+        <div
+          class="notif-row"
+          [class.unread]="!notif.isRead"
+          [class]="'type-' + notif.type.toLowerCase()"
+          (click)="marquerLue(notif)">
+          <div class="notif-icon"><i class="ti" [class]="notifIcon(notif.type)"></i></div>
+          <div class="notif-body">
+            <div class="notif-text">{{ notif.contenu }}</div>
+            <div class="notif-date">{{ formatDate(notif.createdAt) }}</div>
+          </div>
+          @if (!notif.isRead) {
+            <span class="notif-dot" title="Non lue"></span>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

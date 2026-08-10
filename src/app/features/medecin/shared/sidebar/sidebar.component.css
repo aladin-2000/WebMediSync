@@ -267,6 +267,22 @@ nav {
   margin-top: 4px;
 }
 
+.notif-panel-footer {
+  padding: 10px 14px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1971c2;
+  border-top: 1px solid #f1f3f5;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.notif-panel-footer:hover {
+  background: #eaf2fd;
+}
+
 .spacer {
   flex: 1;
 }

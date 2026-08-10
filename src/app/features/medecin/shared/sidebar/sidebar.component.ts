@@ -9,7 +9,7 @@ import { MedecinService } from '../../../admin/services/medecin.service';
 import { MedecinResponse, SpecialiteOption } from '../../../admin/models/medecin.model';
 import { ModalComponent } from '../modal/modal.component';
 
-export type ViewName = 'calendar' | 'recurrences' | 'creneaux' | 'historique';
+export type ViewName = 'calendar' | 'recurrences' | 'creneaux' | 'historique' | 'notifications';
 
 const NOTIF_POLL_INTERVAL_MS = 30000;
 
@@ -137,6 +137,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
         this.unreadCount = 0;
       },
     });
+  }
+
+  voirToutesLesNotifications(event: Event): void {
+    event.stopPropagation();
+    this.showNotifPanel = false;
+    this.navigate('notifications');
   }
 
   notifIcon(type: NotificationResponse['type']): string {

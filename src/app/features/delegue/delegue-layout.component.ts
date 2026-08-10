@@ -4,13 +4,14 @@ import { SidebarComponent } from './shared/sidebar/sidebar.component';
 import { SearchComponent } from './features/search/search.component';
 import { PlanningComponent } from './features/planning/planning.component';
 import { HistoryComponent } from './features/history/history.component';
+import { NotificationsComponent } from './features/notifications/notifications.component';
 
-export type DeleguePageName = 'search' | 'planning' | 'history';
+export type DeleguePageName = 'search' | 'planning' | 'history' | 'notifications';
 
 @Component({
   selector: 'app-delegue-layout',
   standalone: true,
-  imports: [CommonModule, SidebarComponent, SearchComponent, PlanningComponent, HistoryComponent],
+  imports: [CommonModule, SidebarComponent, SearchComponent, PlanningComponent, HistoryComponent, NotificationsComponent],
   templateUrl: './delegue-layout.component.html',
   styleUrls: ['./delegue-layout.component.css'],
 })
