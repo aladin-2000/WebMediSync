@@ -73,6 +73,9 @@
               <div class="agenda-time">{{ formatHeure(rdv.heureDebut) }}</div>
               <div class="agenda-info">
                 <div class="agenda-name"><i class="ti ti-id-badge-2"></i> {{ delegueLabel(rdv) }}</div>
+                @if (laboratoireLabel(rdv)) {
+                  <div class="agenda-sub"><i class="ti ti-building"></i> {{ laboratoireLabel(rdv) }}</div>
+                }
               </div>
               <span class="badge" [class]="'statut-' + rdv.statut.toLowerCase()">{{ rdv.statut }}</span>
             </div>

@@ -13,6 +13,10 @@ export class DelegueService {
 
   constructor(private http: HttpClient) {}
 
+  getAll(): Observable<ApiResponse<DelegueResponse[]>> {
+    return this.http.get<ApiResponse<DelegueResponse[]>>(this.baseUrl);
+  }
+
   getByUserId(userId: string): Observable<ApiResponse<DelegueResponse>> {
     return this.http.get<ApiResponse<DelegueResponse>>(`${this.baseUrl}/by-user/${userId}`);
   }

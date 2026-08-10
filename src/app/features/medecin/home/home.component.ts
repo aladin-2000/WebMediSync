@@ -171,6 +171,10 @@ export class HomeComponent implements OnInit {
     return `Délégué #${rdv.delegueId.slice(0, 8)}`;
   }
 
+  laboratoireLabel(rdv: RendezVousMedecinEnrichi): string {
+    return rdv.laboratoireNom || '';
+  }
+
   notifIcon(type: NotificationResponse['type']): string {
     switch (type) {
       case 'REALISATION':
