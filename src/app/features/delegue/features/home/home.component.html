@@ -1,0 +1,115 @@
+<div class="home-view">
+  <div class="hero">
+    <div>
+      <div class="hero-eyebrow">{{ todayLabel }}</div>
+      <h1>Bonjour, {{ nomComplet }}</h1>
+      <p class="hero-subtitle">Voici un aperçu de votre activité aujourd'hui.</p>
+    </div>
+    <div class="hero-actions">
+      @if (score !== null) {
+        <div class="score-chip">
+          <i class="ti ti-shield-check"></i> Score {{ score }}/100
+        </div>
+      }
+      <button class="btn-confirm" (click)="go('search')">
+        <i class="ti ti-search"></i> Chercher un médecin
+      </button>
+      <button class="btn-cancel" (click)="go('planning')">
+        <i class="ti ti-calendar"></i> Mon planning
+      </button>
+    </div>
+  </div>
+
+  @if (error) {
+    <div class="info-banner danger">
+      <i class="ti ti-alert-triangle"></i>
+      <span>{{ error }}</span>
+    </div>
+  }
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon accent"><i class="ti ti-calendar-event"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{ totalAujourdhui }}</div>
+        <div class="stat-label">Rendez-vous aujourd'hui</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon accent"><i class="ti ti-calendar"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{ totalSemaine }}</div>
+        <div class="stat-label">Cette semaine</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon success"><i class="ti ti-calendar-check"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{ totalRealisesSemaine }}</div>
+        <div class="stat-label">Visites réalisées</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon warning"><i class="ti ti-calendar-x"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{ totalAnnulesSemaine }}</div>
+        <div class="stat-label">Annulations (semaine)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-columns">
+    <div class="home-section">
+      <div class="section-title">
+        <i class="ti ti-clock"></i> Planning du jour
+      </div>
+
+      @if (isLoading) {
+        <div class="empty-state">Chargement...</div>
+      } @else if (rendezvousAujourdhui.length === 0) {
+        <div class="empty-state">
+          <i class="ti ti-calendar-off"></i>
+          <span>Aucun rendez-vous prévu aujourd'hui.</span>
+        </div>
+      } @else {
+        <div class="agenda-list">
+          @for (rdv of rendezvousAujourdhui; track rdv.id) {
+            <div class="agenda-row">
+              <div class="agenda-time">{{ formatHeure(rdv.heureDebut) }}</div>
+              <div class="agenda-info">
+                <div class="agenda-name"><i class="ti ti-stethoscope"></i> {{ medecinLabel(rdv) }}</div>
+              </div>
+              <span class="badge" [class]="'statut-' + rdv.statut.toLowerCase()">{{ rdv.statut }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="home-section">
+      <div class="section-title">
+        <i class="ti ti-bell"></i> Notifications récentes
+        @if (unreadNotifCount > 0) {
+          <span class="section-badge">{{ unreadNotifCount }}</span>
+        }
+      </div>
+
+      @if (dernieresNotifications.length === 0) {
+        <div class="empty-state">
+          <i class="ti ti-bell-off"></i>
+          <span>Aucune notification pour le moment.</span>
+        </div>
+      } @else {
+        <div class="notif-mini-list">
+          @for (notif of dernieresNotifications; track notif.id) {
+            <div class="notif-mini-row" [class.unread]="!notif.isRead">
+              <i class="ti" [class]="notifIcon(notif.type)"></i>
+              <span class="notif-mini-text">{{ notif.contenu }}</span>
+            </div>
+          }
+        </div>
+        <button class="link-btn" (click)="go('notifications')">Voir toutes les notifications</button>
+      }
+    </div>
+  </div>
+</div>

@@ -5,6 +5,9 @@
   </div>
 
   <nav>
+    <div class="nav-item" [class.active]="activeView === 'home'" (click)="navigate('home')">
+      <i class="ti ti-home"></i> Accueil
+    </div>
     <div class="nav-item" [class.active]="activeView === 'calendar'" (click)="navigate('calendar')">
       <i class="ti ti-calendar"></i> Disponibilités
     </div>

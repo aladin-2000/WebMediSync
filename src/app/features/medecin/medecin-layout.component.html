@@ -3,6 +3,9 @@
 
   <div class="main">
     <div class="content">
+      @if (activeView === 'home') {
+        <app-medecin-home (navigateTo)="onViewChange($event)"></app-medecin-home>
+      }
       @if (activeView === 'calendar') {
         <app-calendar (navigateTo)="onViewChange($event)"></app-calendar>
       }

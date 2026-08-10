@@ -3,6 +3,9 @@
 
   <div class="main">
     <div class="content">
+      @if (activePage === 'home') {
+        <app-delegue-home (navigateTo)="onPageChange($event)"></app-delegue-home>
+      }
       @if (activePage === 'search') {
         <app-search></app-search>
       }

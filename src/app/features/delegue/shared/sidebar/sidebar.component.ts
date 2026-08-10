@@ -14,7 +14,7 @@ import { ModalComponent } from '../modal/modal.component';
 // 3 pages: Recherche, Planning, Historique
 // ============================================
 
-export type PageName = 'search' | 'planning' | 'history' | 'notifications';
+export type PageName = 'home' | 'search' | 'planning' | 'history' | 'notifications';
 
 const NOTIF_POLL_INTERVAL_MS = 30000;
 
