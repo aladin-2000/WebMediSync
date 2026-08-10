@@ -1,6 +1,6 @@
 <aside class="sidebar">
   <div class="logo">
-    <i class="ti ti-heartbeat"></i>
+    <span class="logo-badge"><i class="ti ti-heartbeat"></i></span>
     MediSync
   </div>
 
@@ -14,8 +14,8 @@
 
     <div class="divider"></div>
 
-    <div class="nav-item" [class.active]="activeView === 'stats'" (click)="navigate('stats')">
-      <i class="ti ti-chart-bar"></i> Statistiques
+    <div class="nav-item" [class.active]="activeView === 'historique'" (click)="navigate('historique')">
+      <i class="ti ti-history"></i> Historique
     </div>
     <div class="nav-item">
       <i class="ti ti-bell"></i> Notifications
@@ -25,8 +25,15 @@
 
   <div class="spacer"></div>
 
-  <div class="nav-item"><i class="ti ti-settings"></i> Paramètres</div>
-  <div class="nav-item"><i class="ti ti-user"></i> Dr. Martin</div>
+  <div class="profile-card" title="Modifier mon profil" (click)="ouvrirEditProfil()">
+    <div class="profile-avatar">{{ initiales }}</div>
+    <div class="profile-info">
+      <div class="profile-name">{{ nomAffiche }}</div>
+      <div class="profile-role">Médecin</div>
+    </div>
+    <i class="ti ti-pencil profile-edit-icon"></i>
+  </div>
+
   <div class="nav-item logout" (click)="askLogout()">
     <i class="ti ti-logout"></i> Déconnexion
   </div>
@@ -40,6 +47,47 @@
     <button class="btn" (click)="cancelLogout()">Annuler</button>
     <button class="btn danger" (click)="confirmLogout()">
       <i class="ti ti-logout"></i> Se déconnecter
+    </button>
+  </div>
+</app-modal>
+
+<app-modal title="Modifier mon profil" [visible]="showEditProfil" (close)="fermerEditProfil()">
+  <div class="modal-body">
+    <div class="field">
+      <label>Nom</label>
+      <input type="text" [(ngModel)]="formNom">
+    </div>
+    <div class="field">
+      <label>Prénom</label>
+      <input type="text" [(ngModel)]="formPrenom">
+    </div>
+    <div class="field">
+      <label>Spécialité</label>
+      <input type="text" [(ngModel)]="formSpecialite">
+    </div>
+    <div class="field">
+      <label>Adresse du cabinet</label>
+      <input type="text" [(ngModel)]="formAdresseCabinet">
+    </div>
+    <div class="field">
+      <label>Téléphone</label>
+      <input type="tel" [(ngModel)]="formTelephone">
+    </div>
+    <div class="field">
+      <label>Score de fiabilité minimum accepté</label>
+      <input type="number" min="0" max="100" [(ngModel)]="formScoreFiabiliteMin">
+    </div>
+    @if (editProfilError) {
+      <div class="info-banner danger">
+        <i class="ti ti-alert-triangle"></i>
+        <span>{{ editProfilError }}</span>
+      </div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button class="btn" (click)="fermerEditProfil()">Annuler</button>
+    <button class="btn primary" [disabled]="isSavingProfil" (click)="enregistrerProfil()">
+      <i class="ti ti-check"></i> {{ isSavingProfil ? 'Enregistrement...' : 'Enregistrer' }}
     </button>
   </div>
 </app-modal>

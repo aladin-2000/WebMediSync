@@ -48,31 +48,40 @@
             <div class="no-reservation"><i class="ti ti-moon-stars"></i> Libre</div>
           } @else {
             @for (rdv of cell.rendezvous; track rdv.id; let i = $index) {
-              <div class="reservation-card" [style.animation-delay]="(i * 40) + 'ms'" [class.statut-annule]="rdv.statut === 'ANNULE'" [class.statut-realise]="rdv.statut === 'REALISE'" [class.statut-absent]="rdv.statut === 'ABSENT'">
+              <div class="reservation-card" [style.animation-delay]="(i * 40) + 'ms'" [class.statut-annule]="rdv.statut === 'ANNULE'" [class.statut-realise]="rdv.statut === 'REALISE'" [class.statut-absent]="rdv.statut === 'ABSENT_MEDECIN' || rdv.statut === 'ABSENT_DELEGUE'">
                 <div class="res-time">{{ formatHeure(rdv.heureDebut) }} - {{ formatHeure(rdv.heureFin) }}</div>
                 <div class="res-doctor">Dr. {{ rdv.medecinPrenom }} {{ rdv.medecinNom }}</div>
                 <div class="res-specialty">{{ rdv.medecinSpecialite }}</div>
 
                 <div class="res-status">
                   @switch (rdv.statut) {
-                    @case ('CONFIRME') { <span class="badge confirme">Confirmé</span> }
+                    @case ('RESERVE') {
+                      @if (rdv.realiseParDelegue) {
+                        <span class="badge pending">En attente du médecin</span>
+                      } @else {
+                        <span class="badge confirme">Réservé</span>
+                      }
+                    }
                     @case ('REALISE') { <span class="badge realise">Réalisé</span> }
-                    @case ('ABSENT') { <span class="badge absent">Absent</span> }
+                    @case ('ABSENT_MEDECIN') { <span class="badge absent">Médecin absent</span> }
+                    @case ('ABSENT_DELEGUE') { <span class="badge absent">Vous étiez absent</span> }
                     @case ('ANNULE') { <span class="badge annule">Annulé{{ rdv.annulePar === 'MEDECIN' ? ' (médecin)' : '' }}</span> }
                   }
                 </div>
 
-                @if (rdv.statut === 'CONFIRME') {
+                @if (rdv.statut === 'RESERVE' && !rdv.realiseParDelegue) {
                   <div class="res-actions">
-                    <button class="btn-action realise" title="Marquer réalisé" [disabled]="processingId === rdv.id" (click)="marquerRealise(rdv)">
-                      <i class="ti ti-check"></i>
+                    <button class="btn-action realise" title="Marquer ce rendez-vous comme réalisé" [disabled]="processingId === rdv.id" (click)="demanderConfirmation('realise', rdv)">
+                      <i class="ti ti-check"></i> Réalisé
                     </button>
-                    <button class="btn-action absent" title="Marquer absent" [disabled]="processingId === rdv.id" (click)="marquerAbsent(rdv)">
-                      <i class="ti ti-user-x"></i>
+                    <button class="btn-action absent" title="Signaler que le médecin n'était pas présent" [disabled]="processingId === rdv.id" (click)="demanderConfirmation('absent', rdv)">
+                      <i class="ti ti-user-x"></i> Médecin absent
                     </button>
-                    <button class="btn-action annuler" title="Annuler" [disabled]="processingId === rdv.id" (click)="demanderAnnulation(rdv)">
-                      <i class="ti ti-x"></i>
-                    </button>
+                    @if (peutEncoreAnnuler(rdv)) {
+                      <button class="btn-action annuler" title="Annuler ce rendez-vous" [disabled]="processingId === rdv.id" (click)="demanderConfirmation('annuler', rdv)">
+                        <i class="ti ti-x"></i> Annuler
+                      </button>
+                    }
                   </div>
                 }
               </div>
@@ -85,21 +94,29 @@
 
 </div>
 
-<!-- Modal: Confirmer l'annulation -->
-<app-modal title="Annuler le rendez-vous" [visible]="showAnnulerModal" (close)="annulerAnnulation()">
+<!-- Modal: Confirmer une action (réalisé / absent / annuler) -->
+<app-modal [title]="confirmModalTitle" [visible]="showConfirmModal" (close)="annulerConfirmation()">
   <div class="modal-body">
-    @if (rdvAAnnuler) {
-      <p>Voulez-vous annuler ce rendez-vous avec Dr. {{ rdvAAnnuler.medecinPrenom }} {{ rdvAAnnuler.medecinNom }} du {{ formatHeure(rdvAAnnuler.heureDebut) }} ?</p>
-      <div class="info-banner">
-        <i class="ti ti-info-circle"></i>
-        Cette annulation affectera votre score de fiabilité.
-      </div>
+    @if (rdvSelectionne) {
+      <p>{{ confirmModalMessage }}</p>
+      @if (confirmType === 'annuler') {
+        <div class="info-banner">
+          <i class="ti ti-info-circle"></i>
+          Cette annulation affectera votre score de fiabilité.
+        </div>
+      }
+      @if (confirmType === 'absent') {
+        <div class="info-banner">
+          <i class="ti ti-info-circle"></i>
+          Cette déclaration affectera le score de fiabilité du médecin.
+        </div>
+      }
     }
   </div>
   <div class="modal-footer">
-    <button class="btn-cancel" (click)="annulerAnnulation()">Retour</button>
-    <button class="btn-confirm danger" (click)="confirmerAnnulation()">
-      <i class="ti ti-x"></i> Confirmer l'annulation
+    <button class="btn-cancel" (click)="annulerConfirmation()">Retour</button>
+    <button class="btn-confirm" [class.danger]="confirmType === 'annuler' || confirmType === 'absent'" (click)="confirmerAction()">
+      <i class="ti ti-check"></i> Confirmer
     </button>
   </div>
 </app-modal>

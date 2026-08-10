@@ -21,9 +21,22 @@
           <label><i class="ti ti-user"></i> Nom</label>
           <input type="text" [(ngModel)]="searchNom" placeholder="Nom du médecin">
         </div>
-        <div class="field">
+        <div class="field specialite-field">
           <label><i class="ti ti-stethoscope"></i> Spécialité</label>
-          <input type="text" [(ngModel)]="searchSpecialite" placeholder="Cardiologue, généraliste...">
+          <button type="button" class="specialite-toggle" (click)="showSpecialiteDropdown = !showSpecialiteDropdown">
+            <span>{{ specialitesLabel }}</span>
+            <i class="ti" [class.ti-chevron-down]="!showSpecialiteDropdown" [class.ti-chevron-up]="showSpecialiteDropdown"></i>
+          </button>
+          @if (showSpecialiteDropdown) {
+            <div class="specialite-dropdown">
+              @for (opt of specialites; track opt.valeur) {
+                <label class="specialite-option">
+                  <input type="checkbox" [checked]="searchSpecialites.includes(opt.valeur)" (change)="toggleSpecialite(opt.valeur)">
+                  {{ opt.libelle }}
+                </label>
+              }
+            </div>
+          }
         </div>
         <div class="field">
           <label><i class="ti ti-calendar"></i> Date</label>
@@ -75,7 +88,7 @@
 
               <div class="doctor-info">
                 <div class="doctor-name">Dr. {{ doctor.prenom }} {{ doctor.nom }}</div>
-                <span class="specialty-chip">{{ doctor.specialite }}</span>
+                <span class="specialty-chip">{{ specialiteLibelle(doctor.specialite) }}</span>
                 @if (doctor.adresseCabinet) {
                   <div class="doctor-city">
                     <i class="ti ti-map-pin"></i> {{ doctor.adresseCabinet }}
@@ -104,7 +117,7 @@
         <div class="doctor-banner-avatar">{{ initials(selectedDoctor) }}</div>
         <div class="details-title">
           <h2>Dr. {{ selectedDoctor.prenom }} {{ selectedDoctor.nom }}</h2>
-          <span class="specialty-chip light">{{ selectedDoctor.specialite }}</span>
+          <span class="specialty-chip light">{{ specialiteLibelle(selectedDoctor.specialite) }}</span>
         </div>
       </div>
 
@@ -166,7 +179,7 @@
         </div>
         <div class="detail-row">
           <span class="label">Spécialité</span>
-          <span class="value">{{ selectedDoctor.specialite }}</span>
+          <span class="value">{{ specialiteLibelle(selectedDoctor.specialite) }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Date</span>

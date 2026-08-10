@@ -90,6 +90,19 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.profile-section:hover {
+  background: #eaf4ff;
+  border-color: #bcdcff;
+}
+
+.profile-edit-icon {
+  font-size: 13px;
+  color: #adb5bd;
+  flex-shrink: 0;
 }
 
 .profile-avatar {
@@ -140,6 +153,54 @@
 .modal-body {
   padding: 20px;
   font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field label {
+  font-size: 12px;
+  color: #868e96;
+  font-weight: 500;
+}
+
+.field input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  background: #f8f9fa;
+  color: #212529;
+  font-size: 13px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: #1971c2;
+}
+
+.info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  border: 1px solid transparent;
+}
+
+.info-banner.danger {
+  background: #ffe3e3;
+  border-color: #ffa8a8;
+  color: #c92a2a;
 }
 
 .modal-footer {
@@ -172,6 +233,20 @@
 
 .btn-cancel:hover {
   background: #e9ecef;
+}
+
+.btn-confirm {
+  background: #1971c2;
+  color: #fff;
+}
+
+.btn-confirm:hover {
+  background: #1864ab;
+}
+
+.btn-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .btn-confirm.danger {

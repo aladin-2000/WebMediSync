@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { CreneauxComponent } from './creneaux/creneaux.component';
-import { StatsComponent } from './stats/stats.component';
+import { HistoriqueComponent } from './historique/historique.component';
 
-export type ViewName = 'calendar' | 'recurrences' | 'creneaux' | 'stats';
+export type ViewName = 'calendar' | 'recurrences' | 'creneaux' | 'historique';
 
 @Component({
   selector: 'app-medecin-layout',
   standalone: true,
-  imports: [CommonModule, SidebarComponent, CalendarComponent, CreneauxComponent, StatsComponent],
+  imports: [CommonModule, SidebarComponent, CalendarComponent, CreneauxComponent, HistoriqueComponent],
   templateUrl: './medecin-layout.component.html',
   styleUrls: ['./medecin-layout.component.css'],
 })

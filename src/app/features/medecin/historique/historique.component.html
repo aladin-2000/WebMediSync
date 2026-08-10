@@ -1,24 +1,15 @@
-<div class="history-page">
-
-  <!-- En-tête -->
-  <div class="hero">
-    <div class="hero-text">
-      <h1><i class="ti ti-history"></i> Historique de mes visites</h1>
-      <p>Consultez le détail de vos visites réalisées, absences et annulations, semaine par semaine</p>
-    </div>
-    <div class="hero-deco"><i class="ti ti-report-analytics"></i></div>
-  </div>
+<div class="historique-view">
 
   <!-- Navigation de la semaine -->
   <div class="month-nav">
-    <button class="btn-nav" (click)="changeWeek(-1)">
+    <button class="btn" (click)="changeWeek(-1)" aria-label="Semaine précédente">
       <i class="ti ti-chevron-left"></i>
     </button>
     <div class="month-label">{{ weekLabel }}</div>
-    <button class="btn-nav" (click)="changeWeek(1)">
+    <button class="btn" (click)="changeWeek(1)" aria-label="Semaine suivante">
       <i class="ti ti-chevron-right"></i>
     </button>
-    <button class="btn-nav" (click)="goToday()">Cette semaine</button>
+    <button class="btn" (click)="goToday()" style="margin-left:8px">Cette semaine</button>
   </div>
 
   @if (error) {
@@ -29,29 +20,37 @@
   }
 
   @if (isLoading) {
-    <div class="empty-state"><i class="ti ti-loader-2 spin"></i><p>Chargement de l'historique...</p></div>
+    <div class="empty-state">Chargement de l'historique...</div>
   } @else {
     <!-- Statistiques -->
     <div class="stats-row">
-      <div class="stat-card done">
-        <i class="ti ti-calendar-check"></i>
-        <div class="stat-num">{{ getTotalVisits() }}</div>
-        <div class="stat-label">Visites réalisées</div>
+      <div class="stat-card">
+        <div class="stat-icon success"><i class="ti ti-calendar-check"></i></div>
+        <div class="stat-body">
+          <div class="stat-num">{{ getTotalVisits() }}</div>
+          <div class="stat-label">Visites réalisées</div>
+        </div>
       </div>
-      <div class="stat-card absent">
-        <i class="ti ti-user-x"></i>
-        <div class="stat-num">{{ getTotalAbsences() }}</div>
-        <div class="stat-label">Absences</div>
+      <div class="stat-card">
+        <div class="stat-icon warning"><i class="ti ti-user-x"></i></div>
+        <div class="stat-body">
+          <div class="stat-num">{{ getTotalAbsences() }}</div>
+          <div class="stat-label">Absences</div>
+        </div>
       </div>
-      <div class="stat-card cancelled">
-        <i class="ti ti-alert-circle"></i>
-        <div class="stat-num">{{ getTotalCancellations() }}</div>
-        <div class="stat-label">Annulations</div>
+      <div class="stat-card">
+        <div class="stat-icon danger"><i class="ti ti-alert-circle"></i></div>
+        <div class="stat-body">
+          <div class="stat-num">{{ getTotalCancellations() }}</div>
+          <div class="stat-label">Annulations</div>
+        </div>
       </div>
-      <div class="stat-card rate">
-        <i class="ti ti-percentage"></i>
-        <div class="stat-num">{{ getCancellationRate() }}%</div>
-        <div class="stat-label">Taux d'annulation</div>
+      <div class="stat-card">
+        <div class="stat-icon accent"><i class="ti ti-percentage"></i></div>
+        <div class="stat-body">
+          <div class="stat-num">{{ getCancellationRate() }}%</div>
+          <div class="stat-label">Taux d'annulation</div>
+        </div>
       </div>
     </div>
 
@@ -68,10 +67,8 @@
           @for (visit of completedVisits; track visit.id) {
             <div class="visit-card">
               <div class="visit-header">
-                <div class="visit-doctor">Dr. {{ visit.medecinPrenom }} {{ visit.medecinNom }}</div>
-                <div class="visit-status done">
-                  <i class="ti ti-check"></i> Réalisée
-                </div>
+                <div class="visit-name"><i class="ti ti-id-badge-2"></i> {{ delegueLabel(visit) }}</div>
+                <span class="badge success">Réalisée</span>
               </div>
               <div class="visit-details">
                 <div class="detail">
@@ -79,9 +76,6 @@
                 </div>
                 <div class="detail">
                   <i class="ti ti-clock"></i> {{ formatHeure(visit.heureDebut) }}
-                </div>
-                <div class="detail">
-                  <i class="ti ti-stethoscope"></i> {{ visit.medecinSpecialite }}
                 </div>
               </div>
             </div>
@@ -103,10 +97,8 @@
           @for (absence of absences; track absence.id) {
             <div class="visit-card absent">
               <div class="visit-header">
-                <div class="visit-doctor">Dr. {{ absence.medecinPrenom }} {{ absence.medecinNom }}</div>
-                <div class="visit-status absent">
-                  <i class="ti ti-user-x"></i> {{ absence.statut === 'ABSENT_MEDECIN' ? 'Médecin absent' : 'Vous étiez absent' }}
-                </div>
+                <div class="visit-name"><i class="ti ti-id-badge-2"></i> {{ delegueLabel(absence) }}</div>
+                <span class="badge warning">{{ absence.statut === 'ABSENT_MEDECIN' ? 'Vous étiez absent' : 'Délégué absent' }}</span>
               </div>
               <div class="visit-details">
                 <div class="detail">
@@ -135,10 +127,8 @@
           @for (cancellation of cancellations; track cancellation.id) {
             <div class="visit-card cancelled">
               <div class="visit-header">
-                <div class="visit-doctor">Dr. {{ cancellation.medecinPrenom }} {{ cancellation.medecinNom }}</div>
-                <div class="visit-status cancelled">
-                  <i class="ti ti-x"></i> Annulée{{ cancellation.annulePar === 'MEDECIN' ? ' par le médecin' : '' }}
-                </div>
+                <div class="visit-name"><i class="ti ti-id-badge-2"></i> {{ delegueLabel(cancellation) }}</div>
+                <span class="badge neutral">Annulée{{ cancellation.annulePar === 'MEDECIN' ? ' (par vous)' : ' (par le délégué)' }}</span>
               </div>
               <div class="visit-details">
                 <div class="detail">

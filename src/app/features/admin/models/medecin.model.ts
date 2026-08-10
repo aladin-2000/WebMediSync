@@ -5,6 +5,7 @@ export interface MedecinResponse {
   prenom: string;
   specialite: string;
   adresseCabinet: string | null;
+  telephone: string | null;
   latitude: number | null;
   longitude: number | null;
   photoUrl: string | null;
@@ -24,11 +25,17 @@ export interface CreerMedecinRequest {
   scoreFiabiliteMin?: number;
 }
 
+export interface SpecialiteOption {
+  valeur: string;
+  libelle: string;
+}
+
 export interface ModifierMedecinRequest {
   nom: string;
   prenom: string;
   specialite: string;
   adresseCabinet?: string;
+  telephone?: string;
   latitude?: number;
   longitude?: number;
   scoreFiabiliteMin?: number;

@@ -2,25 +2,37 @@
 
   <div class="stats-grid-4">
     <div class="stat-card">
-      <div class="stat-num" style="color: #1971c2">{{ stats.total }}</div>
-      <div class="stat-label">Créneaux ce mois</div>
+      <div class="stat-icon accent"><i class="ti ti-calendar"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{ stats.total }}</div>
+        <div class="stat-label">Créneaux ce mois</div>
+      </div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" style="color: #2f9e44">{{ stats.reserves }}</div>
-      <div class="stat-label">Visites réalisées</div>
+      <div class="stat-icon success"><i class="ti ti-circle-check"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{ stats.reserves }}</div>
+        <div class="stat-label">Visites réalisées</div>
+      </div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" style="color: #f59f00">{{ stats.taux }}%</div>
-      <div class="stat-label">Taux remplissage</div>
+      <div class="stat-icon warning"><i class="ti ti-chart-bar"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{ stats.taux }}%</div>
+        <div class="stat-label">Taux remplissage</div>
+      </div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" style="color: #c92a2a">{{ stats.annulations }}</div>
-      <div class="stat-label">Annulations</div>
+      <div class="stat-icon danger"><i class="ti ti-calendar-x"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{ stats.annulations }}</div>
+        <div class="stat-label">Annulations</div>
+      </div>
     </div>
   </div>
 
   <div class="chart-card">
-    <div class="chart-title">Remplissage par jour de la semaine</div>
+    <div class="chart-title"><i class="ti ti-chart-bar"></i> Remplissage par jour de la semaine</div>
     <div class="bar-chart">
       @for (jour of statsJours; track jour.label) {
         <div class="chart-bar">

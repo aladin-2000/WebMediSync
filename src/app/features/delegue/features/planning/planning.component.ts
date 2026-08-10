@@ -13,6 +13,8 @@ const MONTHS = [
   'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
 ];
 
+type ActionType = 'realise' | 'absent' | 'annuler';
+
 interface PlanningCell {
   date: Date;
   dateISO: string;
@@ -38,8 +40,9 @@ export class PlanningComponent implements OnInit {
   processingId: string | null = null;
   actionError = '';
 
-  showAnnulerModal = false;
-  rdvAAnnuler: RendezVousEnrichi | null = null;
+  showConfirmModal = false;
+  confirmType: ActionType | null = null;
+  rdvSelectionne: RendezVousEnrichi | null = null;
 
   readonly dayLabels = DAYS_LABELS;
 
@@ -84,6 +87,34 @@ export class PlanningComponent implements OnInit {
       });
     }
     return cells;
+  }
+
+  get confirmModalTitle(): string {
+    switch (this.confirmType) {
+      case 'realise': return 'Marquer réalisé';
+      case 'absent': return 'Médecin absent';
+      case 'annuler': return 'Annuler le rendez-vous';
+      default: return '';
+    }
+  }
+
+  get confirmModalMessage(): string {
+    const rdv = this.rdvSelectionne;
+    if (!rdv) {
+      return '';
+    }
+    const medecin = `Dr. ${rdv.medecinPrenom} ${rdv.medecinNom}`;
+    const heure = this.formatHeure(rdv.heureDebut);
+    switch (this.confirmType) {
+      case 'realise':
+        return `Confirmez-vous que le rendez-vous avec ${medecin} du ${heure} a bien eu lieu ?`;
+      case 'absent':
+        return `Confirmez-vous que ${medecin} ne s'est pas présenté au rendez-vous du ${heure} ?`;
+      case 'annuler':
+        return `Voulez-vous annuler le rendez-vous avec ${medecin} du ${heure} ?`;
+      default:
+        return '';
+    }
   }
 
   chargerSemaine(): void {
@@ -140,66 +171,48 @@ export class PlanningComponent implements OnInit {
     return heure ? heure.slice(0, 5) : '';
   }
 
-  marquerRealise(rdv: RendezVousEnrichi): void {
+  /** Le délégué ne peut annuler que tant que l'heure de début du rendez-vous n'est pas passée. */
+  peutEncoreAnnuler(rdv: RendezVousEnrichi): boolean {
+    if (!rdv.date || !rdv.heureDebut) {
+      return true;
+    }
+    const debut = new Date(`${rdv.date}T${rdv.heureDebut}`);
+    return debut.getTime() > Date.now();
+  }
+
+  demanderConfirmation(type: ActionType, rdv: RendezVousEnrichi): void {
+    this.confirmType = type;
+    this.rdvSelectionne = rdv;
+    this.showConfirmModal = true;
     this.actionError = '';
-    this.processingId = rdv.id;
-    this.rendezVousService.marquerRealise(rdv.id).subscribe({
-      next: (response) => {
-        this.processingId = null;
-        if (response.success) {
-          this.chargerSemaine();
-        } else {
-          this.actionError = response.message;
-        }
-      },
-      error: (err) => {
-        this.processingId = null;
-        this.actionError = err?.error?.message ?? 'Erreur lors de la mise à jour du rendez-vous.';
-      },
-    });
   }
 
-  marquerAbsent(rdv: RendezVousEnrichi): void {
-    this.actionError = '';
-    this.processingId = rdv.id;
-    this.rendezVousService.marquerAbsent(rdv.id).subscribe({
-      next: (response) => {
-        this.processingId = null;
-        if (response.success) {
-          this.chargerSemaine();
-        } else {
-          this.actionError = response.message;
-        }
-      },
-      error: (err) => {
-        this.processingId = null;
-        this.actionError = err?.error?.message ?? 'Erreur lors de la mise à jour du rendez-vous.';
-      },
-    });
+  annulerConfirmation(): void {
+    this.showConfirmModal = false;
+    this.confirmType = null;
+    this.rdvSelectionne = null;
   }
 
-  demanderAnnulation(rdv: RendezVousEnrichi): void {
-    this.rdvAAnnuler = rdv;
-    this.showAnnulerModal = true;
-  }
-
-  annulerAnnulation(): void {
-    this.showAnnulerModal = false;
-    this.rdvAAnnuler = null;
-  }
-
-  confirmerAnnulation(): void {
-    const rdv = this.rdvAAnnuler;
-    if (!rdv) {
+  confirmerAction(): void {
+    const rdv = this.rdvSelectionne;
+    const type = this.confirmType;
+    if (!rdv || !type) {
       return;
     }
-    this.showAnnulerModal = false;
+    this.showConfirmModal = false;
     this.actionError = '';
     this.processingId = rdv.id;
-    this.rendezVousService.annulerDelegue(rdv.id).subscribe({
+
+    const appel =
+      type === 'realise' ? this.rendezVousService.marquerRealiseDelegue(rdv.id)
+      : type === 'absent' ? this.rendezVousService.marquerAbsentMedecin(rdv.id)
+      : this.rendezVousService.annulerDelegue(rdv.id);
+
+    appel.subscribe({
       next: (response) => {
         this.processingId = null;
-        this.rdvAAnnuler = null;
+        this.confirmType = null;
+        this.rdvSelectionne = null;
         if (response.success) {
           this.chargerSemaine();
         } else {
@@ -208,8 +221,9 @@ export class PlanningComponent implements OnInit {
       },
       error: (err) => {
         this.processingId = null;
-        this.rdvAAnnuler = null;
-        this.actionError = err?.error?.message ?? "Erreur lors de l'annulation du rendez-vous.";
+        this.confirmType = null;
+        this.rdvSelectionne = null;
+        this.actionError = err?.error?.message ?? 'Erreur lors de la mise à jour du rendez-vous.';
       },
     });
   }

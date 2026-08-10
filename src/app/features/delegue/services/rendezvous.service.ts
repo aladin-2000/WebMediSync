@@ -27,12 +27,22 @@ export class RendezVousService {
     });
   }
 
-  marquerRealise(id: string): Observable<ApiResponse<RendezVousResponse>> {
-    return this.http.patch<ApiResponse<RendezVousResponse>>(`${this.baseUrl}/${id}/realise`, {});
+  marquerRealiseDelegue(id: string): Observable<ApiResponse<RendezVousResponse>> {
+    return this.http.patch<ApiResponse<RendezVousResponse>>(`${this.baseUrl}/${id}/realise-delegue`, {});
   }
 
-  marquerAbsent(id: string): Observable<ApiResponse<RendezVousResponse>> {
-    return this.http.patch<ApiResponse<RendezVousResponse>>(`${this.baseUrl}/${id}/absent`, {});
+  marquerRealiseMedecin(id: string): Observable<ApiResponse<RendezVousResponse>> {
+    return this.http.patch<ApiResponse<RendezVousResponse>>(`${this.baseUrl}/${id}/realise-medecin`, {});
+  }
+
+  /** Appelé par le DELEGUE : constate que le médecin ne s'est pas présenté. */
+  marquerAbsentMedecin(id: string): Observable<ApiResponse<RendezVousResponse>> {
+    return this.http.patch<ApiResponse<RendezVousResponse>>(`${this.baseUrl}/${id}/absent-medecin`, {});
+  }
+
+  /** Appelé par le MEDECIN : constate que le délégué ne s'est pas présenté. */
+  marquerAbsentDelegue(id: string): Observable<ApiResponse<RendezVousResponse>> {
+    return this.http.patch<ApiResponse<RendezVousResponse>>(`${this.baseUrl}/${id}/absent-delegue`, {});
   }
 
   listeJour(delegueId: string, date: string): Observable<ApiResponse<RendezVousResponse[]>> {

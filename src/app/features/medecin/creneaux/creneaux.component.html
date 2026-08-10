@@ -1,37 +1,183 @@
 <div class="creneaux-view">
 
-  <div class="section-header">
-    <div class="section-title">Rendez-vous de la semaine</div>
-    <div class="header-actions">
-      <button class="btn" (click)="changeWeek(-1)" aria-label="Semaine précédente">
-        <i class="ti ti-chevron-left"></i>
-      </button>
-      <span class="week-label">{{ currentWeekLabel }}</span>
-      <button class="btn" (click)="changeWeek(1)" aria-label="Semaine suivante">
-        <i class="ti ti-chevron-right"></i>
-      </button>
+  @if (error) {
+    <div class="info-banner danger">
+      <i class="ti ti-alert-triangle"></i>
+      <span>{{ error }}</span>
+    </div>
+  }
+
+  <!-- Navigation de la semaine -->
+  <div class="month-nav">
+    <button class="btn" (click)="changeWeek(-1)" aria-label="Semaine précédente">
+      <i class="ti ti-chevron-left"></i>
+    </button>
+    <div class="month-label">{{ weekLabel }}</div>
+    <button class="btn" (click)="changeWeek(1)" aria-label="Semaine suivante">
+      <i class="ti ti-chevron-right"></i>
+    </button>
+    <button class="btn" (click)="goToday()" style="margin-left:8px">Cette semaine</button>
+    <div class="legend">
+      <span class="badge info"><span class="dot-badge accent"></span>Confirmé</span>
+      <span class="badge success"><span class="dot-badge green"></span>Réalisé</span>
     </div>
   </div>
 
-  <div class="week-grid">
-    @for (jour of semaine; track jour.label; let i = $index) {
-      <div class="day-column">
-        <div class="day-header">{{ jour.label }}</div>
+  @if (isLoading) {
+    <div class="empty-state">Chargement des rendez-vous...</div>
+  } @else {
+    <div class="week-grid">
+      @for (cell of cells; track cell.dateISO) {
+        <div class="week-col" [class.today]="cell.isToday">
+          <div class="day-num">{{ cell.label }}</div>
 
-        @if (jour.creneaux.length === 0) {
-          <div class="empty-state">Aucun créneau</div>
-        } @else {
-          <div class="slots-list">
-            @for (slot of jour.creneaux; track slot.heure; let j = $index) {
-              <div class="timeline-slot" [class.reserve]="slot.statut === 'reserve'" [class.libre]="slot.statut === 'libre'">
-                <div class="dot" [class.taken]="slot.statut === 'reserve'" [class.free]="slot.statut === 'libre'"></div>
-                <span class="slot-time">{{ slot.heure }}</span>
+          @if (cell.rendezvous.length === 0) {
+            <div class="no-reservation">Libre</div>
+          } @else {
+            @for (rdv of cell.rendezvous; track rdv.id) {
+              <div
+                class="reservation-card"
+                [class.statut-annule]="rdv.statut === 'ANNULE'"
+                [class.statut-realise]="rdv.statut === 'REALISE'"
+                [class.statut-absent]="rdv.statut === 'ABSENT_MEDECIN' || rdv.statut === 'ABSENT_DELEGUE'"
+                (click)="ouvrirDetail(rdv)">
+                <div class="res-time">{{ formatHeure(rdv.heureDebut) }} - {{ formatHeure(rdv.heureFin) }}</div>
+                <div class="res-doctor"><i class="ti ti-id-badge-2"></i> {{ delegueLabel(rdv) }}</div>
+
+                <div class="res-status">
+                  @switch (rdv.statut) {
+                    @case ('RESERVE') {
+                      @if (rdv.realiseParMedecin) {
+                        <span class="badge warning">En attente du délégué</span>
+                      } @else {
+                        <span class="badge info">Confirmé</span>
+                      }
+                    }
+                    @case ('REALISE') { <span class="badge success">Réalisé</span> }
+                    @case ('ABSENT_MEDECIN') { <span class="badge warning">Vous étiez absent</span> }
+                    @case ('ABSENT_DELEGUE') { <span class="badge warning">Délégué absent</span> }
+                    @case ('ANNULE') { <span class="badge neutral">Annulé{{ rdv.annulePar === 'DELEGUE' ? ' (délégué)' : '' }}</span> }
+                  }
+                </div>
+
+                @if (rdv.statut === 'RESERVE' && !rdv.realiseParMedecin) {
+                  <div class="res-actions">
+                    <button class="btn-action realise" title="Marquer ce rendez-vous comme réalisé" [disabled]="processingId === rdv.id" (click)="demanderAction('realise', rdv, $event)">
+                      <i class="ti ti-check"></i> Réalisé
+                    </button>
+                    <button class="btn-action absent" title="Signaler que le délégué n'était pas présent" [disabled]="processingId === rdv.id" (click)="demanderAction('absent', rdv, $event)">
+                      <i class="ti ti-user-x"></i> Délégué absent
+                    </button>
+                    <button class="btn-action annuler" title="Annuler ce rendez-vous" [disabled]="processingId === rdv.id" (click)="demanderAction('annuler', rdv, $event)">
+                      <i class="ti ti-x"></i> Annuler
+                    </button>
+                  </div>
+                }
               </div>
             }
+          }
+        </div>
+      }
+    </div>
+  }
+
+</div>
+
+<!-- Modal : Détails du rendez-vous / confirmation d'action -->
+<app-modal [title]="actionMode ? actionModalTitle : 'Détails du rendez-vous'" [visible]="showDetailModal" (close)="fermerDetail()">
+  <div class="modal-body">
+    @if (selectedRdv) {
+      @if (!actionMode) {
+        <div class="reservation-details">
+          <div class="detail-row">
+            <span class="label">Délégué</span>
+            <span class="value">{{ delegueLabel(selectedRdv) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Date</span>
+            <span class="value">{{ formatDateLongue(selectedRdv.date) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Heure</span>
+            <span class="value">{{ formatHeure(selectedRdv.heureDebut) }} - {{ formatHeure(selectedRdv.heureFin) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Statut</span>
+            <span class="value">
+              @switch (selectedRdv.statut) {
+                @case ('RESERVE') { <span class="badge info">Confirmé</span> }
+                @case ('REALISE') { <span class="badge success">Réalisé</span> }
+                @case ('ABSENT_MEDECIN') { <span class="badge warning">Vous étiez absent</span> }
+                @case ('ABSENT_DELEGUE') { <span class="badge warning">Délégué absent</span> }
+                @case ('ANNULE') { <span class="badge neutral">Annulé{{ selectedRdv.annulePar === 'DELEGUE' ? ' (délégué)' : '' }}</span> }
+              }
+            </span>
+          </div>
+          @if (selectedRdv.motifAnnulation) {
+            <div class="detail-row">
+              <span class="label">Motif d'annulation</span>
+              <span class="value">{{ selectedRdv.motifAnnulation }}</span>
+            </div>
+          }
+        </div>
+
+        @if (actionError) {
+          <div class="info-banner danger">
+            <i class="ti ti-alert-triangle"></i>
+            <span>{{ actionError }}</span>
           </div>
         }
-      </div>
+
+        @if (selectedRdv.statut === 'RESERVE' && !selectedRdv.realiseParMedecin) {
+          <div class="detail-actions">
+            <button class="btn primary" [disabled]="processingId === selectedRdv.id" (click)="demanderAction('realise', selectedRdv)">
+              <i class="ti ti-check"></i> Marquer réalisé
+            </button>
+            <button class="btn warning" [disabled]="processingId === selectedRdv.id" (click)="demanderAction('absent', selectedRdv)">
+              <i class="ti ti-user-x"></i> Délégué absent
+            </button>
+            <button class="btn danger" [disabled]="processingId === selectedRdv.id" (click)="demanderAction('annuler', selectedRdv)">
+              <i class="ti ti-x"></i> Annuler le rendez-vous
+            </button>
+          </div>
+        }
+      } @else {
+        <p>{{ actionModalMessage }}</p>
+
+        @if (actionMode === 'absent') {
+          <div class="info-banner warning">
+            <i class="ti ti-info-circle"></i>
+            Cette déclaration affectera le score de fiabilité du délégué.
+          </div>
+        }
+
+        @if (actionMode === 'annuler') {
+          <div class="field">
+            <label for="motif">Motif d'annulation (obligatoire)</label>
+            <textarea id="motif" rows="3" [(ngModel)]="motifAnnulation" placeholder="Expliquez pourquoi vous annulez ce rendez-vous..."></textarea>
+          </div>
+        }
+
+        @if (actionError) {
+          <div class="info-banner danger">
+            <i class="ti ti-alert-triangle"></i>
+            <span>{{ actionError }}</span>
+          </div>
+        }
+      }
     }
   </div>
 
-</div>
+  @if (actionMode) {
+    <div class="modal-footer">
+      <button class="btn" (click)="annulerAction()">Retour</button>
+      <button class="btn" [class.danger]="actionMode === 'annuler' || actionMode === 'absent'" [class.primary]="actionMode === 'realise'" [disabled]="processingId === selectedRdv?.id" (click)="confirmerAction()">
+        <i class="ti ti-check"></i> {{ processingId === selectedRdv?.id ? 'Envoi...' : 'Confirmer' }}
+      </button>
+    </div>
+  } @else {
+    <div class="modal-footer">
+      <button class="btn" (click)="fermerDetail()">Fermer</button>
+    </div>
+  }
+</app-modal>

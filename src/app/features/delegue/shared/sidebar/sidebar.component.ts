@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { DelegueService } from '../../services/delegue.service';
+import { DelegueResponse } from '../../models/delegue.model';
 import { ModalComponent } from '../modal/modal.component';
 
 // ============================================
@@ -15,7 +17,7 @@ export type PageName = 'search' | 'planning' | 'history';
 @Component({
   selector: 'app-delegue-sidebar',
   standalone: true,
-  imports: [CommonModule, ModalComponent],
+  imports: [CommonModule, FormsModule, ModalComponent],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
@@ -30,6 +32,15 @@ export class SidebarComponent implements OnInit {
   initiales = '';
   score: number | null = null;
   showLogoutConfirm = false;
+
+  delegue: DelegueResponse | null = null;
+
+  showEditProfil = false;
+  formNom = '';
+  formPrenom = '';
+  formTelephone = '';
+  isSavingProfil = false;
+  editProfilError = '';
 
   constructor(
     private authService: AuthService,
@@ -46,6 +57,7 @@ export class SidebarComponent implements OnInit {
       this.delegueService.getByUserId(user.id).subscribe({
         next: (response) => {
           if (response.success) {
+            this.delegue = response.data;
             this.nomComplet = `${response.data.prenom} ${response.data.nom}`;
             this.initiales = `${response.data.prenom?.[0] ?? ''}${response.data.nom?.[0] ?? ''}`.toUpperCase();
             this.score = response.data.scoreFiabilite;
@@ -71,5 +83,51 @@ export class SidebarComponent implements OnInit {
   confirmLogout(): void {
     this.authService.logout();
     this.router.navigateByUrl('/login');
+  }
+
+  ouvrirEditProfil(): void {
+    if (!this.delegue) {
+      return;
+    }
+    this.formNom = this.delegue.nom;
+    this.formPrenom = this.delegue.prenom;
+    this.formTelephone = this.delegue.telephone ?? '';
+    this.editProfilError = '';
+    this.showEditProfil = true;
+  }
+
+  fermerEditProfil(): void {
+    this.showEditProfil = false;
+  }
+
+  enregistrerProfil(): void {
+    if (!this.formNom.trim() || !this.formPrenom.trim()) {
+      this.editProfilError = 'Nom et prénom sont obligatoires.';
+      return;
+    }
+
+    this.isSavingProfil = true;
+    this.editProfilError = '';
+    this.delegueService.updateMonProfil({
+      nom: this.formNom.trim(),
+      prenom: this.formPrenom.trim(),
+      telephone: this.formTelephone.trim() || undefined,
+    }).subscribe({
+      next: (response) => {
+        this.isSavingProfil = false;
+        if (response.success) {
+          this.delegue = response.data;
+          this.nomComplet = `${response.data.prenom} ${response.data.nom}`;
+          this.initiales = `${response.data.prenom?.[0] ?? ''}${response.data.nom?.[0] ?? ''}`.toUpperCase();
+          this.showEditProfil = false;
+        } else {
+          this.editProfilError = response.message;
+        }
+      },
+      error: (err) => {
+        this.isSavingProfil = false;
+        this.editProfilError = err?.error?.message ?? 'Erreur lors de la mise à jour du profil.';
+      },
+    });
   }
 }

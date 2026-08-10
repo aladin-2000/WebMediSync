@@ -39,7 +39,7 @@
   <div class="spacer"></div>
 
   <!-- Profil en bas -->
-  <div class="profile-section">
+  <div class="profile-section" title="Modifier mon profil" (click)="ouvrirEditProfil()">
     <div class="profile-avatar">{{ initiales }}</div>
     <div class="profile-info">
       <div class="profile-name">{{ nomComplet }}</div>
@@ -49,6 +49,7 @@
         </div>
       }
     </div>
+    <i class="ti ti-pencil profile-edit-icon"></i>
   </div>
 
   <div class="nav-item logout" (click)="askLogout()">
@@ -64,6 +65,35 @@
     <button class="btn-cancel" (click)="cancelLogout()">Annuler</button>
     <button class="btn-confirm danger" (click)="confirmLogout()">
       <i class="ti ti-logout"></i> Se déconnecter
+    </button>
+  </div>
+</app-modal>
+
+<app-modal title="Modifier mon profil" [visible]="showEditProfil" (close)="fermerEditProfil()">
+  <div class="modal-body">
+    <div class="field">
+      <label>Nom</label>
+      <input type="text" [(ngModel)]="formNom">
+    </div>
+    <div class="field">
+      <label>Prénom</label>
+      <input type="text" [(ngModel)]="formPrenom">
+    </div>
+    <div class="field">
+      <label>Téléphone</label>
+      <input type="tel" [(ngModel)]="formTelephone">
+    </div>
+    @if (editProfilError) {
+      <div class="info-banner danger">
+        <i class="ti ti-alert-triangle"></i>
+        <span>{{ editProfilError }}</span>
+      </div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button class="btn-cancel" (click)="fermerEditProfil()">Annuler</button>
+    <button class="btn-confirm" [disabled]="isSavingProfil" (click)="enregistrerProfil()">
+      <i class="ti ti-check"></i> {{ isSavingProfil ? 'Enregistrement...' : 'Enregistrer' }}
     </button>
   </div>
 </app-modal>

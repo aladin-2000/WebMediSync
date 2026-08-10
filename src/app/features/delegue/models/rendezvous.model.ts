@@ -1,4 +1,4 @@
-export type StatutRendezVous = 'CONFIRME' | 'ANNULE' | 'REALISE' | 'ABSENT';
+export type StatutRendezVous = 'RESERVE' | 'ANNULE' | 'REALISE' | 'ABSENT_MEDECIN' | 'ABSENT_DELEGUE';
 export type AnnulePar = 'DELEGUE' | 'MEDECIN' | null;
 
 export interface RendezVousResponse {
@@ -10,6 +10,9 @@ export interface RendezVousResponse {
   statut: StatutRendezVous;
   annulePar: AnnulePar;
   motifAnnulation: string | null;
+  /** Le rendez-vous ne passe a REALISE que lorsque delegue ET medecin ont confirme. */
+  realiseParDelegue: boolean;
+  realiseParMedecin: boolean;
   createdAt: string;
 }
 

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api.config';
 import { ApiResponse } from '../../../core/models/user.model';
-import { CreerMedecinRequest, MedecinResponse, ModifierMedecinRequest } from '../models/medecin.model';
+import { CreerMedecinRequest, MedecinResponse, ModifierMedecinRequest, SpecialiteOption } from '../models/medecin.model';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class MedecinService {
   rechercher(params: {
     date: string;
     nom?: string;
-    specialite?: string;
+    specialites?: string[];
     heureDebut?: string;
     heureFin?: string;
   }): Observable<ApiResponse<MedecinResponse[]>> {
@@ -32,8 +32,8 @@ export class MedecinService {
     if (params.nom) {
       query += `&nom=${encodeURIComponent(params.nom)}`;
     }
-    if (params.specialite) {
-      query += `&specialite=${encodeURIComponent(params.specialite)}`;
+    if (params.specialites && params.specialites.length > 0) {
+      query += `&specialites=${encodeURIComponent(params.specialites.join(','))}`;
     }
     if (params.heureDebut) {
       query += `&heureDebut=${encodeURIComponent(params.heureDebut)}`;
@@ -44,12 +44,20 @@ export class MedecinService {
     return this.http.get<ApiResponse<MedecinResponse[]>>(`${this.baseUrl}/recherche?${query}`);
   }
 
+  getSpecialites(): Observable<ApiResponse<SpecialiteOption[]>> {
+    return this.http.get<ApiResponse<SpecialiteOption[]>>(`${this.baseUrl}/specialites`);
+  }
+
   create(body: CreerMedecinRequest): Observable<ApiResponse<MedecinResponse>> {
     return this.http.post<ApiResponse<MedecinResponse>>(`${this.baseUrl}/creer-medecin-complet`, body);
   }
 
   update(id: string, body: ModifierMedecinRequest): Observable<ApiResponse<MedecinResponse>> {
     return this.http.put<ApiResponse<MedecinResponse>>(`${this.baseUrl}/${id}`, body);
+  }
+
+  updateMonProfil(body: ModifierMedecinRequest): Observable<ApiResponse<MedecinResponse>> {
+    return this.http.put<ApiResponse<MedecinResponse>>(`${this.baseUrl}/mon-profil`, body);
   }
 
   delete(id: string): Observable<ApiResponse<null>> {

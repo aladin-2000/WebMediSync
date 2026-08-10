@@ -1,34 +1,32 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RendezVousService } from '../../services/rendezvous.service';
-import { RendezVousEnrichmentService } from '../../services/rendezvous-enrichment.service';
-import { RendezVousEnrichi } from '../../models/rendezvous-enrichi.model';
-import { AuthService } from '../../../../core/services/auth.service';
-import { toISODate, lundiDeLaSemaine, dimancheDeLaSemaine } from '../../shared/semaine.util';
-
-const MONTHS = [
-  'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-  'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
-];
+import { RendezVousService } from '../../delegue/services/rendezvous.service';
+import { RendezVousMedecinEnrichmentService } from '../services/rendezvous-medecin-enrichment.service';
+import { RendezVousMedecinEnrichi } from '../models/rendezvous-medecin-enrichi.model';
+import { AuthService } from '../../../core/services/auth.service';
+import { MedecinService } from '../../admin/services/medecin.service';
+import { toISODate, lundiDeLaSemaine, dimancheDeLaSemaine } from '../../delegue/shared/semaine.util';
+import { MONTHS } from '../shared/date-labels.constants';
 
 @Component({
-  selector: 'app-history',
+  selector: 'app-historique',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './history.component.html',
-  styleUrls: ['./history.component.css'],
+  templateUrl: './historique.component.html',
+  styleUrls: ['./historique.component.css'],
 })
-export class HistoryComponent implements OnInit {
+export class HistoriqueComponent implements OnInit {
   currentDate = new Date();
 
-  rendezvous: RendezVousEnrichi[] = [];
+  rendezvous: RendezVousMedecinEnrichi[] = [];
   isLoading = false;
   error = '';
 
   constructor(
     private rendezVousService: RendezVousService,
-    private enrichmentService: RendezVousEnrichmentService,
-    private authService: AuthService
+    private enrichmentService: RendezVousMedecinEnrichmentService,
+    private authService: AuthService,
+    private medecinService: MedecinService
   ) {}
 
   ngOnInit(): void {
@@ -46,19 +44,19 @@ export class HistoryComponent implements OnInit {
     return `${lundi.getDate()} ${moisLundi} - ${dimanche.getDate()} ${moisDimanche} ${dimanche.getFullYear()}`;
   }
 
-  get completedVisits(): RendezVousEnrichi[] {
+  get completedVisits(): RendezVousMedecinEnrichi[] {
     return this.rendezvous
       .filter((r) => r.statut === 'REALISE')
       .sort((a, b) => (a.date + a.heureDebut).localeCompare(b.date + b.heureDebut));
   }
 
-  get absences(): RendezVousEnrichi[] {
+  get absences(): RendezVousMedecinEnrichi[] {
     return this.rendezvous
       .filter((r) => r.statut === 'ABSENT_MEDECIN' || r.statut === 'ABSENT_DELEGUE')
       .sort((a, b) => (a.date + a.heureDebut).localeCompare(b.date + b.heureDebut));
   }
 
-  get cancellations(): RendezVousEnrichi[] {
+  get cancellations(): RendezVousMedecinEnrichi[] {
     return this.rendezvous
       .filter((r) => r.statut === 'ANNULE')
       .sort((a, b) => (a.date + a.heureDebut).localeCompare(b.date + b.heureDebut));
@@ -82,26 +80,26 @@ export class HistoryComponent implements OnInit {
   }
 
   chargerSemaine(): void {
-    const delegueId = this.authService.getDelegueId();
-    if (!delegueId) {
-      this.error = 'Profil délégué introuvable.';
+    const medecinId = this.authService.getMedecinId();
+    if (!medecinId) {
+      this.resoudreMedecinId();
       return;
     }
 
     this.isLoading = true;
     this.error = '';
     const semaine = toISODate(this.currentDate);
+    const dateDebut = toISODate(lundiDeLaSemaine(this.currentDate));
+    const dateFin = toISODate(dimancheDeLaSemaine(this.currentDate));
 
-    this.rendezVousService.listeSemaine(delegueId, semaine).subscribe({
+    this.rendezVousService.listeMedecinSemaine(medecinId, semaine).subscribe({
       next: (response) => {
         if (!response.success) {
           this.isLoading = false;
           this.error = response.message;
           return;
         }
-        const dateDebut = toISODate(lundiDeLaSemaine(this.currentDate));
-        const dateFin = toISODate(dimancheDeLaSemaine(this.currentDate));
-        this.enrichmentService.enrichir(response.data, dateDebut, dateFin).subscribe({
+        this.enrichmentService.enrichir(response.data, medecinId, dateDebut, dateFin).subscribe({
           next: (enrichis) => {
             this.isLoading = false;
             this.rendezvous = enrichis;
@@ -116,6 +114,29 @@ export class HistoryComponent implements OnInit {
       error: (err) => {
         this.isLoading = false;
         this.error = err?.error?.message ?? "Erreur lors du chargement de l'historique.";
+      },
+    });
+  }
+
+  private resoudreMedecinId(): void {
+    const user = this.authService.getCurrentUser();
+    if (!user) {
+      return;
+    }
+    this.isLoading = true;
+    this.medecinService.getByUserId(user.id).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        if (response.success) {
+          this.authService.setMedecinId(response.data.id);
+          this.chargerSemaine();
+        } else {
+          this.error = response.message;
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.error = err?.error?.message ?? 'Impossible de récupérer votre profil médecin.';
       },
     });
   }
@@ -143,7 +164,14 @@ export class HistoryComponent implements OnInit {
     const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
     const day = days[date.getDay()];
     const num = date.getDate();
-    const month = MONTHS[date.getMonth()];
+    const month = MONTHS[date.getMonth()].toLowerCase();
     return `${day} ${num} ${month}`;
+  }
+
+  delegueLabel(rdv: RendezVousMedecinEnrichi): string {
+    if (rdv.delegueNom || rdv.deleguePrenom) {
+      return `${rdv.deleguePrenom} ${rdv.delegueNom}`.trim();
+    }
+    return `Délégué #${rdv.delegueId.slice(0, 8)}`;
   }
 }

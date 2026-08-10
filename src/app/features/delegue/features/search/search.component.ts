@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../shared/modal/modal.component';
 import { MedecinService } from '../../../admin/services/medecin.service';
-import { MedecinResponse } from '../../../admin/models/medecin.model';
+import { MedecinResponse, SpecialiteOption } from '../../../admin/models/medecin.model';
 import { CreneauService } from '../../../medecin/services/creneau.service';
 import { CreneauResponse } from '../../../medecin/models/disponibilite.models';
 import { RendezVousService } from '../../services/rendezvous.service';
@@ -20,10 +20,13 @@ export class SearchComponent {
   readonly todayISO = new Date().toISOString().split('T')[0];
 
   searchNom = '';
-  searchSpecialite = '';
   searchDate = this.todayISO;
-  searchHeureDebut = '';
-  searchHeureFin = '';
+  searchHeureDebut = '08:00';
+  searchHeureFin = '17:00';
+
+  specialites: SpecialiteOption[] = [];
+  searchSpecialites: string[] = [];
+  showSpecialiteDropdown = false;
 
   doctors: MedecinResponse[] = [];
   isSearching = false;
@@ -47,17 +50,48 @@ export class SearchComponent {
     private rendezVousService: RendezVousService,
     private authService: AuthService
   ) {
+    this.medecinService.getSpecialites().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.specialites = response.data;
+        }
+      },
+    });
     this.rechercher();
+  }
+
+  toggleSpecialite(valeur: string): void {
+    const index = this.searchSpecialites.indexOf(valeur);
+    if (index === -1) {
+      this.searchSpecialites.push(valeur);
+    } else {
+      this.searchSpecialites.splice(index, 1);
+    }
+  }
+
+  specialiteLibelle(valeur: string): string {
+    return this.specialites.find((s) => s.valeur === valeur)?.libelle ?? valeur;
+  }
+
+  get specialitesLabel(): string {
+    if (this.searchSpecialites.length === 0) {
+      return 'Toutes les spécialités';
+    }
+    if (this.searchSpecialites.length === 1) {
+      return this.specialiteLibelle(this.searchSpecialites[0]);
+    }
+    return `${this.searchSpecialites.length} spécialités sélectionnées`;
   }
 
   rechercher(): void {
     this.searchError = '';
     this.isSearching = true;
     this.hasSearched = true;
+    this.showSpecialiteDropdown = false;
     this.medecinService.rechercher({
       date: this.searchDate,
       nom: this.searchNom || undefined,
-      specialite: this.searchSpecialite || undefined,
+      specialites: this.searchSpecialites.length > 0 ? this.searchSpecialites : undefined,
       heureDebut: this.searchHeureDebut ? `${this.searchHeureDebut}:00` : undefined,
       heureFin: this.searchHeureFin ? `${this.searchHeureFin}:00` : undefined,
     }).subscribe({

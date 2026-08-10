@@ -9,3 +9,9 @@ export interface DelegueResponse {
   scoreFiabilite: number;
   createdAt: string;
 }
+
+export interface ModifierDelegueRequest {
+  nom: string;
+  prenom: string;
+  telephone?: string;
+}

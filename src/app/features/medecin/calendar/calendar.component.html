@@ -9,20 +9,32 @@
   <!-- Stats -->
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-num">{{ stats.total }}</div>
-      <div class="stat-label">Créneaux ce mois</div>
+      <div class="stat-icon accent"><i class="ti ti-calendar"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{ stats.total }}</div>
+        <div class="stat-label">Créneaux ce mois</div>
+      </div>
     </div>
     <div class="stat-card">
-      <div class="stat-num">{{ stats.reserves }}</div>
-      <div class="stat-label">Déjà réservés</div>
+      <div class="stat-icon success"><i class="ti ti-lock"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{ stats.reserves }}</div>
+        <div class="stat-label">Déjà réservés</div>
+      </div>
     </div>
     <div class="stat-card">
-      <div class="stat-num">{{ stats.effectues }}</div>
-      <div class="stat-label">Rendez-vous effectués</div>
+      <div class="stat-icon teal"><i class="ti ti-circle-check"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{ stats.effectues }}</div>
+        <div class="stat-label">Rendez-vous effectués</div>
+      </div>
     </div>
     <div class="stat-card">
-      <div class="stat-num">{{ stats.taux }}%</div>
-      <div class="stat-label">Taux remplissage</div>
+      <div class="stat-icon warning"><i class="ti ti-chart-bar"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{ stats.taux }}%</div>
+        <div class="stat-label">Taux remplissage</div>
+      </div>
     </div>
   </div>
   <!-- End Stats -->

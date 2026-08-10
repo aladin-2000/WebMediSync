@@ -101,7 +101,8 @@
   color: #495057;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 8px 10px;
   border: 1px solid #dee2e6;
@@ -109,6 +110,7 @@
   font-size: 14px;
   font-family: inherit;
   box-sizing: border-box;
+  background: #fff;
 }
 
 .modal-actions {

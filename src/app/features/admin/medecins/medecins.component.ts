@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../medecin/shared/modal/modal.component';
 import { MedecinService } from '../services/medecin.service';
-import { MedecinResponse } from '../models/medecin.model';
+import { MedecinResponse, SpecialiteOption } from '../models/medecin.model';
 
 interface MedecinFormState {
   email: string;
@@ -32,6 +32,7 @@ const EMPTY_FORM: MedecinFormState = {
 })
 export class MedecinsComponent implements OnInit {
   medecins: MedecinResponse[] = [];
+  specialites: SpecialiteOption[] = [];
   isLoading = false;
   errorMessage = '';
 
@@ -45,6 +46,17 @@ export class MedecinsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMedecins();
+    this.medecinService.getSpecialites().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.specialites = response.data;
+        }
+      },
+    });
+  }
+
+  specialiteLibelle(valeur: string): string {
+    return this.specialites.find((s) => s.valeur === valeur)?.libelle ?? valeur;
   }
 
   loadMedecins(): void {

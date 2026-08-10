@@ -31,7 +31,7 @@
           <tr>
             <td>{{ medecin.nom }}</td>
             <td>{{ medecin.prenom }}</td>
-            <td>{{ medecin.specialite }}</td>
+            <td>{{ specialiteLibelle(medecin.specialite) }}</td>
             <td>{{ medecin.adresseCabinet || '—' }}</td>
             <td class="actions">
               <button class="btn" (click)="openEditModal(medecin)">
@@ -75,7 +75,12 @@
     </div>
     <div class="form-group">
       <label for="specialite">Spécialité</label>
-      <input type="text" id="specialite" name="specialite" [(ngModel)]="form.specialite" required>
+      <select id="specialite" name="specialite" [(ngModel)]="form.specialite" required>
+        <option value="" disabled>Choisir une spécialité</option>
+        @for (opt of specialites; track opt.valeur) {
+          <option [value]="opt.valeur">{{ opt.libelle }}</option>
+        }
+      </select>
     </div>
     <div class="form-group">
       <label for="adresseCabinet">Adresse cabinet</label>
