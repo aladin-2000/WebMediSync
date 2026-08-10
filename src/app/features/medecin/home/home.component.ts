@@ -39,6 +39,15 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
     this.nomAffiche = user?.email ?? 'Médecin';
+    if (user) {
+      this.medecinService.getByUserId(user.id).subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.nomAffiche = `Dr. ${response.data.prenom} ${response.data.nom}`;
+          }
+        },
+      });
+    }
     this.chargerSemaine();
     this.chargerNotifications();
   }
