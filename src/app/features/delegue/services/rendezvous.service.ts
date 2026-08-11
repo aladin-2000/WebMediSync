@@ -45,6 +45,10 @@ export class RendezVousService {
     return this.http.patch<ApiResponse<RendezVousResponse>>(`${this.baseUrl}/${id}/absent-delegue`, {});
   }
 
+  listeDelegue(delegueId: string): Observable<ApiResponse<RendezVousResponse[]>> {
+    return this.http.get<ApiResponse<RendezVousResponse[]>>(`${this.baseUrl}/delegue/${delegueId}`);
+  }
+
   listeJour(delegueId: string, date: string): Observable<ApiResponse<RendezVousResponse[]>> {
     return this.http.get<ApiResponse<RendezVousResponse[]>>(
       `${this.baseUrl}/delegue/${delegueId}/jour?date=${date}`

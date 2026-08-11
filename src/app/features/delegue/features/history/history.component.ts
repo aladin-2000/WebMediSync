@@ -5,11 +5,7 @@ import { RendezVousEnrichmentService } from '../../services/rendezvous-enrichmen
 import { RendezVousEnrichi } from '../../models/rendezvous-enrichi.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { toISODate, lundiDeLaSemaine, dimancheDeLaSemaine } from '../../shared/semaine.util';
-
-const MONTHS = [
-  'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-  'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
-];
+import { MONTHS } from '../../../medecin/shared/date-labels.constants';
 
 @Component({
   selector: 'app-history',
@@ -38,8 +34,8 @@ export class HistoryComponent implements OnInit {
   get weekLabel(): string {
     const lundi = lundiDeLaSemaine(this.currentDate);
     const dimanche = dimancheDeLaSemaine(this.currentDate);
-    const moisLundi = MONTHS[lundi.getMonth()];
-    const moisDimanche = MONTHS[dimanche.getMonth()];
+    const moisLundi = MONTHS[lundi.getMonth()].toLowerCase();
+    const moisDimanche = MONTHS[dimanche.getMonth()].toLowerCase();
     if (lundi.getMonth() === dimanche.getMonth()) {
       return `${lundi.getDate()} - ${dimanche.getDate()} ${moisDimanche} ${dimanche.getFullYear()}`;
     }
@@ -143,7 +139,7 @@ export class HistoryComponent implements OnInit {
     const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
     const day = days[date.getDay()];
     const num = date.getDate();
-    const month = MONTHS[date.getMonth()];
+    const month = MONTHS[date.getMonth()].toLowerCase();
     return `${day} ${num} ${month}`;
   }
 }

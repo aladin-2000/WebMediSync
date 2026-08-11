@@ -1,0 +1,57 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    @if (state === 'loading') {
+      <div class="state-block">
+        <div class="logo-box"><i class="ti ti-loader-2 spin"></i></div>
+        <h2>Vérification en cours...</h2>
+        <p>Merci de patienter un instant.</p>
+      </div>
+    }
+
+    @if (state === 'success') {
+      <div class="state-block">
+        <div class="logo-box success"><i class="ti ti-circle-check"></i></div>
+        <h2>Email vérifié !</h2>
+        <p>Votre adresse email a été vérifiée avec succès. Vous pouvez maintenant vous connecter.</p>
+        <a routerLink="/login" class="btn-login">Se connecter</a>
+      </div>
+    }
+
+    @if (state === 'missing' || state === 'error') {
+      <div class="state-block">
+        <div class="logo-box danger"><i class="ti ti-alert-triangle"></i></div>
+        @if (state === 'missing') {
+          <h2>Lien invalide</h2>
+          <p>Ce lien de vérification est incomplet, ou vous devez vérifier votre email avant de vous connecter. Saisissez votre email pour recevoir un nouveau lien.</p>
+        } @else {
+          <h2>Échec de la vérification</h2>
+          <p>{{ errorMessage }}</p>
+        }
+
+        @if (!resendDone) {
+          <form class="resend-form" (ngSubmit)="renvoyer()">
+            <div class="input-icon">
+              <i class="ti ti-mail"></i>
+              <input type="email" name="resendEmail" [(ngModel)]="resendEmail" placeholder="Votre email" required>
+            </div>
+            @if (resendError) {
+              <div class="error-banner"><i class="ti ti-alert-circle"></i><span>{{ resendError }}</span></div>
+            }
+            <button type="submit" class="btn-login" [disabled]="isResending">
+              {{ isResending ? 'Envoi...' : "Renvoyer l'email de vérification" }}
+            </button>
+          </form>
+        } @else {
+          <div class="info-banner">
+            <i class="ti ti-mail-check"></i>
+            <span>Un nouvel email de vérification a été envoyé à {{ resendEmail }}.</span>
+          </div>
+        }
+
+        <a routerLink="/login" class="back-link">Retour à la connexion</a>
+      </div>
+    }
+
+  </div>
+</div>

@@ -1,0 +1,110 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+    @if (!isDone) {
+      <div class="auth-header">
+        <div class="logo-box">
+          <i class="ti ti-stethoscope"></i>
+        </div>
+        <h2>Créer un compte médecin</h2>
+        <p>Renseignez vos informations pour rejoindre MediSync</p>
+      </div>
+
+      <form (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" name="nom" [(ngModel)]="nom" placeholder="Nom" required>
+          </div>
+          <div class="form-group">
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" name="prenom" [(ngModel)]="prenom" placeholder="Prénom" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <div class="input-icon">
+            <i class="ti ti-mail"></i>
+            <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="vous@exemple.com" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <div class="input-icon">
+              <i class="ti ti-lock"></i>
+              <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="6 caractères min." required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirmer</label>
+            <div class="input-icon">
+              <i class="ti ti-lock"></i>
+              <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" placeholder="Confirmer" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="specialite">Spécialité</label>
+          <select id="specialite" name="specialite" [(ngModel)]="specialite" required>
+            <option value="" disabled>Choisir une spécialité</option>
+            @for (opt of specialites; track opt.valeur) {
+              <option [value]="opt.valeur">{{ opt.libelle }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="adresseCabinet">Adresse du cabinet</label>
+          <div class="input-icon">
+            <i class="ti ti-map-pin"></i>
+            <input type="text" id="adresseCabinet" name="adresseCabinet" [(ngModel)]="adresseCabinet" placeholder="Adresse du cabinet" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="telephone">Téléphone (optionnel)</label>
+          <div class="input-icon">
+            <i class="ti ti-phone"></i>
+            <input type="tel" id="telephone" name="telephone" [(ngModel)]="telephone" placeholder="+216 ..">
+          </div>
+        </div>
+
+        <div class="info-banner">
+          <i class="ti ti-info-circle"></i>
+          <span>Votre profil devra être validé par un administrateur avant d'apparaître dans les recherches des délégués.</span>
+        </div>
+
+        @if (errorMessage) {
+          <div class="error-banner">
+            <i class="ti ti-alert-circle"></i>
+            <span>{{ errorMessage }}</span>
+          </div>
+        }
+
+        <button type="submit" class="btn-login" [disabled]="isLoading">
+          {{ isLoading ? 'Création du compte...' : 'Créer mon compte' }}
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Déjà un compte ? <a routerLink="/login">Se connecter</a>
+      </div>
+    } @else {
+      <div class="success-state">
+        <div class="logo-box success">
+          <i class="ti ti-mail-check"></i>
+        </div>
+        <h2>Vérifiez votre boîte email</h2>
+        <p>
+          Un lien de vérification a été envoyé à <strong>{{ email }}</strong>.
+          Cliquez dessus pour activer votre compte, puis attendez la validation
+          de votre profil par un administrateur avant de vous connecter.
+        </p>
+        <a routerLink="/login" class="btn-login link">Retour à la connexion</a>
+      </div>
+    }
+  </div>
+</div>

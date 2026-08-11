@@ -8,11 +8,7 @@ import { DelegueService } from '../../services/delegue.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { NotificationResponse } from '../../../../core/models/notification.model';
 import { toISODate, lundiDeLaSemaine, dimancheDeLaSemaine } from '../../shared/semaine.util';
-
-const MONTHS = [
-  'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-  'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
-];
+import { MONTHS } from '../../../medecin/shared/date-labels.constants';
 
 @Component({
   selector: 'app-delegue-home',
@@ -60,7 +56,7 @@ export class HomeComponent implements OnInit {
 
   get todayLabel(): string {
     const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-    return `${days[this.today.getDay()]} ${this.today.getDate()} ${MONTHS[this.today.getMonth()]} ${this.today.getFullYear()}`;
+    return `${days[this.today.getDay()]} ${this.today.getDate()} ${MONTHS[this.today.getMonth()].toLowerCase()} ${this.today.getFullYear()}`;
   }
 
   get rendezvousAujourdhui(): RendezVousEnrichi[] {

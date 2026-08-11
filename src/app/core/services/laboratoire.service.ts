@@ -16,4 +16,8 @@ export class LaboratoireService {
   getAll(): Observable<ApiResponse<LaboratoireResponse[]>> {
     return this.http.get<ApiResponse<LaboratoireResponse[]>>(this.baseUrl);
   }
+
+  getByUserId(userId: string): Observable<ApiResponse<LaboratoireResponse>> {
+    return this.http.get<ApiResponse<LaboratoireResponse>>(`${this.baseUrl}/by-user/${userId}`);
+  }
 }

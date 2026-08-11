@@ -10,6 +10,7 @@ export interface MedecinResponse {
   longitude: number | null;
   photoUrl: string | null;
   scoreFiabiliteMin: number;
+  valide: boolean;
   createdAt: string;
 }
 
@@ -23,6 +24,18 @@ export interface CreerMedecinRequest {
   latitude?: number;
   longitude?: number;
   scoreFiabiliteMin?: number;
+}
+
+export interface InscriptionMedecinRequest {
+  email: string;
+  password: string;
+  nom: string;
+  prenom: string;
+  specialite: string;
+  adresseCabinet: string;
+  telephone?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface SpecialiteOption {

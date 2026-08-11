@@ -8,6 +8,7 @@ import { CreneauService } from '../../../medecin/services/creneau.service';
 import { CreneauResponse } from '../../../medecin/models/disponibilite.models';
 import { RendezVousService } from '../../services/rendezvous.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { DAYS_LABELS_LONG } from '../../../medecin/shared/date-labels.constants';
 
 @Component({
   selector: 'app-search',
@@ -201,8 +202,7 @@ export class SearchComponent {
 
   formatDate(dateStr: string): string {
     const date = new Date(dateStr + 'T00:00:00');
-    const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-    const day = days[date.getDay()];
+    const day = DAYS_LABELS_LONG[date.getDay()];
     const num = date.getDate();
     const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
     const month = months[date.getMonth()];

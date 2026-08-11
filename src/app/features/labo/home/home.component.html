@@ -1,0 +1,66 @@
+<div class="home-view">
+  <div class="hero">
+    <div>
+      <h1>Tableau de bord</h1>
+      <p class="hero-subtitle">Vue d'ensemble de l'activité de vos délégués.</p>
+    </div>
+    <button class="btn primary" (click)="go('delegues')">
+      <i class="ti ti-users"></i> Gérer mes délégués
+    </button>
+  </div>
+
+  @if (isLoading) {
+    <div class="empty-state">Chargement des statistiques...</div>
+  } @else if (delegues.length === 0) {
+    <div class="empty-state">
+      <i class="ti ti-users"></i>
+      <span>Aucun délégué pour le moment.</span>
+      <button class="btn primary" (click)="go('delegues')">Ajouter mon premier délégué</button>
+    </div>
+  } @else {
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon accent"><i class="ti ti-users"></i></div>
+        <div class="stat-body">
+          <div class="stat-num">{{ totalActifs }}</div>
+          <div class="stat-label">Délégués actifs</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon warning"><i class="ti ti-user-off"></i></div>
+        <div class="stat-body">
+          <div class="stat-num">{{ totalInactifs }}</div>
+          <div class="stat-label">Délégués inactifs</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon success"><i class="ti ti-calendar-check"></i></div>
+        <div class="stat-body">
+          <div class="stat-num">{{ totalVisitesMoisCourant }}</div>
+          <div class="stat-label">Visites réalisées ce mois</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon danger"><i class="ti ti-calendar-x"></i></div>
+        <div class="stat-body">
+          <div class="stat-num">{{ tauxAnnulationMoyen }}%</div>
+          <div class="stat-label">Taux d'annulation moyen</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Classement du mois — visites réalisées</div>
+    <div class="classement-list">
+      @for (entry of classement; track entry.delegue.id; let i = $index) {
+        <div class="classement-row">
+          <span class="rank">{{ i + 1 }}</span>
+          <div class="classement-info">
+            <span class="classement-name">{{ entry.delegue.prenom }} {{ entry.delegue.nom }}</span>
+            <span class="classement-sub">{{ entry.totalRealisees }} visites au total</span>
+          </div>
+          <span class="classement-count">{{ entry.realiseesMoisCourant }}</span>
+        </div>
+      }
+    </div>
+  }
+</div>

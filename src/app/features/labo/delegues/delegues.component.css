@@ -1,0 +1,310 @@
+.page {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.page-header h1 {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1c2733;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+}
+
+.page-header h1 i {
+  color: #0f9b8e;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #8b96a5;
+  margin: 4px 0 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid #dee2e6;
+  background: #ffffff;
+  color: #212529;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.btn:hover {
+  background: #f1f3f5;
+}
+
+.btn.primary {
+  background: #0f9b8e;
+  color: #fff;
+  border-color: #0f9b8e;
+  box-shadow: 0 2px 6px rgba(15, 155, 142, 0.25);
+}
+
+.btn.primary:hover {
+  background: #0c7d73;
+}
+
+.btn.danger {
+  color: #c92a2a;
+  border-color: #ffc9c9;
+}
+
+.btn.danger:hover {
+  background: #fff5f5;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  border: 1px solid transparent;
+  margin-bottom: 16px;
+}
+
+.info-banner.danger {
+  background: #fff5f5;
+  border-color: #ffc9c9;
+  color: #c92a2a;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: #adb5bd;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.empty-state i {
+  font-size: 30px;
+}
+
+.delegues-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: #ffffff;
+  border: 1px solid #eef1f4;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.delegues-table th,
+.delegues-table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eef1f4;
+}
+
+.delegues-table th {
+  color: #6b7684;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #f8fafc;
+}
+
+.delegues-table tr:last-child td {
+  border-bottom: none;
+}
+
+.inactive-row {
+  opacity: 0.6;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge.success { background: #d3f9d8; color: #2f9e44; }
+.badge.neutral { background: #f1f3f5; color: #868e96; }
+.badge.statut-reserve { background: #dbe4ff; color: #1971c2; }
+.badge.statut-realise { background: #d3f9d8; color: #2f9e44; }
+.badge.statut-annule { background: #f1f3f5; color: #868e96; }
+.badge.statut-absent_medecin,
+.badge.statut-absent_delegue { background: #fff4e6; color: #d9700e; }
+.badge.statut-conflit { background: #ffe3e3; color: #c92a2a; }
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.field label {
+  font-size: 12px;
+  color: #8b96a5;
+  font-weight: 500;
+}
+
+.field input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  background: #f8fafc;
+  color: #212529;
+  font-size: 13px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: #0f9b8e;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.detail-body {
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: #f8fafc;
+  border: 1px solid #eef1f4;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+
+.stat-num {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1c2733;
+}
+
+.stat-label {
+  font-size: 10.5px;
+  color: #8b96a5;
+  margin-top: 2px;
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 18px 0 10px;
+}
+
+.mois-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mois-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 12.5px;
+}
+
+.mois-label {
+  color: #334155;
+  text-transform: capitalize;
+}
+
+.mois-count {
+  font-weight: 700;
+  color: #0f9b8e;
+}
+
+.rdv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rdv-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 12.5px;
+}
+
+.rdv-date {
+  width: 90px;
+  color: #6b7684;
+  flex-shrink: 0;
+}
+
+.rdv-medecin {
+  flex: 1;
+  color: #1c2733;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

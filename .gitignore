@@ -40,3 +40,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Mobile app — separate repo, not part of the web frontend
+/mobileMediSync

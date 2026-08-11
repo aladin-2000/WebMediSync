@@ -6,12 +6,9 @@ import { RendezVousEnrichmentService } from '../../services/rendezvous-enrichmen
 import { RendezVousEnrichi } from '../../models/rendezvous-enrichi.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { toISODate, lundiDeLaSemaine, dimancheDeLaSemaine } from '../../shared/semaine.util';
+import { MONTHS } from '../../../medecin/shared/date-labels.constants';
 
 const DAYS_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven'];
-const MONTHS = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
-];
 
 type ActionType = 'realise' | 'absent' | 'annuler';
 

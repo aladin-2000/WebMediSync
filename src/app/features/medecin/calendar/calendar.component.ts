@@ -2,11 +2,12 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../shared/modal/modal.component';
-import { MONTHS, DAYS_LABELS } from '../shared/date-labels.constants';
+import { MONTHS, DAYS_LABELS, DAYS_LABELS_LONG } from '../shared/date-labels.constants';
 import { CreneauResponse, PlageCreneauxRequest } from '../models/disponibilite.models';
 import { CreneauService } from '../services/creneau.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { MedecinService } from '../../admin/services/medecin.service';
+import { toISODate } from '../../delegue/shared/semaine.util';
 
 export interface CalendarCell {
   day: number;
@@ -26,8 +27,6 @@ export interface DaySlot {
   heure: string;
   statut: 'reserve' | 'libre';
 }
-
-const JOURS_LONGS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
 @Component({
   selector: 'app-calendar',
@@ -258,7 +257,7 @@ changeMonth(dir: number): void {
     }
     const [year, month, day] = this.selectedKey.split('-').map(Number);
     const date = new Date(year, month - 1, day);
-    return `${JOURS_LONGS[date.getDay()]} ${day} ${MONTHS[month - 1].toLowerCase()}`;
+    return `${DAYS_LABELS_LONG[date.getDay()]} ${day} ${MONTHS[month - 1].toLowerCase()}`;
   }
 
   selectedDaySlots: DaySlot[] = [];
@@ -556,8 +555,7 @@ changeMonth(dir: number): void {
   showConfirmAjoutPlage = false;
 
   get todayISO(): string {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    return toISODate(new Date());
   }
 
   private contientWeekend(dateDebut: string, dateFin: string): boolean {

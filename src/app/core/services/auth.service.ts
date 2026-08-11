@@ -8,6 +8,7 @@ const TOKEN_STORAGE_KEY = 'authToken';
 const USER_STORAGE_KEY = 'currentUser';
 const MEDECIN_ID_STORAGE_KEY = 'medecinId';
 const DELEGUE_ID_STORAGE_KEY = 'delegueId';
+const LABORATOIRE_ID_STORAGE_KEY = 'laboratoireId';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class AuthService {
   private currentUser: UserResponse | null = this.readStoredUser();
   private medecinId: string | null = localStorage.getItem(MEDECIN_ID_STORAGE_KEY);
   private delegueId: string | null = localStorage.getItem(DELEGUE_ID_STORAGE_KEY);
+  private laboratoireId: string | null = localStorage.getItem(LABORATOIRE_ID_STORAGE_KEY);
 
   constructor(private http: HttpClient) {}
 
@@ -32,6 +34,14 @@ export class AuthService {
         }
       })
     );
+  }
+
+  verifierEmail(token: string): Observable<ApiResponse<null>> {
+    return this.http.get<ApiResponse<null>>(`${API_BASE_URL}/auth/verifier-email`, { params: { token } });
+  }
+
+  renvoyerVerification(email: string): Observable<ApiResponse<null>> {
+    return this.http.post<ApiResponse<null>>(`${API_BASE_URL}/auth/renvoyer-verification`, { email });
   }
 
   changePassword(currentPassword: string, newPassword: string): Observable<ApiResponse<null>> {
@@ -76,15 +86,26 @@ export class AuthService {
     return this.delegueId;
   }
 
+  setLaboratoireId(laboratoireId: string): void {
+    localStorage.setItem(LABORATOIRE_ID_STORAGE_KEY, laboratoireId);
+    this.laboratoireId = laboratoireId;
+  }
+
+  getLaboratoireId(): string | null {
+    return this.laboratoireId;
+  }
+
   logout(): void {
     localStorage.removeItem(TOKEN_STORAGE_KEY);
     localStorage.removeItem(USER_STORAGE_KEY);
     localStorage.removeItem(MEDECIN_ID_STORAGE_KEY);
     localStorage.removeItem(DELEGUE_ID_STORAGE_KEY);
+    localStorage.removeItem(LABORATOIRE_ID_STORAGE_KEY);
     this.token = null;
     this.currentUser = null;
     this.medecinId = null;
     this.delegueId = null;
+    this.laboratoireId = null;
   }
 
   getToken(): string | null {

@@ -66,6 +66,66 @@
   background: #fff5f5;
 }
 
+.btn.success {
+  background: #2f9e44;
+  color: #fff;
+  border-color: #2f9e44;
+}
+
+.btn.success:hover {
+  background: #2b8a3e;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.en-attente-section {
+  background: #fff9db;
+  border: 1px solid #ffe066;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.en-attente-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #997404;
+  margin-bottom: 12px;
+}
+
+.badge-count {
+  background: #f08c00;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 10px;
+}
+
+.en-attente-section .medecins-table {
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.badge-pending {
+  display: inline-block;
+  background: #fff3bf;
+  color: #997404;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-left: 6px;
+  text-transform: uppercase;
+}
+
 .medecins-table {
   width: 100%;
   border-collapse: collapse;

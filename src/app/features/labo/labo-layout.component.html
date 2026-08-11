@@ -1,0 +1,14 @@
+<div class="app">
+  <app-labo-sidebar [activePage]="activePage" (pageChange)="onPageChange($event)"></app-labo-sidebar>
+
+  <div class="main">
+    <div class="content">
+      @if (activePage === 'home') {
+        <app-labo-home (navigateTo)="onPageChange($event)"></app-labo-home>
+      }
+      @if (activePage === 'delegues') {
+        <app-labo-delegues></app-labo-delegues>
+      }
+    </div>
+  </div>
+</div>

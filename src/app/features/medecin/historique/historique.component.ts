@@ -6,7 +6,7 @@ import { RendezVousMedecinEnrichi } from '../models/rendezvous-medecin-enrichi.m
 import { AuthService } from '../../../core/services/auth.service';
 import { MedecinService } from '../../admin/services/medecin.service';
 import { toISODate, lundiDeLaSemaine, dimancheDeLaSemaine } from '../../delegue/shared/semaine.util';
-import { MONTHS } from '../shared/date-labels.constants';
+import { MONTHS, DAYS_LABELS_LONG } from '../shared/date-labels.constants';
 
 @Component({
   selector: 'app-historique',
@@ -161,8 +161,7 @@ export class HistoriqueComponent implements OnInit {
       return '';
     }
     const date = new Date(dateStr + 'T00:00:00');
-    const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-    const day = days[date.getDay()];
+    const day = DAYS_LABELS_LONG[date.getDay()];
     const num = date.getDate();
     const month = MONTHS[date.getMonth()].toLowerCase();
     return `${day} ${num} ${month}`;

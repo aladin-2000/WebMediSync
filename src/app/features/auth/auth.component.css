@@ -133,3 +133,13 @@
 .auth-footer strong {
   color: #495057;
 }
+
+.signup-links a {
+  color: #1971c2;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.signup-links a:hover {
+  text-decoration: underline;
+}

@@ -3,7 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api.config';
 import { ApiResponse } from '../../../core/models/user.model';
-import { CreerMedecinRequest, MedecinResponse, ModifierMedecinRequest, SpecialiteOption } from '../models/medecin.model';
+import {
+  CreerMedecinRequest,
+  InscriptionMedecinRequest,
+  MedecinResponse,
+  ModifierMedecinRequest,
+  SpecialiteOption,
+} from '../models/medecin.model';
 
 @Injectable({
   providedIn: 'root',
@@ -50,6 +56,18 @@ export class MedecinService {
 
   create(body: CreerMedecinRequest): Observable<ApiResponse<MedecinResponse>> {
     return this.http.post<ApiResponse<MedecinResponse>>(`${this.baseUrl}/creer-medecin-complet`, body);
+  }
+
+  inscrire(body: InscriptionMedecinRequest): Observable<ApiResponse<MedecinResponse>> {
+    return this.http.post<ApiResponse<MedecinResponse>>(`${this.baseUrl}/inscription`, body);
+  }
+
+  getEnAttente(): Observable<ApiResponse<MedecinResponse[]>> {
+    return this.http.get<ApiResponse<MedecinResponse[]>>(`${this.baseUrl}/en-attente`);
+  }
+
+  valider(id: string): Observable<ApiResponse<MedecinResponse>> {
+    return this.http.patch<ApiResponse<MedecinResponse>>(`${this.baseUrl}/${id}/valider`, {});
   }
 
   update(id: string, body: ModifierMedecinRequest): Observable<ApiResponse<MedecinResponse>> {

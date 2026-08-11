@@ -1,0 +1,41 @@
+<aside class="sidebar">
+  <div class="logo">
+    <span class="logo-badge"><i class="ti ti-flask"></i></span>
+    MediSync
+  </div>
+
+  <nav>
+    <div class="nav-item" [class.active]="activePage === 'home'" (click)="navigate('home')">
+      <i class="ti ti-home"></i> Accueil
+    </div>
+    <div class="nav-item" [class.active]="activePage === 'delegues'" (click)="navigate('delegues')">
+      <i class="ti ti-users"></i> Mes délégués
+    </div>
+  </nav>
+
+  <div class="spacer"></div>
+
+  <div class="profile-card">
+    <div class="profile-avatar">{{ initiales }}</div>
+    <div class="profile-info">
+      <div class="profile-name">{{ nomLabo }}</div>
+      <div class="profile-role">Laboratoire</div>
+    </div>
+  </div>
+
+  <div class="nav-item logout" (click)="askLogout()">
+    <i class="ti ti-logout"></i> Déconnexion
+  </div>
+</aside>
+
+<app-modal title="Déconnexion" [visible]="showLogoutConfirm" (close)="cancelLogout()">
+  <div class="modal-body">
+    <p>Voulez-vous vraiment vous déconnecter ?</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" (click)="cancelLogout()">Annuler</button>
+    <button class="btn danger" (click)="confirmLogout()">
+      <i class="ti ti-logout"></i> Se déconnecter
+    </button>
+  </div>
+</app-modal>

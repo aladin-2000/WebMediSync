@@ -1,0 +1,165 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1><i class="ti ti-users"></i> Mes délégués</h1>
+      <p class="subtitle">Gérez les comptes des délégués rattachés à votre laboratoire</p>
+    </div>
+    <button class="btn primary" (click)="openCreateModal()">
+      <i class="ti ti-plus"></i> Ajouter un délégué
+    </button>
+  </div>
+
+  @if (errorMessage) {
+    <div class="info-banner danger">
+      <i class="ti ti-alert-triangle"></i>
+      <span>{{ errorMessage }}</span>
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="empty-state">Chargement...</div>
+  } @else if (delegues.length === 0) {
+    <div class="empty-state">
+      <i class="ti ti-users"></i>
+      <span>Aucun délégué pour le moment. Ajoutez-en un pour commencer.</span>
+    </div>
+  } @else {
+    <table class="delegues-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Téléphone</th>
+          <th>Score fiabilité</th>
+          <th>Statut</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (delegue of delegues; track delegue.id) {
+          <tr [class.inactive-row]="!delegue.isActive">
+            <td>{{ delegue.nom }}</td>
+            <td>{{ delegue.prenom }}</td>
+            <td>{{ delegue.telephone || '—' }}</td>
+            <td>{{ delegue.scoreFiabilite }}%</td>
+            <td>
+              <span class="badge" [class.success]="delegue.isActive" [class.neutral]="!delegue.isActive">
+                {{ delegue.isActive ? 'Actif' : 'Inactif' }}
+              </span>
+            </td>
+            <td class="actions">
+              <button class="btn" (click)="voirDetail(delegue)">
+                <i class="ti ti-history"></i> Historique
+              </button>
+              <button class="btn" [class.danger]="delegue.isActive" (click)="toggleActif(delegue)">
+                <i class="ti" [class.ti-user-off]="delegue.isActive" [class.ti-user-check]="!delegue.isActive"></i>
+                {{ delegue.isActive ? 'Désactiver' : 'Réactiver' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+
+<app-modal title="Ajouter un délégué" [visible]="showCreateModal" (close)="closeCreateModal()">
+  <div class="modal-body">
+    <div class="field-row">
+      <div class="field">
+        <label>Nom</label>
+        <input type="text" [(ngModel)]="form.nom">
+      </div>
+      <div class="field">
+        <label>Prénom</label>
+        <input type="text" [(ngModel)]="form.prenom">
+      </div>
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" [(ngModel)]="form.email">
+    </div>
+    <div class="field">
+      <label>Mot de passe</label>
+      <input type="password" [(ngModel)]="form.password" placeholder="6 caractères min.">
+    </div>
+    <div class="field">
+      <label>Téléphone (optionnel)</label>
+      <input type="tel" [(ngModel)]="form.telephone">
+    </div>
+
+    @if (formError) {
+      <div class="info-banner danger">
+        <i class="ti ti-alert-triangle"></i>
+        <span>{{ formError }}</span>
+      </div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button class="btn" (click)="closeCreateModal()">Annuler</button>
+    <button class="btn primary" [disabled]="isSaving" (click)="creerDelegue()">
+      {{ isSaving ? 'Création...' : 'Créer le compte' }}
+    </button>
+  </div>
+</app-modal>
+
+<app-modal
+  [title]="selectedDelegue ? (selectedDelegue.prenom + ' ' + selectedDelegue.nom) : ''"
+  [visible]="!!selectedDelegue"
+  (close)="fermerDetail()"
+>
+  <div class="modal-body detail-body">
+    @if (detailLoading) {
+      <div class="empty-state">Chargement de l'historique...</div>
+    } @else if (detailStats) {
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num">{{ detailStats.totalRealisees }}</div>
+          <div class="stat-label">Visites réalisées</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">{{ detailStats.totalAbsences }}</div>
+          <div class="stat-label">Absences</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">{{ detailStats.totalAnnulations }}</div>
+          <div class="stat-label">Annulations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">{{ detailStats.tauxAnnulation }}%</div>
+          <div class="stat-label">Taux d'annulation</div>
+        </div>
+      </div>
+
+      @if (detailStats.parMois.length > 0) {
+        <div class="section-title">Visites réalisées par mois</div>
+        <div class="mois-list">
+          @for (m of detailStats.parMois; track m.cle) {
+            <div class="mois-row">
+              <span class="mois-label">{{ m.libelle }}</span>
+              <span class="mois-count">{{ m.realisees }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="section-title">Historique des rendez-vous</div>
+      @if (detailRendezvous.length === 0) {
+        <div class="empty-state">Aucun rendez-vous.</div>
+      } @else {
+        <div class="rdv-list">
+          @for (rdv of detailRendezvous; track rdv.id) {
+            <div class="rdv-row">
+              <span class="rdv-date">{{ formatDate(rdv.date) }}</span>
+              <span class="rdv-medecin">Dr. {{ rdv.medecinPrenom }} {{ rdv.medecinNom }}</span>
+              <span class="badge" [class]="'statut-' + rdv.statut.toLowerCase()">{{ rdv.statut }}</span>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+  <div class="modal-footer">
+    <button class="btn" (click)="fermerDetail()">Fermer</button>
+  </div>
+</app-modal>

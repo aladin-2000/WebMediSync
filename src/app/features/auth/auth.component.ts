@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { roleHomePath, CHANGE_PASSWORD_PATH } from '../../core/guards/role.guard';
 import { MedecinService } from '../admin/services/medecin.service';
 import { DelegueService } from '../delegue/services/delegue.service';
+import { LaboratoireService } from '../../core/services/laboratoire.service';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
@@ -24,6 +25,7 @@ export class AuthComponent {
     private authService: AuthService,
     private medecinService: MedecinService,
     private delegueService: DelegueService,
+    private laboratoireService: LaboratoireService,
     private router: Router
   ) {}
 
@@ -79,6 +81,21 @@ export class AuthComponent {
             error: (err) => {
               this.isLoading = false;
               console.error('Récupération du profil délégué échouée:', err);
+              this.router.navigateByUrl(roleHomePath[user.role]);
+            },
+          });
+        } else if (user.role === 'LABO') {
+          this.laboratoireService.getByUserId(user.id).subscribe({
+            next: (laboResponse) => {
+              this.isLoading = false;
+              if (laboResponse.success) {
+                this.authService.setLaboratoireId(laboResponse.data.id);
+              }
+              this.router.navigateByUrl(roleHomePath[user.role]);
+            },
+            error: (err) => {
+              this.isLoading = false;
+              console.error('Récupération du profil laboratoire échouée:', err);
               this.router.navigateByUrl(roleHomePath[user.role]);
             },
           });

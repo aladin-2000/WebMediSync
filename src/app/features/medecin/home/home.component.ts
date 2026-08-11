@@ -8,7 +8,7 @@ import { MedecinService } from '../../admin/services/medecin.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { NotificationResponse } from '../../../core/models/notification.model';
 import { toISODate, lundiDeLaSemaine, dimancheDeLaSemaine } from '../../delegue/shared/semaine.util';
-import { MONTHS } from '../shared/date-labels.constants';
+import { MONTHS, DAYS_LABELS_LONG } from '../shared/date-labels.constants';
 
 @Component({
   selector: 'app-medecin-home',
@@ -53,8 +53,7 @@ export class HomeComponent implements OnInit {
   }
 
   get todayLabel(): string {
-    const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-    return `${days[this.today.getDay()]} ${this.today.getDate()} ${MONTHS[this.today.getMonth()]} ${this.today.getFullYear()}`;
+    return `${DAYS_LABELS_LONG[this.today.getDay()]} ${this.today.getDate()} ${MONTHS[this.today.getMonth()]} ${this.today.getFullYear()}`;
   }
 
   get rendezvousAujourdhui(): RendezVousMedecinEnrichi[] {
