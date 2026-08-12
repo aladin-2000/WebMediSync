@@ -62,6 +62,16 @@
   color: #fff;
 }
 
+.badge-count {
+  margin-left: auto;
+  background: #f08c00;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+
 .sidebar-spacer {
   flex: 1;
 }

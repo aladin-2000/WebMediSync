@@ -11,43 +11,6 @@
     <div class="error-banner">{{ errorMessage }}</div>
   }
 
-  @if (medecinsEnAttente.length > 0) {
-    <div class="en-attente-section">
-      <div class="en-attente-header">
-        <i class="ti ti-clock-hour-4"></i>
-        Médecins en attente de validation
-        <span class="badge-count">{{ medecinsEnAttente.length }}</span>
-      </div>
-      <table class="medecins-table">
-        <thead>
-          <tr>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Spécialité</th>
-            <th>Adresse cabinet</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (medecin of medecinsEnAttente; track medecin.id) {
-            <tr>
-              <td>{{ medecin.nom }}</td>
-              <td>{{ medecin.prenom }}</td>
-              <td>{{ specialiteLibelle(medecin.specialite) }}</td>
-              <td>{{ medecin.adresseCabinet || '—' }}</td>
-              <td class="actions">
-                <button class="btn success" [disabled]="validatingId === medecin.id" (click)="validerMedecin(medecin)">
-                  <i class="ti ti-check"></i>
-                  {{ validatingId === medecin.id ? 'Validation...' : 'Valider' }}
-                </button>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  }
-
   @if (isLoading) {
     <p class="info-text">Chargement...</p>
   } @else if (medecins.length === 0) {

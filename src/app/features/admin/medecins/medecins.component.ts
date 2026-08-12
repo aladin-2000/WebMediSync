@@ -32,12 +32,9 @@ const EMPTY_FORM: MedecinFormState = {
 })
 export class MedecinsComponent implements OnInit {
   medecins: MedecinResponse[] = [];
-  medecinsEnAttente: MedecinResponse[] = [];
   specialites: SpecialiteOption[] = [];
   isLoading = false;
-  isLoadingEnAttente = false;
   errorMessage = '';
-  validatingId: string | null = null;
 
   showModal = false;
   editingMedecin: MedecinResponse | null = null;
@@ -49,49 +46,11 @@ export class MedecinsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMedecins();
-    this.loadEnAttente();
     this.medecinService.getSpecialites().subscribe({
       next: (response) => {
         if (response.success) {
           this.specialites = response.data;
         }
-      },
-    });
-  }
-
-  loadEnAttente(): void {
-    this.isLoadingEnAttente = true;
-    this.medecinService.getEnAttente().subscribe({
-      next: (response) => {
-        this.isLoadingEnAttente = false;
-        if (response.success) {
-          this.medecinsEnAttente = response.data;
-        }
-      },
-      error: () => {
-        this.isLoadingEnAttente = false;
-      },
-    });
-  }
-
-  validerMedecin(medecin: MedecinResponse): void {
-    this.validatingId = medecin.id;
-    this.medecinService.valider(medecin.id).subscribe({
-      next: (response) => {
-        this.validatingId = null;
-        if (response.success) {
-          this.medecinsEnAttente = this.medecinsEnAttente.filter((m) => m.id !== medecin.id);
-          const index = this.medecins.findIndex((m) => m.id === medecin.id);
-          if (index !== -1) {
-            this.medecins[index] = response.data;
-          } else {
-            this.medecins.push(response.data);
-          }
-        }
-      },
-      error: () => {
-        this.validatingId = null;
-        this.errorMessage = 'Erreur lors de la validation du médecin.';
       },
     });
   }
