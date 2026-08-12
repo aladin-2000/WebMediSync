@@ -1,7 +1,8 @@
 export interface DelegueResponse {
   id: string;
   userId: string;
-  laboratoireId: string;
+  laboratoireId: string | null;
+  laboName: string | null;
   nom: string;
   prenom: string;
   telephone: string | null;
@@ -30,6 +31,7 @@ export interface InscriptionDelegueRequest {
   password: string;
   nom: string;
   prenom: string;
-  laboratoireId: string;
+  laboratoireId?: string;
+  laboName?: string;
   telephone?: string;
 }

@@ -20,6 +20,8 @@ export class SignupDelegueComponent implements OnInit {
   nom = '';
   prenom = '';
   laboratoireId = '';
+  laboName = '';
+  laboInconnu = false;
   telephone = '';
 
   laboratoires: LaboratoireResponse[] = [];
@@ -45,8 +47,12 @@ export class SignupDelegueComponent implements OnInit {
   onSubmit(): void {
     this.errorMessage = '';
 
-    if (!this.email || !this.password || !this.nom || !this.prenom || !this.laboratoireId) {
+    if (!this.email || !this.password || !this.nom || !this.prenom) {
       this.errorMessage = 'Veuillez remplir tous les champs obligatoires.';
+      return;
+    }
+    if (this.laboInconnu ? !this.laboName : !this.laboratoireId) {
+      this.errorMessage = 'Veuillez choisir votre laboratoire ou en saisir le nom.';
       return;
     }
     if (this.password.length < 6) {
@@ -64,7 +70,8 @@ export class SignupDelegueComponent implements OnInit {
       password: this.password,
       nom: this.nom,
       prenom: this.prenom,
-      laboratoireId: this.laboratoireId,
+      laboratoireId: this.laboInconnu ? undefined : this.laboratoireId,
+      laboName: this.laboInconnu ? this.laboName : undefined,
       telephone: this.telephone || undefined,
     }).subscribe({
       next: (response) => {
