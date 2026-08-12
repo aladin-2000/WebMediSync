@@ -1,0 +1,88 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+    @if (!isDone) {
+      <div class="auth-header">
+        <div class="logo-box">
+          <i class="ti ti-building-hospital"></i>
+        </div>
+        <h2>Créer un compte laboratoire</h2>
+        <p>Renseignez les informations de votre laboratoire pour rejoindre MediSync</p>
+      </div>
+
+      <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="nom">Nom du laboratoire</label>
+          <input type="text" id="nom" name="nom" [(ngModel)]="nom" placeholder="Nom du laboratoire" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <div class="input-icon">
+            <i class="ti ti-mail"></i>
+            <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="vous@exemple.com" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <div class="input-icon">
+              <i class="ti ti-lock"></i>
+              <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="6 caractères min." required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirmer</label>
+            <div class="input-icon">
+              <i class="ti ti-lock"></i>
+              <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" placeholder="Confirmer" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="adresse">Adresse</label>
+          <div class="input-icon">
+            <i class="ti ti-map-pin"></i>
+            <input type="text" id="adresse" name="adresse" [(ngModel)]="adresse" placeholder="Adresse du laboratoire" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="telephone">Téléphone (optionnel)</label>
+          <div class="input-icon">
+            <i class="ti ti-phone"></i>
+            <input type="tel" id="telephone" name="telephone" [(ngModel)]="telephone" placeholder="+216 ..">
+          </div>
+        </div>
+
+        @if (errorMessage) {
+          <div class="error-banner">
+            <i class="ti ti-alert-circle"></i>
+            <span>{{ errorMessage }}</span>
+          </div>
+        }
+
+        <button type="submit" class="btn-login" [disabled]="isLoading">
+          {{ isLoading ? 'Création du compte...' : 'Créer mon compte' }}
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Déjà un compte ? <a routerLink="/login">Se connecter</a>
+      </div>
+    } @else {
+      <div class="success-state">
+        <div class="logo-box success">
+          <i class="ti ti-mail-check"></i>
+        </div>
+        <h2>Vérifiez votre boîte email</h2>
+        <p>
+          Un lien de vérification a été envoyé à <strong>{{ email }}</strong>.
+          Cliquez dessus pour activer votre compte et vous connecter.
+        </p>
+        <a routerLink="/login" class="btn-login link">Retour à la connexion</a>
+      </div>
+    }
+  </div>
+</div>

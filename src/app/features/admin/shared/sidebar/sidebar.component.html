@@ -26,6 +26,14 @@
         <span class="badge-count">{{ nombreEnAttente }}</span>
       }
     </button>
+    <button
+      class="nav-item"
+      [class.active]="activePage === 'laboratoires'"
+      (click)="navigate('laboratoires')"
+    >
+      <i class="ti ti-building-hospital"></i>
+      <span>Laboratoires</span>
+    </button>
   </nav>
 
   <div class="sidebar-spacer"></div>

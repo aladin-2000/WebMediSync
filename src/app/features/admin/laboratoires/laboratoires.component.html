@@ -1,0 +1,109 @@
+<div class="page">
+  <div class="page-header">
+    <h2>Gérer les laboratoires</h2>
+    <button class="btn primary" (click)="openAddModal()">
+      <i class="ti ti-plus"></i>
+      Ajouter un laboratoire
+    </button>
+  </div>
+
+  @if (errorMessage) {
+    <div class="error-banner">{{ errorMessage }}</div>
+  }
+
+  @if (isLoading) {
+    <p class="info-text">Chargement...</p>
+  } @else if (laboratoires.length === 0) {
+    <p class="info-text">Aucun laboratoire enregistré.</p>
+  } @else {
+    <table class="medecins-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Adresse</th>
+          <th>Téléphone</th>
+          <th>Abonnement</th>
+          <th>Statut</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (labo of laboratoires; track labo.id) {
+          <tr [class.inactive-row]="!labo.isActive">
+            <td>{{ labo.nom }}</td>
+            <td>{{ labo.adresse || '—' }}</td>
+            <td>{{ labo.telephone || '—' }}</td>
+            <td>
+              {{ labo.statutAbonnement }}
+              <span class="dates-hint">{{ formatDate(labo.dateDebutAbonnement) }} → {{ formatDate(labo.dateFinAbonnement) }}</span>
+            </td>
+            <td>
+              <span class="badge" [class.success]="labo.isActive" [class.neutral]="!labo.isActive">
+                {{ labo.isActive ? 'Actif' : 'Inactif' }}
+              </span>
+            </td>
+            <td class="actions">
+              <button class="btn" [class.danger]="labo.isActive" (click)="toggleActif(labo)">
+                <i class="ti" [class.ti-building-off]="labo.isActive" [class.ti-building-store]="!labo.isActive"></i>
+                {{ labo.isActive ? 'Désactiver' : 'Réactiver' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+
+<app-modal title="Ajouter un laboratoire" [visible]="showModal" (close)="closeModal()">
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" [(ngModel)]="form.email" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Mot de passe</label>
+      <input type="password" id="password" name="password" [(ngModel)]="form.password" placeholder="6 caractères min." required>
+    </div>
+    <div class="form-group">
+      <label for="nom">Nom du laboratoire</label>
+      <input type="text" id="nom" name="nom" [(ngModel)]="form.nom" required>
+    </div>
+    <div class="form-group">
+      <label for="adresse">Adresse</label>
+      <input type="text" id="adresse" name="adresse" [(ngModel)]="form.adresse" required>
+    </div>
+    <div class="form-group">
+      <label for="telephone">Téléphone (optionnel)</label>
+      <input type="tel" id="telephone" name="telephone" [(ngModel)]="form.telephone">
+    </div>
+    <div class="form-group">
+      <label for="statutAbonnement">Statut d'abonnement</label>
+      <select id="statutAbonnement" name="statutAbonnement" [(ngModel)]="form.statutAbonnement" required>
+        <option value="" disabled>Choisir un statut</option>
+        <option value="ACTIF">Actif</option>
+        <option value="ESSAI">Essai</option>
+        <option value="SUSPENDU">Suspendu</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="dateDebutAbonnement">Début d'abonnement</label>
+      <input type="date" id="dateDebutAbonnement" name="dateDebutAbonnement" [(ngModel)]="form.dateDebutAbonnement" required>
+    </div>
+    <div class="form-group">
+      <label for="dateFinAbonnement">Fin d'abonnement</label>
+      <input type="date" id="dateFinAbonnement" name="dateFinAbonnement" [(ngModel)]="form.dateFinAbonnement" required>
+    </div>
+
+    @if (formError) {
+      <div class="error-banner">{{ formError }}</div>
+    }
+
+    <div class="modal-actions">
+      <button type="button" class="btn" (click)="closeModal()">Annuler</button>
+      <button type="submit" class="btn primary" [disabled]="isSaving">
+        {{ isSaving ? 'Création...' : 'Créer le compte' }}
+      </button>
+    </div>
+  </form>
+</app-modal>

@@ -5,7 +5,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { MedecinService } from '../../services/medecin.service';
 import { ModalComponent } from '../../../medecin/shared/modal/modal.component';
 
-export type AdminPageName = 'medecins' | 'validations';
+export type AdminPageName = 'medecins' | 'validations' | 'laboratoires';
 
 @Component({
   selector: 'app-admin-sidebar',
