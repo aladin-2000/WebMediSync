@@ -23,10 +23,10 @@
       </div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon teal"><i class="ti ti-circle-check"></i></div>
+      <div class="stat-icon warning"><i class="ti ti-chart-bar"></i></div>
       <div class="stat-body">
-        <div class="stat-num">{{ stats.effectues }}</div>
-        <div class="stat-label">Rendez-vous effectués</div>
+        <div class="stat-num">{{ stats.taux }}%</div>
+        <div class="stat-label">Taux remplissage</div>
       </div>
     </div>
     <div class="stat-card">
@@ -282,7 +282,7 @@
 </app-modal>
 
 <!-- Modal: Détail des créneaux du jour -->
-<app-modal title="{{ detailTitre }} · {{ selectedDayLabel }}" [visible]="showDetailJour" (close)="fermerDetailJour()">
+<app-modal title="{{ selectedDayLabel }}" [visible]="showDetailJour" (close)="fermerDetailJour()">
   <div class="modal-body">
     <div class="slot-summary">
       <button class="summary-card libre" [class.active]="detailFiltre === 'libre'" (click)="ouvrirDetailJour('libre')">
@@ -307,8 +307,12 @@
         @for (slot of slotsAffiches; track slot.heure) {
           <div class="slot-row" [class.reserve]="slot.statut === 'reserve'" [class.libre]="slot.statut === 'libre'">
             <i class="ti" [class.ti-lock]="slot.statut === 'reserve'" [class.ti-clock]="slot.statut === 'libre'"></i>
-            <span>{{ slot.heure }} · {{ slot.statut === 'reserve' ? 'réservé' : 'libre' }}</span>
+            <span>{{ slot.heure }} : {{ slot.statut === 'reserve' ? 'réservé' : 'libre' }}</span>
+            <button class="delete-slot" *ngIf="slot.statut === 'libre'">
+              <i class="ti ti-trash" (click)="supprimerUnCreneau(slot.heure)" title="Supprimer ce créneau"></i>
+          </button>
           </div>
+          
         }
       </div>
     }

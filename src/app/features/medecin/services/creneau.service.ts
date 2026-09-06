@@ -32,4 +32,9 @@ export class CreneauService {
       `${this.baseUrl}/periode?medecinId=${medecinId}&dateDebut=${dateDebut}&dateFin=${dateFin}`
     );
   }
+  supprimerUnCreneau(medecinId: string, creneauId: string): Observable<ApiResponse<null>> {
+    return this.http.delete<ApiResponse<null>>(
+      `${this.baseUrl}/supprimer-un-creneau?medecinId=${medecinId}&creneauId=${creneauId}`
+    );
+  }
 }

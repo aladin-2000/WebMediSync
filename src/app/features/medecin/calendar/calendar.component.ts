@@ -23,9 +23,10 @@ export interface CalendarCell {
 
 export type ModalType = 'addDispo' | 'copyWeek' | 'template' | null;
 
-export interface DaySlot {
+export interface CreneauxHoraireDuJour {
   heure: string;
   statut: 'reserve' | 'libre';
+  id: string;
 }
 
 @Component({
@@ -139,11 +140,11 @@ export class CalendarComponent implements OnInit {
     return this.creneaux.filter((c) => this.toSlotKey(c.date) === key);
   }
 
-  stats = { total: 0, reserves: 0, libres: 0, taux: 0, effectues: 0 };
+  stats = { total: 0, reserves: 0, libres: 0, taux: 0 };
   cells: CalendarCell[] = [];
 
   private recalculerCalendrier(): void {
-    let total = 0, reserves = 0, effectues = 0;
+    let total = 0, reserves = 0;
     const maintenant = new Date();
     this.creneaux.forEach((c) => {
       if (c.statut === 'ANNULE') {
@@ -152,12 +153,6 @@ export class CalendarComponent implements OnInit {
       total++;
       if (c.statut === 'RESERVE') {
         reserves++;
-        const [y, m, d] = c.date.split('-').map(Number);
-        const [h, min] = c.heureDebut.split(':').map(Number);
-        const dateHeure = new Date(y, m - 1, d, h, min);
-        if (dateHeure < maintenant) {
-          effectues++;
-        }
       }
     });
     this.stats = {
@@ -165,7 +160,6 @@ export class CalendarComponent implements OnInit {
       reserves,
       libres: total - reserves,
       taux: total ? Math.round((reserves / total) * 100) : 0,
-      effectues,
     };
 
     const d = this.currentDate;
@@ -189,15 +183,15 @@ export class CalendarComponent implements OnInit {
       const cellDate = new Date(y, m, day);
       const isPast = cellDate < today;
       cells.push({
-        day,
+        day: day,
         otherMonth: false,
-        isToday,
-        isPast,
+        isToday : isToday,
+        isPast : isPast,
         hasFull: dayCreneaux.length > 0 && available === 0,
         hasSlots: available > 0,
-        available,
-        taken,
-        key,
+        available : available,
+        taken : taken,
+        key: key,
       });
     }
     this.cells = cells;
@@ -260,7 +254,7 @@ changeMonth(dir: number): void {
     return `${DAYS_LABELS_LONG[date.getDay()]} ${day} ${MONTHS[month - 1].toLowerCase()}`;
   }
 
-  selectedDaySlots: DaySlot[] = [];
+  selectedDaySlots: CreneauxHoraireDuJour[] = []; // selectedDaySlots c'est une liste des créneaux du jour sélectionné, avec l'heure et le statut (libre ou réservé)
 
   private recalculerJourSelectionne(): void {
     if (!this.selectedKey) {
@@ -273,6 +267,7 @@ changeMonth(dir: number): void {
       .map((c) => ({
         heure: this.formatHeureFromString(c.heureDebut),
         statut: c.statut === 'RESERVE' ? 'reserve' : 'libre',
+        id: c.id
       }));
   }
 
@@ -287,21 +282,11 @@ changeMonth(dir: number): void {
   showDetailJour = false;
   detailFiltre: 'libre' | 'reserve' | null = null;
 
-  get slotsAffiches(): DaySlot[] {
+  get slotsAffiches(): CreneauxHoraireDuJour[] {
     if (!this.detailFiltre) {
       return this.selectedDaySlots;
     }
     return this.selectedDaySlots.filter((s) => s.statut === this.detailFiltre);
-  }
-
-  get detailTitre(): string {
-    if (this.detailFiltre === 'libre') {
-      return 'Créneaux libres';
-    }
-    if (this.detailFiltre === 'reserve') {
-      return 'Créneaux réservés';
-    }
-    return 'Créneaux';
   }
 
   get detailMessageVide(): string {
@@ -678,6 +663,29 @@ changeMonth(dir: number): void {
   applyTemplate2(type: string): void {
   this.selectedTemplate = type;
     // ton traitement existant ici
+  }
+  supprimerUnCreneau(heure : string) : void {
+    const medecinId = this.authService.getMedecinId();
+     if (!medecinId) {
+      this.resoudreMedecinId();
+      return;
+    }
+    let creneauId : string  = this.selectedDaySlots.filter( creneau => {
+      return creneau.heure === heure 
+    })[0].id;
+    this.creneauService.supprimerUnCreneau(medecinId, creneauId).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.chargerCreneauxDuMois();
+        } else {
+          console.error('Erreur lors de la suppression du créneau :', response.message);
+        }
+      },
+      error: (error) => {
+        console.error('Erreur lors de la suppression du créneau :', error);
+      }
+
+    });
   }
 
 }
