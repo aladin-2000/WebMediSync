@@ -543,18 +543,10 @@ changeMonth(dir: number): void {
     return toISODate(new Date());
   }
 
-  private contientWeekend(dateDebut: string, dateFin: string): boolean {
+  private isDimanche(dateDebut: string, dateFin: string): boolean {
     const [y1, m1, d1] = dateDebut.split('-').map(Number);
-    const [y2, m2, d2] = dateFin.split('-').map(Number);
     const debut = new Date(y1, m1 - 1, d1);
-    const fin = new Date(y2, m2 - 1, d2);
-    for (let d = new Date(debut); d <= fin; d.setDate(d.getDate() + 1)) {
-      const jour = d.getDay();
-      if (jour === 0 || jour === 6) {
-        return true;
-      }
-    }
-    return false;
+    return dateDebut===dateFin && debut.getDay() === 0  ? true : false;
   }
 
   private validerPlageAjout(): string {
@@ -565,8 +557,8 @@ changeMonth(dir: number): void {
       return "Impossible de planifier des créneaux pour une date déjà passée.";
     }
 
-    if (this.contientWeekend(this.dateDebut, this.dateFin)) {
-      return 'Impossible de planifier des créneaux le samedi ou le dimanche.';
+    if (this.isDimanche(this.dateDebut, this.dateFin)) {
+      return 'Impossible de planifier des créneaux le dimanche.';
     }
 
     if (this.dateDebut === aujourdHui) {
