@@ -28,13 +28,14 @@ export class MedecinService {
   }
 
   rechercher(params: {
-    date: string;
+    searchDateDebut: string;
+    searchDateFin: string;
     nom?: string;
     specialites?: string[];
     heureDebut?: string;
     heureFin?: string;
   }): Observable<ApiResponse<MedecinResponse[]>> {
-    let query = `date=${encodeURIComponent(params.date)}`;
+    let query = `searchDateDebut=${encodeURIComponent(params.searchDateDebut)}&searchDateFin=${encodeURIComponent(params.searchDateFin)}`;
     if (params.nom) {
       query += `&nom=${encodeURIComponent(params.nom)}`;
     }

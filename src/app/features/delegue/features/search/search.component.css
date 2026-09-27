@@ -20,8 +20,8 @@
   margin: 0 0 6px;
   display: flex;
   align-items: center;
-  gap: 10px;
-}
+  gap: 8px;
+} 
 
 .hero-text .subtitle {
   font-size: 14px;
@@ -47,7 +47,7 @@
   gap: 14px;
   padding: 18px 20px;
   background: #fff;
-  border: 1px solid #e9ecef;
+  border: 1px solid #dee2e6;
   border-radius: 14px;
   margin: -36px 12px 24px;
   position: relative;
@@ -72,6 +72,12 @@
 .search-form .field > label i {
   font-size: 13px;
   color: #1971c2;
+}
+
+.search-form .field:has(.date-range) > label,
+.search-form .field:has(.time-range) > label {
+  justify-content: center;
+  text-align: center;
 }
 
 .search-form .field > input {
@@ -643,5 +649,175 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+.date-range,
+.time-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.date-range .input-group,
+.time-range .input-group {
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.label-small {
+  font-size: 11px;
+  color: #868e96;
+  font-weight: 600;
+}
+
+.date-range .label-small,
+.time-range .label-small {
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.separator {
+  color: #adb5bd;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.input-group input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background: #fff;
+  color: #212529;
+  font-size: 14px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #1971c2;
+  box-shadow: 0 0 0 3px rgba(25, 113, 194, 0.1);
+}
+
+/* ============================================
+   Responsive téléphone : bandeau du médecin sélectionné
+   ============================================ */
+@media (max-width: 768px) {
+  /* "Retour"/avatar/nom/rafraîchir tous sur une ligne débordaient sur un
+     écran étroit. On passe en 2 lignes : Retour+rafraîchir en haut,
+     avatar+nom en dessous (via .banner-break, cf. HTML). */
+  .doctor-banner {
+    flex-wrap: wrap;
+    padding: 16px 18px;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .btn-back {
+    order: 1;
+  }
+
+  .btn-icon.light {
+    order: 2;
+  }
+
+  .banner-break {
+    order: 3;
+    flex-basis: 100%;
+    height: 0;
+  }
+
+  .doctor-banner-avatar {
+    order: 4;
+    width: 44px;
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .details-title {
+    order: 5;
+    min-width: 0;
+  }
+
+  .details-title h2 {
+    font-size: 17px;
+  }
+}
+
+/* ============================================
+   Responsive téléphone : formulaire de recherche
+   ============================================ */
+@media (max-width: 768px) {
+  /* Champs empilés en pleine largeur au lieu de flotter à leur largeur
+     minimale (160-200px) au milieu d'une carte plus large que l'écran. */
+  .search-form {
+    flex-direction: column;
+    align-items: stretch;
+    margin: -24px 8px 20px;
+    padding: 16px;
+  }
+
+  .search-form .field {
+    width: 100%;
+  }
+
+  .search-form .field:has(.date-range) > label,
+  .search-form .field:has(.time-range) > label {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  /* 16px minimum : sous cette taille, iOS Safari zoome automatiquement
+     sur le champ au focus — gênant, pas un choix de design. */
+  .search-form .field > input,
+  .specialite-toggle,
+  .input-group input {
+    width: 100%;
+    min-width: 0;
+    font-size: 16px;
+    padding: 11px 12px;
+  }
+
+  .specialite-dropdown {
+    width: 100%;
+  }
+
+  /* Options plus grandes : plus faciles à toucher au doigt. */
+  .specialite-option {
+    padding: 10px 8px;
+    font-size: 14px;
+  }
+
+  /* CTA principal de la page, pleine largeur. */
+  .btn-search {
+    width: 100%;
+    justify-content: center;
+    height: 46px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .date-range,
+  .time-range {
+    gap: 4px;
+  }
+
+  .separator {
+    font-size: 12px;
   }
 }

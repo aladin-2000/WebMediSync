@@ -40,6 +40,7 @@
   display: flex;
   gap: 10px;
   flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
 .btn {
@@ -343,5 +344,15 @@
   }
   .stats-row {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Sous 768px : le bandeau d'accueil passe en colonne pour laisser
+   les boutons (qui ne rétrécissent jamais, flex-shrink:0) passer à la
+   ligne au lieu de pousser toute la page en scroll horizontal. */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

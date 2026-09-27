@@ -1,4 +1,13 @@
-<aside class="sidebar">
+<!-- Bouton hamburger : visible uniquement en dessous de 768px (cf. sidebar.component.css) -->
+<button class="mobile-menu-btn" (click)="toggleMobileMenu()" aria-label="Ouvrir le menu">
+  <i class="ti" [class.ti-menu-2]="!mobileOpen" [class.ti-x]="mobileOpen"></i>
+</button>
+
+@if (mobileOpen) {
+  <div class="sidebar-backdrop" (click)="closeMobileMenu()"></div>
+}
+
+<aside class="sidebar" [class.open]="mobileOpen">
   <div class="logo">
     <span class="logo-badge"><i class="ti ti-heartbeat"></i></span>
     MediSync

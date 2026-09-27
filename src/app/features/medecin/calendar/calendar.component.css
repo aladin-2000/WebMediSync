@@ -506,7 +506,7 @@
 .tpl-nom { font-weight: 500; margin-bottom: 2px; }
 .tpl-desc { font-size: 11px; color: #868e96; }
 
-.delete-slot { 
+.delete-slot {
   margin-left: auto;
   border: none;
   background: transparent;
@@ -514,4 +514,94 @@
   font-size: 20px;
   cursor: pointer;
   padding: 0 5px;
+}
+
+/* ============================================
+   Responsive téléphone (sous 900px)
+   ============================================ */
+@media (max-width: 900px) {
+  /* La colonne latérale (260px, flex-shrink:0) écrasait le calendrier :
+     on empile tout verticalement à la place. */
+  .calendar-view {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .calendar-main {
+    height: auto;
+  }
+
+  .side-column {
+    width: 100%;
+  }
+
+  /* Les 3 cartes sur une seule ligne : plus compactes (icône réduite,
+     texte empilé au lieu de côte-à-côte) pour que ça tienne. */
+  .stats-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .stats-row .stat-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 8px;
+    gap: 4px;
+  }
+
+  .stats-row .stat-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+
+  .stats-row .stat-num {
+    font-size: 15px;
+  }
+
+  .stats-row .stat-label {
+    font-size: 9px;
+    line-height: 1.2;
+  }
+
+  /* Le bloc prev/label/next/"Aujourd'hui"/refresh/légende ne tenait
+     jamais sur une seule ligne : on le laisse passer à la ligne. */
+  .month-nav {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  .month-label {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .legend {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  /* Grille du mois : cellules plus compactes pour limiter le scroll vertical */
+  .cal-cell {
+    min-height: 54px;
+    padding: 4px;
+  }
+
+  .slot-pill {
+    font-size: 9px;
+  }
+
+  /* Le médecin ne travaille jamais le dimanche (règle métier appliquée à la
+     création de créneaux) : on le masque sur mobile pour donner plus de
+     place aux 6 autres jours. Le dimanche est toujours en 1ère position de
+     chaque semaine (DAYS_LABELS commence par 'Dim', comme Date.getDay()),
+     donc systématiquement le 7n+1-ème enfant de .cal-grid (en-tête inclus). */
+  .cal-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .cal-grid > *:nth-child(7n + 1) {
+    display: none;
+  }
 }

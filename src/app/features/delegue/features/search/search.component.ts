@@ -21,7 +21,11 @@ export class SearchComponent {
   readonly todayISO = new Date().toISOString().split('T')[0];
 
   searchNom = '';
+  searchRegion = '';
+  searchDateDebut = this.todayISO;
+  searchDateFin = this.todayISO;
   searchDate = this.todayISO;
+
   searchHeureDebut = '08:00';
   searchHeureFin = '17:00';
 
@@ -90,7 +94,8 @@ export class SearchComponent {
     this.hasSearched = true;
     this.showSpecialiteDropdown = false;
     this.medecinService.rechercher({
-      date: this.searchDate,
+      searchDateDebut: this.searchDateDebut,
+      searchDateFin: this.searchDateFin,
       nom: this.searchNom || undefined,
       specialites: this.searchSpecialites.length > 0 ? this.searchSpecialites : undefined,
       heureDebut: this.searchHeureDebut ? `${this.searchHeureDebut}:00` : undefined,
@@ -120,13 +125,28 @@ export class SearchComponent {
     }
   }
 
+  get datesEntreDebutFin(): string[]  {
+    const datesEntreDebutFin: string[] = [];
+    const dateDebut = new Date(this.searchDateDebut);
+    const dateFin = new Date(this.searchDateFin);
+    while (dateDebut <= dateFin) {
+      datesEntreDebutFin.push(dateDebut.toISOString().split('T')[0] );
+      dateDebut.setDate(dateDebut.getDate() + 1);
+    }
+    return datesEntreDebutFin;
+  }
+
+  getCreneauxPourDate(date: string): CreneauResponse[] {
+  return this.creneaux.filter(slot => slot.date === date);
+}
+
   selectDoctor(doctor: MedecinResponse): void {
     this.selectedDoctor = doctor;
     this.creneaux = [];
     this.creneauxError = '';
     this.isLoadingCreneaux = true;
 
-    this.creneauService.getPeriode(doctor.id, this.searchDate, this.searchDate).subscribe({
+    this.creneauService.getPeriode(doctor.id, this.searchDateDebut, this.searchDateFin).subscribe({
       next: (response) => {
         this.isLoadingCreneaux = false;
         if (response.success) {

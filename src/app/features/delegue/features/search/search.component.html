@@ -36,21 +36,42 @@
                   {{ opt.libelle }}
                 </label>
               }
-            </div>
+            </div> 
           }
         </div>
         <div class="field">
-          <label><i class="ti ti-calendar"></i> Date</label>
-          <input type="date" [min]="todayISO" [(ngModel)]="searchDate">
+          <label><i class="ti ti-user"></i> Régions</label>
+          <input type="text" [(ngModel)]="searchRegion">
         </div>
         <div class="field">
-          <label><i class="ti ti-clock"></i> Début</label>
-          <input type="time" [(ngModel)]="searchHeureDebut">
+          <label><i class="ti ti-calendar"></i> Période de disponibilité</label>
+          <div class="date-range">
+              <div class="input-group">
+                <span class="label-small">Du</span>
+                <input type="date" [min]="todayISO" [(ngModel)]="searchDateDebut">
+              </div>
+              <span class="separator">—</span>
+              <div class="input-group">
+                <span class="label-small">Au</span>
+                <input type="date" [min]="todayISO" [(ngModel)]="searchDateFin">
+              </div>
+            </div>
         </div>
         <div class="field">
-          <label><i class="ti ti-clock"></i> Fin</label>
-          <input type="time" [(ngModel)]="searchHeureFin">
+          <label><i class="ti ti-clock"></i> Plage horaire</label>
+          <div class="time-range">
+            <div class="input-group">
+              <span class="label-small">De</span>
+              <input type="time" [(ngModel)]="searchHeureDebut">
+            </div>
+            <span class="separator">—</span>
+            <div class="input-group">
+              <span class="label-small">À</span>
+              <input type="time" [(ngModel)]="searchHeureFin">
+            </div>
+          </div>
         </div>
+
         <button class="btn-search" [disabled]="isSearching" (click)="rechercher()">
           <i class="ti ti-search"></i> {{ isSearching ? 'Recherche...' : 'Rechercher' }}
         </button>
@@ -121,6 +142,9 @@
           <i class="ti ti-chevron-left"></i> Retour
         </button>
         <div class="doctor-banner-avatar">{{ initials(selectedDoctor) }}</div>
+        <!-- Force le passage à la ligne sur mobile (cf. media query) sans rien
+             changer au rendu desktop, qui l'ignore (largeur nulle, sans contenu). -->
+        <div class="banner-break"></div>
         <div class="details-title">
           <h2>Dr. {{ selectedDoctor.prenom }} {{ selectedDoctor.nom }}</h2>
           <span class="specialty-chip light">{{ specialiteLibelle(selectedDoctor.specialite) }}</span>
@@ -144,26 +168,30 @@
           <p>Chargement des créneaux...</p>
         </div>
       } @else if (creneaux.length === 0) {
-        <div class="empty-state">
+        <div class="empty-state"> 
           <i class="ti ti-calendar-x"></i>
           <p>Aucune disponibilité pour {{ formatDate(searchDate) }}</p>
         </div>
       } @else {
-        <div class="availabilities">
-          <div class="avail-title"><i class="ti ti-calendar-check"></i> Créneaux disponibles · {{ formatDate(searchDate) }}</div>
-          <div class="slots-list">
-            @for (slot of creneaux; track slot.id; let i = $index) {
-              <div class="slot-card" [style.animation-delay]="(i * 30) + 'ms'" (click)="selectCreneau(slot)">
-                <div class="slot-time">
-                  <i class="ti ti-clock"></i> {{ formatHeure(slot.heureDebut) }} - {{ formatHeure(slot.heureFin) }}
-                </div>
-                <button class="btn-reserve">
-                  Réserver <i class="ti ti-arrow-right"></i>
-                </button>
-              </div>
+        @for (searchDate_i of datesEntreDebutFin ; track searchDate_i; let i=$index){
+          <div class="availabilities">
+            @if(getCreneauxPourDate(searchDate_i).length > 0) {
+              <div class="avail-title"><i class="ti ti-calendar-check"></i> Créneaux disponibles · {{ formatDate(searchDate_i) }}</div>
             }
+            <div class="slots-list">
+              @for (slot of getCreneauxPourDate(searchDate_i); track slot.id; let i = $index) {
+                <div class="slot-card" [style.animation-delay]="(i * 30) + 'ms'" (click)="selectCreneau(slot)">
+                  <div class="slot-time">
+                    <i class="ti ti-clock"></i> {{ formatHeure(slot.heureDebut) }} - {{ formatHeure(slot.heureFin) }}
+                  </div>
+                  <button class="btn-reserve">
+                    Réserver <i class="ti ti-arrow-right"></i>
+                  </button>
+                </div>
+              }
+            </div>
           </div>
-        </div>
+        }
       }
     </div>
   }

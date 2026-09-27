@@ -46,6 +46,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
   showNotifPanel = false;
   private notifPollHandle: ReturnType<typeof setInterval> | null = null;
 
+  // Tiroir mobile : sidebar masquée par défaut sous 768px, ouverte via le bouton hamburger
+  mobileOpen = false;
+
   constructor(
     private authService: AuthService,
     private medecinService: MedecinService,
@@ -182,6 +185,15 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   navigate(view: ViewName): void {
     this.viewChange.emit(view);
+    this.closeMobileMenu();
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileOpen = !this.mobileOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.mobileOpen = false;
   }
 
   askLogout(): void {
