@@ -1,0 +1,143 @@
+<div class="page">
+  <div class="page-header">
+    <h2>Statistiques</h2>
+  </div>
+
+  <!-- Dashboard cards -->
+  <div class="dashboard-cards">
+    <div class="stat-card">
+      <div class="stat-icon medecins"><i class="ti ti-stethoscope"></i></div>
+      <div class="stat-info">
+        <span class="stat-value">{{ dashboardCounts?.totalMedecins ?? '—' }}</span>
+        <span class="stat-label">Médecins inscrits</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon delegues"><i class="ti ti-user-share"></i></div>
+      <div class="stat-info">
+        <span class="stat-value">{{ dashboardCounts?.totalDelegues ?? '—' }}</span>
+        <span class="stat-label">Délégués inscrits</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon labos"><i class="ti ti-building-hospital"></i></div>
+      <div class="stat-info">
+        <span class="stat-value">{{ dashboardCounts?.totalLaboratoires ?? '—' }}</span>
+        <span class="stat-label">Laboratoires inscrits</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'laboratoires'" (click)="switchTab('laboratoires')">
+      <i class="ti ti-building-hospital"></i>
+      Par laboratoire
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'delegues'" (click)="switchTab('delegues')">
+      <i class="ti ti-user-share"></i>
+      Par délégué
+    </button>
+  </div>
+
+  <!-- Period filter -->
+  <div class="period-filter">
+    <label class="period-label"><i class="ti ti-calendar"></i> Période :</label>
+    <select [(ngModel)]="selectedMois" (change)="onPeriodChange()">
+      @for (m of moisOptions; track m.value) {
+        <option [value]="m.value">{{ m.label }}</option>
+      }
+    </select>
+    <select [(ngModel)]="selectedAnnee" (change)="onPeriodChange()">
+      @for (a of anneeOptions; track a) {
+        <option [value]="a">{{ a }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Filter chip -->
+  @if (selectedLaboId && activeTab === 'delegues') {
+    <div class="filter-chip">
+      <i class="ti ti-filter"></i>
+      {{ selectedLaboNom }}
+      <button class="chip-remove" (click)="clearLaboFilter()">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="error-banner">{{ errorMessage }}</div>
+  }
+
+  @if (isLoading) {
+    <p class="info-text">Chargement...</p>
+  } @else {
+    <!-- Tab: Par laboratoire -->
+    @if (activeTab === 'laboratoires') {
+      @if (statsLabos.length === 0) {
+        <p class="info-text">Aucune visite réalisée pour le moment.</p>
+      } @else {
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th>Laboratoire</th>
+              <th>Visites réalisées</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (labo of statsLabos; track labo.laboratoireId) {
+              <tr>
+                <td>{{ labo.laboratoireNom }}</td>
+                <td>
+                  <span class="visit-count">{{ labo.nombreVisites }}</span>
+                </td>
+                <td class="actions">
+                  <button class="btn-link" (click)="voirDelegues(labo)">
+                    <i class="ti ti-users"></i>
+                    Voir délégués
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    }
+
+    <!-- Tab: Par délégué -->
+    @if (activeTab === 'delegues') {
+      @if (statsDelegues.length === 0) {
+        <p class="info-text">Aucune visite réalisée pour le moment.</p>
+      } @else {
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Prénom</th>
+              @if (!selectedLaboId) {
+                <th>Laboratoire</th>
+              }
+              <th>Visites réalisées</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (d of statsDelegues; track d.delegueId) {
+              <tr>
+                <td>{{ d.delegueNom }}</td>
+                <td>{{ d.deleguePrenom }}</td>
+                @if (!selectedLaboId) {
+                  <td>{{ d.laboratoireNom ?? '—' }}</td>
+                }
+                <td>
+                  <span class="visit-count">{{ d.nombreVisites }}</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    }
+  }
+</div>

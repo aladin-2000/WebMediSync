@@ -23,6 +23,7 @@
           <th>Prénom</th>
           <th>Spécialité</th>
           <th>Adresse cabinet</th>
+          <th>Région</th>
           <th></th>
         </tr>
       </thead>
@@ -33,6 +34,7 @@
             <td>{{ medecin.prenom }}</td>
             <td>{{ specialiteLibelle(medecin.specialite) }}</td>
             <td>{{ medecin.adresseCabinet || '—' }}</td>
+            <td>{{ medecin.regionNom || '—' }}</td>
             <td class="actions">
               <button class="btn" (click)="openEditModal(medecin)">
                 <i class="ti ti-pencil"></i>
@@ -53,25 +55,30 @@
   [visible]="showModal"
   (close)="closeModal()"
 >
+  <div class="modal-body">
   <form (ngSubmit)="onSubmit()">
     @if (!editingMedecin) {
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" [(ngModel)]="form.email" required>
-      </div>
-      <div class="form-group">
-        <label for="password">Mot de passe</label>
-        <input type="password" id="password" name="password" [(ngModel)]="form.password" required>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" [(ngModel)]="form.email" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" name="password" [(ngModel)]="form.password" required>
+        </div>
       </div>
     }
 
-    <div class="form-group">
-      <label for="nom">Nom</label>
-      <input type="text" id="nom" name="nom" [(ngModel)]="form.nom" required>
-    </div>
-    <div class="form-group">
-      <label for="prenom">Prénom</label>
-      <input type="text" id="prenom" name="prenom" [(ngModel)]="form.prenom" required>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="nom">Nom</label>
+        <input type="text" id="nom" name="nom" [(ngModel)]="form.nom" required>
+      </div>
+      <div class="form-group">
+        <label for="prenom">Prénom</label>
+        <input type="text" id="prenom" name="prenom" [(ngModel)]="form.prenom" required>
+      </div>
     </div>
     <div class="form-group">
       <label for="specialite">Spécialité</label>
@@ -82,13 +89,27 @@
         }
       </select>
     </div>
-    <div class="form-group">
-      <label for="adresseCabinet">Adresse cabinet</label>
-      <input type="text" id="adresseCabinet" name="adresseCabinet" [(ngModel)]="form.adresseCabinet">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="adresseCabinet">Adresse cabinet</label>
+        <input type="text" id="adresseCabinet" name="adresseCabinet" [(ngModel)]="form.adresseCabinet">
+      </div>
+      <div class="form-group">
+        <label for="regionId">Région</label>
+        <select id="regionId" name="regionId" [(ngModel)]="form.regionId">
+          <option value="">Aucune</option>
+          @for (r of regions; track r.valeur) {
+            <option [value]="r.valeur">{{ r.libelle }}</option>
+          }
+        </select>
+      </div>
     </div>
 
     @if (formError) {
-      <div class="error-banner">{{ formError }}</div>
+      <div class="error-banner">
+        <i class="ti ti-alert-triangle"></i>
+        <span>{{ formError }}</span>
+      </div>
     }
 
     <div class="modal-actions">
@@ -98,4 +119,5 @@
       </button>
     </div>
   </form>
+  </div>
 </app-modal>

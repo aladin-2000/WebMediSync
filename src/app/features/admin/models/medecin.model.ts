@@ -11,6 +11,8 @@ export interface MedecinResponse {
   photoUrl: string | null;
   scoreFiabiliteMin: number;
   valide: boolean;
+  regionId: string | null;
+  regionNom: string | null;
   createdAt: string;
 }
 
@@ -24,6 +26,7 @@ export interface CreerMedecinRequest {
   latitude?: number;
   longitude?: number;
   scoreFiabiliteMin?: number;
+  regionId?: string;
 }
 
 export interface InscriptionMedecinRequest {
@@ -33,12 +36,18 @@ export interface InscriptionMedecinRequest {
   prenom: string;
   specialite: string;
   adresseCabinet: string;
+  regionId: string;
   telephone?: string;
   latitude?: number;
   longitude?: number;
 }
 
 export interface SpecialiteOption {
+  valeur: string;
+  libelle: string;
+}
+
+export interface RegionOption {
   valeur: string;
   libelle: string;
 }
@@ -52,4 +61,5 @@ export interface ModifierMedecinRequest {
   latitude?: number;
   longitude?: number;
   scoreFiabiliteMin?: number;
+  regionId?: string;
 }

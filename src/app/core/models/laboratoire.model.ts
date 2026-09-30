@@ -32,3 +32,18 @@ export interface InscriptionLaboratoireRequest {
   adresse: string;
   telephone?: string;
 }
+
+/**
+ * Le backend réutilise le DTO de création pour la mise à jour (PUT /api/laboratoires/{id}) —
+ * `userId` y est marqué obligatoire côté validation même si l'update ne s'en sert pas, donc on
+ * doit le renvoyer (celui du laboratoire édité) pour passer la validation.
+ */
+export interface UpdateLaboratoireRequest {
+  userId: string;
+  nom: string;
+  adresse: string;
+  telephone?: string;
+  statutAbonnement: StatutAbonnement;
+  dateDebutAbonnement: string;
+  dateFinAbonnement: string;
+}

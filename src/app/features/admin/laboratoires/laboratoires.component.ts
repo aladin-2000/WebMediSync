@@ -32,7 +32,7 @@ const EMPTY_FORM: LaboFormState = {
   standalone: true,
   imports: [CommonModule, FormsModule, ModalComponent],
   templateUrl: './laboratoires.component.html',
-  styleUrls: ['./laboratoires.component.css'],
+  styleUrls: ['./laboratoires.component.css', '../shared/admin-modal-form.css'],
 })
 export class LaboratoiresComponent implements OnInit {
   laboratoires: LaboratoireResponse[] = [];
@@ -40,6 +40,7 @@ export class LaboratoiresComponent implements OnInit {
   errorMessage = '';
 
   showModal = false;
+  editingLabo: LaboratoireResponse | null = null;
   form: LaboFormState = { ...EMPTY_FORM };
   formError = '';
   isSaving = false;
@@ -68,7 +69,24 @@ export class LaboratoiresComponent implements OnInit {
   }
 
   openAddModal(): void {
+    this.editingLabo = null;
     this.form = { ...EMPTY_FORM };
+    this.formError = '';
+    this.showModal = true;
+  }
+
+  openEditModal(labo: LaboratoireResponse): void {
+    this.editingLabo = labo;
+    this.form = {
+      email: '',
+      password: '',
+      nom: labo.nom,
+      adresse: labo.adresse ?? '',
+      telephone: labo.telephone ?? '',
+      statutAbonnement: labo.statutAbonnement,
+      dateDebutAbonnement: labo.dateDebutAbonnement ?? '',
+      dateFinAbonnement: labo.dateFinAbonnement ?? '',
+    };
     this.formError = '';
     this.showModal = true;
   }
@@ -80,9 +98,22 @@ export class LaboratoiresComponent implements OnInit {
   onSubmit(): void {
     this.formError = '';
 
-    if (!this.form.email || !this.form.password || !this.form.nom || !this.form.adresse || !this.form.statutAbonnement
+    if (!this.form.nom || !this.form.adresse || !this.form.statutAbonnement
       || !this.form.dateDebutAbonnement || !this.form.dateFinAbonnement) {
-      this.formError = 'Email, mot de passe, nom, adresse, statut et dates d\'abonnement sont obligatoires.';
+      this.formError = 'Nom, adresse, statut et dates d\'abonnement sont obligatoires.';
+      return;
+    }
+
+    if (this.editingLabo) {
+      this.updateLaboratoire(this.editingLabo);
+    } else {
+      this.createLaboratoire();
+    }
+  }
+
+  private createLaboratoire(): void {
+    if (!this.form.email || !this.form.password) {
+      this.formError = 'Email et mot de passe sont obligatoires.';
       return;
     }
     if (this.form.password.length < 6) {
@@ -115,6 +146,39 @@ export class LaboratoiresComponent implements OnInit {
         error: (err) => {
           this.isSaving = false;
           this.formError = err?.error?.message ?? 'Erreur lors de la création.';
+        },
+      });
+  }
+
+  private updateLaboratoire(labo: LaboratoireResponse): void {
+    this.isSaving = true;
+    this.laboratoireService
+      .update(labo.id, {
+        userId: labo.userId,
+        nom: this.form.nom.trim(),
+        adresse: this.form.adresse.trim(),
+        telephone: this.form.telephone.trim() || undefined,
+        statutAbonnement: this.form.statutAbonnement as StatutAbonnement,
+        dateDebutAbonnement: this.form.dateDebutAbonnement,
+        dateFinAbonnement: this.form.dateFinAbonnement,
+      })
+      .subscribe({
+        next: (response) => {
+          this.isSaving = false;
+          if (response.success && response.data) {
+            const updated = response.data;
+            const index = this.laboratoires.findIndex((l) => l.id === labo.id);
+            if (index !== -1) {
+              this.laboratoires[index] = updated;
+            }
+            this.showModal = false;
+          } else {
+            this.formError = response.message;
+          }
+        },
+        error: (err) => {
+          this.isSaving = false;
+          this.formError = err?.error?.message ?? 'Erreur lors de la modification.';
         },
       });
   }

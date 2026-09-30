@@ -8,6 +8,7 @@ import {
   InscriptionMedecinRequest,
   MedecinResponse,
   ModifierMedecinRequest,
+  RegionOption,
   SpecialiteOption,
 } from '../models/medecin.model';
 
@@ -32,6 +33,7 @@ export class MedecinService {
     searchDateFin: string;
     nom?: string;
     specialites?: string[];
+    regionId?: string;
     heureDebut?: string;
     heureFin?: string;
   }): Observable<ApiResponse<MedecinResponse[]>> {
@@ -41,6 +43,9 @@ export class MedecinService {
     }
     if (params.specialites && params.specialites.length > 0) {
       query += `&specialites=${encodeURIComponent(params.specialites.join(','))}`;
+    }
+    if (params.regionId) {
+      query += `&regionId=${encodeURIComponent(params.regionId)}`;
     }
     if (params.heureDebut) {
       query += `&heureDebut=${encodeURIComponent(params.heureDebut)}`;
@@ -53,6 +58,10 @@ export class MedecinService {
 
   getSpecialites(): Observable<ApiResponse<SpecialiteOption[]>> {
     return this.http.get<ApiResponse<SpecialiteOption[]>>(`${this.baseUrl}/specialites`);
+  }
+
+  getRegions(): Observable<ApiResponse<RegionOption[]>> {
+    return this.http.get<ApiResponse<RegionOption[]>>(`${this.baseUrl}/regions`);
   }
 
   create(body: CreerMedecinRequest): Observable<ApiResponse<MedecinResponse>> {

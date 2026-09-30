@@ -1,0 +1,140 @@
+/* ============================================
+   Styles partagés des popups admin (médecins, laboratoires)
+   Contenu à l'intérieur de <app-modal> : formulaires, boutons, bandeaux.
+   ============================================ */
+
+.modal-body {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-row .form-group {
+  margin-bottom: 0;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #495057;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 9px;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  background: #f8f9fa;
+  color: #212529;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #1971c2;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(25, 113, 194, 0.12);
+}
+
+.error-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #fff5f5;
+  color: #c92a2a;
+  border: 1px solid #ffc9c9;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.error-banner i {
+  font-size: 15px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f3f5;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #dee2e6;
+  background: #ffffff;
+  color: #212529;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s, filter 0.15s;
+}
+
+.btn:hover {
+  background: #f1f3f5;
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, #1971c2, #4263eb);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 10px rgba(25, 113, 194, 0.25);
+}
+
+.btn.primary:hover {
+  filter: brightness(1.05);
+}
+
+.btn.danger {
+  color: #c92a2a;
+  border-color: #ffc9c9;
+}
+
+.btn.danger:hover {
+  background: #fff5f5;
+}
+
+.btn.success {
+  background: linear-gradient(135deg, #2f9e44, #37b24d);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 10px rgba(47, 158, 68, 0.25);
+}
+
+.btn.success:hover {
+  filter: brightness(1.05);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: none;
+}

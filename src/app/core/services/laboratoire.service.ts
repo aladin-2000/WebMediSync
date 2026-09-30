@@ -7,6 +7,7 @@ import {
   CreateLaboratoireCompletRequest,
   InscriptionLaboratoireRequest,
   LaboratoireResponse,
+  UpdateLaboratoireRequest,
 } from '../models/laboratoire.model';
 
 @Injectable({
@@ -31,6 +32,10 @@ export class LaboratoireService {
 
   creerLaboratoireComplet(body: CreateLaboratoireCompletRequest): Observable<ApiResponse<LaboratoireResponse>> {
     return this.http.post<ApiResponse<LaboratoireResponse>>(`${this.baseUrl}/creer-labo-complet`, body);
+  }
+
+  update(id: string, body: UpdateLaboratoireRequest): Observable<ApiResponse<LaboratoireResponse>> {
+    return this.http.put<ApiResponse<LaboratoireResponse>>(`${this.baseUrl}/${id}`, body);
   }
 
   activer(id: string): Observable<ApiResponse<LaboratoireResponse>> {

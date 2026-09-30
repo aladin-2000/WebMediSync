@@ -43,7 +43,11 @@
               </span>
             </td>
             <td class="actions">
-              <button class="btn" [class.danger]="labo.isActive" (click)="toggleActif(labo)">
+              <button class="btn" (click)="openEditModal(labo)">
+                <i class="ti ti-pencil"></i>
+                Modifier
+              </button>
+              <button class="btn" [class.danger]="labo.isActive" [class.navy]="!labo.isActive" (click)="toggleActif(labo)">
                 <i class="ti" [class.ti-building-off]="labo.isActive" [class.ti-building-store]="!labo.isActive"></i>
                 {{ labo.isActive ? 'Désactiver' : 'Réactiver' }}
               </button>
@@ -55,16 +59,25 @@
   }
 </div>
 
-<app-modal title="Ajouter un laboratoire" [visible]="showModal" (close)="closeModal()">
+<app-modal
+  [title]="editingLabo ? 'Modifier le laboratoire' : 'Ajouter un laboratoire'"
+  [visible]="showModal"
+  (close)="closeModal()"
+>
+  <div class="modal-body">
   <form (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" [(ngModel)]="form.email" required>
-    </div>
-    <div class="form-group">
-      <label for="password">Mot de passe</label>
-      <input type="password" id="password" name="password" [(ngModel)]="form.password" placeholder="6 caractères min." required>
-    </div>
+    @if (!editingLabo) {
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" [(ngModel)]="form.email" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" name="password" [(ngModel)]="form.password" placeholder="6 caractères min." required>
+        </div>
+      </div>
+    }
     <div class="form-group">
       <label for="nom">Nom du laboratoire</label>
       <input type="text" id="nom" name="nom" [(ngModel)]="form.nom" required>
@@ -73,37 +86,45 @@
       <label for="adresse">Adresse</label>
       <input type="text" id="adresse" name="adresse" [(ngModel)]="form.adresse" required>
     </div>
-    <div class="form-group">
-      <label for="telephone">Téléphone (optionnel)</label>
-      <input type="tel" id="telephone" name="telephone" [(ngModel)]="form.telephone">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="telephone">Téléphone (optionnel)</label>
+        <input type="tel" id="telephone" name="telephone" [(ngModel)]="form.telephone">
+      </div>
+      <div class="form-group">
+        <label for="statutAbonnement">Statut d'abonnement</label>
+        <select id="statutAbonnement" name="statutAbonnement" [(ngModel)]="form.statutAbonnement" required>
+          <option value="" disabled>Choisir un statut</option>
+          <option value="ACTIF">Actif</option>
+          <option value="ESSAI">Essai</option>
+          <option value="SUSPENDU">Suspendu</option>
+        </select>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="statutAbonnement">Statut d'abonnement</label>
-      <select id="statutAbonnement" name="statutAbonnement" [(ngModel)]="form.statutAbonnement" required>
-        <option value="" disabled>Choisir un statut</option>
-        <option value="ACTIF">Actif</option>
-        <option value="ESSAI">Essai</option>
-        <option value="SUSPENDU">Suspendu</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="dateDebutAbonnement">Début d'abonnement</label>
-      <input type="date" id="dateDebutAbonnement" name="dateDebutAbonnement" [(ngModel)]="form.dateDebutAbonnement" required>
-    </div>
-    <div class="form-group">
-      <label for="dateFinAbonnement">Fin d'abonnement</label>
-      <input type="date" id="dateFinAbonnement" name="dateFinAbonnement" [(ngModel)]="form.dateFinAbonnement" required>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="dateDebutAbonnement">Début d'abonnement</label>
+        <input type="date" id="dateDebutAbonnement" name="dateDebutAbonnement" [(ngModel)]="form.dateDebutAbonnement" required>
+      </div>
+      <div class="form-group">
+        <label for="dateFinAbonnement">Fin d'abonnement</label>
+        <input type="date" id="dateFinAbonnement" name="dateFinAbonnement" [(ngModel)]="form.dateFinAbonnement" required>
+      </div>
     </div>
 
     @if (formError) {
-      <div class="error-banner">{{ formError }}</div>
+      <div class="error-banner">
+        <i class="ti ti-alert-triangle"></i>
+        <span>{{ formError }}</span>
+      </div>
     }
 
     <div class="modal-actions">
       <button type="button" class="btn" (click)="closeModal()">Annuler</button>
       <button type="submit" class="btn primary" [disabled]="isSaving">
-        {{ isSaving ? 'Création...' : 'Créer le compte' }}
+        {{ isSaving ? 'Enregistrement...' : (editingLabo ? 'Enregistrer' : 'Créer le compte') }}
       </button>
     </div>
   </form>
+  </div>
 </app-modal>

@@ -4,11 +4,12 @@ import { AdminSidebarComponent, AdminPageName } from './shared/sidebar/sidebar.c
 import { MedecinsComponent } from './medecins/medecins.component';
 import { ValidationsComponent } from './validations/validations.component';
 import { LaboratoiresComponent } from './laboratoires/laboratoires.component';
+import { StatistiquesComponent } from './statistiques/statistiques.component';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [CommonModule, AdminSidebarComponent, MedecinsComponent, ValidationsComponent, LaboratoiresComponent],
+  imports: [CommonModule, AdminSidebarComponent, MedecinsComponent, ValidationsComponent, LaboratoiresComponent, StatistiquesComponent],
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.css'],
 })

@@ -34,6 +34,14 @@
       <i class="ti ti-building-hospital"></i>
       <span>Laboratoires</span>
     </button>
+    <button
+      class="nav-item"
+      [class.active]="activePage === 'statistiques'"
+      (click)="navigate('statistiques')"
+    >
+      <i class="ti ti-chart-bar"></i>
+      <span>Statistiques</span>
+    </button>
   </nav>
 
   <div class="sidebar-spacer"></div>

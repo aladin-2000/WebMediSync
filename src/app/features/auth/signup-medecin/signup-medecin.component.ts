@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MedecinService } from '../../admin/services/medecin.service';
-import { SpecialiteOption } from '../../admin/models/medecin.model';
+import { RegionOption, SpecialiteOption } from '../../admin/models/medecin.model';
 
 @Component({
   selector: 'app-signup-medecin',
@@ -20,9 +20,11 @@ export class SignupMedecinComponent implements OnInit {
   prenom = '';
   specialite = '';
   adresseCabinet = '';
+  regionId = '';
   telephone = '';
 
   specialites: SpecialiteOption[] = [];
+  regions: RegionOption[] = [];
   errorMessage = '';
   isLoading = false;
   isDone = false;
@@ -37,12 +39,19 @@ export class SignupMedecinComponent implements OnInit {
         }
       },
     });
+    this.medecinService.getRegions().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.regions = response.data;
+        }
+      },
+    });
   }
 
   onSubmit(): void {
     this.errorMessage = '';
 
-    if (!this.email || !this.password || !this.nom || !this.prenom || !this.specialite || !this.adresseCabinet) {
+    if (!this.email || !this.password || !this.nom || !this.prenom || !this.specialite || !this.adresseCabinet || !this.regionId) {
       this.errorMessage = 'Veuillez remplir tous les champs obligatoires.';
       return;
     }
@@ -63,6 +72,7 @@ export class SignupMedecinComponent implements OnInit {
       prenom: this.prenom,
       specialite: this.specialite,
       adresseCabinet: this.adresseCabinet,
+      regionId: this.regionId,
       telephone: this.telephone || undefined,
     }).subscribe({
       next: (response) => {

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../medecin/shared/modal/modal.component';
 import { MedecinService } from '../services/medecin.service';
-import { MedecinResponse, SpecialiteOption } from '../models/medecin.model';
+import { MedecinResponse, RegionOption, SpecialiteOption } from '../models/medecin.model';
 
 interface MedecinFormState {
   email: string;
@@ -12,6 +12,7 @@ interface MedecinFormState {
   prenom: string;
   specialite: string;
   adresseCabinet: string;
+  regionId: string;
 }
 
 const EMPTY_FORM: MedecinFormState = {
@@ -21,6 +22,7 @@ const EMPTY_FORM: MedecinFormState = {
   prenom: '',
   specialite: '',
   adresseCabinet: '',
+  regionId: '',
 };
 
 @Component({
@@ -28,11 +30,12 @@ const EMPTY_FORM: MedecinFormState = {
   standalone: true,
   imports: [CommonModule, FormsModule, ModalComponent],
   templateUrl: './medecins.component.html',
-  styleUrls: ['./medecins.component.css'],
+  styleUrls: ['./medecins.component.css', '../shared/admin-modal-form.css'],
 })
 export class MedecinsComponent implements OnInit {
   medecins: MedecinResponse[] = [];
   specialites: SpecialiteOption[] = [];
+  regions: RegionOption[] = [];
   isLoading = false;
   errorMessage = '';
 
@@ -50,6 +53,13 @@ export class MedecinsComponent implements OnInit {
       next: (response) => {
         if (response.success) {
           this.specialites = response.data;
+        }
+      },
+    });
+    this.medecinService.getRegions().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.regions = response.data;
         }
       },
     });
@@ -92,6 +102,7 @@ export class MedecinsComponent implements OnInit {
       prenom: medecin.prenom,
       specialite: medecin.specialite,
       adresseCabinet: medecin.adresseCabinet ?? '',
+      regionId: medecin.regionId ?? '',
     };
     this.formError = '';
     this.showModal = true;
@@ -131,6 +142,7 @@ export class MedecinsComponent implements OnInit {
         prenom: this.form.prenom,
         specialite: this.form.specialite,
         adresseCabinet: this.form.adresseCabinet || undefined,
+        regionId: this.form.regionId || undefined,
       })
       .subscribe({
         next: (response) => {
@@ -157,6 +169,7 @@ export class MedecinsComponent implements OnInit {
         prenom: this.form.prenom,
         specialite: this.form.specialite,
         adresseCabinet: this.form.adresseCabinet || undefined,
+        regionId: this.form.regionId || undefined,
       })
       .subscribe({
         next: (response) => {
