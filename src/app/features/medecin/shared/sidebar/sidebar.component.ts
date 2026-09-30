@@ -6,7 +6,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { NotificationResponse } from '../../../../core/models/notification.model';
 import { MedecinService } from '../../../admin/services/medecin.service';
-import { MedecinResponse, SpecialiteOption } from '../../../admin/models/medecin.model';
+import { MedecinResponse, RegionOption, SpecialiteOption } from '../../../admin/models/medecin.model';
 import { ModalComponent } from '../modal/modal.component';
 
 export type ViewName = 'home' | 'calendar' | 'recurrences' | 'creneaux' | 'historique' | 'notifications';
@@ -30,12 +30,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   medecin: MedecinResponse | null = null;
   specialites: SpecialiteOption[] = [];
+  regions: RegionOption[] = [];
 
   showEditProfil = false;
   formNom = '';
   formPrenom = '';
   formSpecialite = '';
   formAdresseCabinet = '';
+  formRegionId = '';
   formTelephone = '';
   formScoreFiabiliteMin: number | null = null;
   isSavingProfil = false;
@@ -78,6 +80,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
       next: (response) => {
         if (response.success) {
           this.specialites = response.data;
+        }
+      },
+    });
+    this.medecinService.getRegions().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.regions = response.data;
         }
       },
     });
@@ -217,6 +226,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.formPrenom = this.medecin.prenom;
     this.formSpecialite = this.medecin.specialite;
     this.formAdresseCabinet = this.medecin.adresseCabinet ?? '';
+    this.formRegionId = this.medecin.regionId ?? '';
     this.formTelephone = this.medecin.telephone ?? '';
     this.formScoreFiabiliteMin = this.medecin.scoreFiabiliteMin;
     this.editProfilError = '';
@@ -240,6 +250,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       prenom: this.formPrenom.trim(),
       specialite: this.formSpecialite.trim(),
       adresseCabinet: this.formAdresseCabinet.trim() || undefined,
+      regionId: this.formRegionId || undefined,
       telephone: this.formTelephone.trim() || undefined,
       scoreFiabiliteMin: this.formScoreFiabiliteMin ?? undefined,
     }).subscribe({

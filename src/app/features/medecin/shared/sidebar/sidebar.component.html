@@ -141,15 +141,25 @@
       <input type="text" [(ngModel)]="formAdresseCabinet">
     </div>
 
+    <div class="field">
+      <label><i class="ti ti-map-pin"></i> Région</label>
+      <select [(ngModel)]="formRegionId">
+        <option value="">Aucune</option>
+        @for (r of regions; track r.valeur) {
+          <option [value]="r.valeur">{{ r.libelle }}</option>
+        }
+      </select>
+    </div>
+
     <div class="field-row">
       <div class="field">
         <label><i class="ti ti-phone"></i> Téléphone</label>
         <input type="tel" [(ngModel)]="formTelephone">
       </div>
-      <div class="field">
+      <!-- <div class="field">
         <label><i class="ti ti-shield-check"></i> Score minimum accepté</label>
         <input type="number" min="0" max="100" [(ngModel)]="formScoreFiabiliteMin">
-      </div>
+      </div> -->
     </div>
 
     @if (editProfilError) {

@@ -40,8 +40,13 @@
           }
         </div>
         <div class="field">
-          <label><i class="ti ti-user"></i> Régions</label>
-          <input type="text" [(ngModel)]="searchRegion">
+          <label><i class="ti ti-map-pin"></i> Région</label>
+          <select [(ngModel)]="searchRegionId">
+            <option value="">Toutes les régions</option>
+            @for (r of regions; track r.valeur) {
+              <option [value]="r.valeur">{{ r.libelle }}</option>
+            }
+          </select>
         </div>
         <div class="field">
           <label><i class="ti ti-calendar"></i> Période de disponibilité</label>
@@ -116,9 +121,10 @@
               <div class="doctor-info">
                 <div class="doctor-name">Dr. {{ doctor.prenom }} {{ doctor.nom }}</div>
                 <span class="specialty-chip">{{ specialiteLibelle(doctor.specialite) }}</span>
-                @if (doctor.adresseCabinet) {
+                @if (doctor.adresseCabinet || doctor.regionNom) {
                   <div class="doctor-city">
-                    <i class="ti ti-map-pin"></i> {{ doctor.adresseCabinet }}
+                    <i class="ti ti-map-pin"></i>
+                    {{ doctor.adresseCabinet }}{{ doctor.adresseCabinet && doctor.regionNom ? ' · ' : '' }}{{ doctor.regionNom }}
                   </div>
                 }
               </div>
@@ -220,7 +226,7 @@
         </div>
         <div class="detail-row">
           <span class="label">Date</span>
-          <span class="value">{{ formatDate(searchDate) }}</span>
+          <span class="value">{{ formatDate(selectedCreneau.date) }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Heure</span>
@@ -236,10 +242,10 @@
       }
 
       <!-- Info: annulation affecte le score -->
-      <div class="info-banner">
+      <!-- <div class="info-banner">
         <i class="ti ti-info-circle"></i>
         Attention: toute annulation de rendez-vous affecte votre score auprès du médecin
-      </div>
+      </div> -->
     }
   </div>
 

@@ -8,7 +8,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { toISODate, lundiDeLaSemaine, dimancheDeLaSemaine } from '../../shared/semaine.util';
 import { MONTHS } from '../../../medecin/shared/date-labels.constants';
 
-const DAYS_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven'];
+const DAYS_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 
 type ActionType = 'realise' | 'absent' | 'annuler';
 
@@ -55,21 +55,21 @@ export class PlanningComponent implements OnInit {
 
   get weekLabel(): string {
     const lundi = lundiDeLaSemaine(this.currentDate);
-    const vendredi = new Date(lundi);
-    vendredi.setDate(vendredi.getDate() + 4);
+    const samedi = new Date(lundi);
+    samedi.setDate(samedi.getDate() + 5);
     const moisLundi = MONTHS[lundi.getMonth()];
-    const moisVendredi = MONTHS[vendredi.getMonth()];
-    if (lundi.getMonth() === vendredi.getMonth()) {
-      return `${lundi.getDate()} - ${vendredi.getDate()} ${moisVendredi} ${vendredi.getFullYear()}`;
+    const moisSamedi = MONTHS[samedi.getMonth()];
+    if (lundi.getMonth() === samedi.getMonth()) {
+      return `${lundi.getDate()} - ${samedi.getDate()} ${moisSamedi} ${samedi.getFullYear()}`;
     }
-    return `${lundi.getDate()} ${moisLundi} - ${vendredi.getDate()} ${moisVendredi} ${vendredi.getFullYear()}`;
+    return `${lundi.getDate()} ${moisLundi} - ${samedi.getDate()} ${moisSamedi} ${samedi.getFullYear()}`;
   }
 
   get cells(): PlanningCell[] {
     const lundi = lundiDeLaSemaine(this.currentDate);
     const today = toISODate(new Date());
     const cells: PlanningCell[] = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 6; i++) {
       const date = new Date(lundi);
       date.setDate(date.getDate() + i);
       const dateISO = toISODate(date);
@@ -104,11 +104,11 @@ export class PlanningComponent implements OnInit {
     const heure = this.formatHeure(rdv.heureDebut);
     switch (this.confirmType) {
       case 'realise':
-        return `Confirmez-vous que le rendez-vous avec ${medecin} du ${heure} a bien eu lieu ?`;
+        return `Confirmez-vous que le rendez-vous avec ${medecin} le ${rdv.date} à ${heure} a bien eu lieu ?`;
       case 'absent':
-        return `Confirmez-vous que ${medecin} ne s'est pas présenté au rendez-vous du ${heure} ?`;
+        return `Confirmez-vous que ${medecin} ne s'est pas présenté au rendez-vous le ${rdv.date} à ${heure} ?`;
       case 'annuler':
-        return `Voulez-vous annuler le rendez-vous avec ${medecin} du ${heure} ?`;
+        return `Voulez-vous annuler le rendez-vous avec ${medecin} le ${rdv.date} à ${heure} ?`;
       default:
         return '';
     }

@@ -30,10 +30,10 @@
   font-size: 13px;
 }
 
-/* Grille semaine */
+/* Grille semaine (Lun -> Sam, seul le dimanche n'est jamais travaillé) */
 .week-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 10px;
 }
 

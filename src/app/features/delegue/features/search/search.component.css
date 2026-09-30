@@ -80,16 +80,21 @@
   text-align: center;
 }
 
-.search-form .field > input {
+.search-form .field > input,
+.search-form .field > select {
   padding: 8px 10px;
   border: 1px solid #dee2e6;
   border-radius: 8px;
   font-size: 14px;
   min-width: 160px;
+  background: #fff;
+  color: #212529;
+  font-family: inherit;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.search-form .field > input:focus {
+.search-form .field > input:focus,
+.search-form .field > select:focus {
   outline: none;
   border-color: #1971c2;
   box-shadow: 0 0 0 3px rgba(25, 113, 194, 0.12);

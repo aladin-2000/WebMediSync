@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../shared/modal/modal.component';
 import { MedecinService } from '../../../admin/services/medecin.service';
-import { MedecinResponse, SpecialiteOption } from '../../../admin/models/medecin.model';
+import { MedecinResponse, RegionOption, SpecialiteOption } from '../../../admin/models/medecin.model';
 import { CreneauService } from '../../../medecin/services/creneau.service';
 import { CreneauResponse } from '../../../medecin/models/disponibilite.models';
 import { RendezVousService } from '../../services/rendezvous.service';
@@ -21,7 +21,7 @@ export class SearchComponent {
   readonly todayISO = new Date().toISOString().split('T')[0];
 
   searchNom = '';
-  searchRegion = '';
+  searchRegionId = '';
   searchDateDebut = this.todayISO;
   searchDateFin = this.todayISO;
   searchDate = this.todayISO;
@@ -32,6 +32,8 @@ export class SearchComponent {
   specialites: SpecialiteOption[] = [];
   searchSpecialites: string[] = [];
   showSpecialiteDropdown = false;
+
+  regions: RegionOption[] = [];
 
   doctors: MedecinResponse[] = [];
   isSearching = false;
@@ -59,6 +61,13 @@ export class SearchComponent {
       next: (response) => {
         if (response.success) {
           this.specialites = response.data;
+        }
+      },
+    });
+    this.medecinService.getRegions().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.regions = response.data;
         }
       },
     });
@@ -98,6 +107,7 @@ export class SearchComponent {
       searchDateFin: this.searchDateFin,
       nom: this.searchNom || undefined,
       specialites: this.searchSpecialites.length > 0 ? this.searchSpecialites : undefined,
+      regionId: this.searchRegionId || undefined,
       heureDebut: this.searchHeureDebut ? `${this.searchHeureDebut}:00` : undefined,
       heureFin: this.searchHeureFin ? `${this.searchHeureFin}:00` : undefined,
     }).subscribe({
