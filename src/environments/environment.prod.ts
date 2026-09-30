@@ -1,3 +1,3 @@
 export const environment = {
-  apiBaseUrl: 'https://medisync-backend-XXXX.onrender.com',
+  apiBaseUrl: 'https://medisync-1tu5.onrender.com',
 };
