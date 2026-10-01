@@ -161,19 +161,23 @@
 
 </div>
 
-    <div class="field">
-      <label>Date Debut</label>
-      <input type="date" [min]="todayISO" [(ngModel)]="dateDebut">
-      <label>Date Fin</label>
-      <input type="date" [min]="todayISO" [(ngModel)]="dateFin">
+    <div class="field-row">
+      <div class="field">
+        <label>Du</label>
+        <input type="date" [min]="todayISO" [(ngModel)]="dateDebut">
+      </div>
+      <div class="field">
+        <label>Au</label>
+        <input type="date" [min]="todayISO" [(ngModel)]="dateFin">
+      </div>
     </div>
     <div class="field-row">
       <div class="field">
-        <label>Heure de début</label>
+        <label>De</label>
         <input type="time" [(ngModel)]="dispoDebut">
       </div>
       <div class="field">
-        <label>Heure de fin</label>
+        <label>À</label>
         <input type="time" [(ngModel)]="dispoFin">
       </div>
     </div>
@@ -318,19 +322,23 @@
 <!-- Modal: Supprimer une plage de créneaux libres -->
 <app-modal title="Supprimer une plage de créneaux libres" [visible]="showModalSupprimerPlage" (close)="closeModalSupprimerPlage()">
   <div class="modal-body">
-    <div class="field">
-      <label>Date Debut</label>
-      <input type="date" [min]="todayISO" [(ngModel)]="suppDateDebut">
-      <label>Date Fin</label>
-      <input type="date" [min]="todayISO" [(ngModel)]="suppDateFin">
+    <div class="field-row">
+      <div class="field">
+        <label>Du</label>
+        <input type="date" [min]="todayISO" [(ngModel)]="suppDateDebut">
+      </div>
+      <div class="field">
+        <label>Au</label>
+        <input type="date" [min]="todayISO" [(ngModel)]="suppDateFin">
+      </div>
     </div>
     <div class="field-row">
       <div class="field">
-        <label>Heure de début</label>
+        <label>De</label>
         <input type="time" [(ngModel)]="suppHeureDebut">
       </div>
       <div class="field">
-        <label>Heure de fin</label>
+        <label>À</label>
         <input type="time" [(ngModel)]="suppHeureFin">
       </div>
     </div>
