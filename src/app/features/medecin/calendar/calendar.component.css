@@ -604,28 +604,4 @@
   .cal-grid > *:nth-child(7n + 1) {
     display: none;
   }
-
-  /* Modal : empiler les champs date/heure verticalement */
-  .modal-body .field-row {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .modal-body {
-    padding: 16px;
-    gap: 10px;
-  }
-
-  .modal-footer {
-    padding: 12px 16px;
-  }
-
-  .template-row {
-    gap: 4px;
-  }
-
-  .template-chip {
-    padding: 4px 10px;
-    font-size: 11px;
-  }
 }
