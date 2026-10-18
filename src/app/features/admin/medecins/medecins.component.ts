@@ -7,22 +7,22 @@ import { MedecinResponse, RegionOption, SpecialiteOption } from '../models/medec
 
 interface MedecinFormState {
   email: string;
-  password: string;
   nom: string;
   prenom: string;
   specialite: string;
   adresseCabinet: string;
   regionId: string;
+  telephone: string;
 }
 
 const EMPTY_FORM: MedecinFormState = {
   email: '',
-  password: '',
   nom: '',
   prenom: '',
   specialite: '',
   adresseCabinet: '',
   regionId: '',
+  telephone: '',
 };
 
 @Component({
@@ -97,12 +97,12 @@ export class MedecinsComponent implements OnInit {
     this.editingMedecin = medecin;
     this.form = {
       email: '',
-      password: '',
       nom: medecin.nom,
       prenom: medecin.prenom,
       specialite: medecin.specialite,
       adresseCabinet: medecin.adresseCabinet ?? '',
       regionId: medecin.regionId ?? '',
+      telephone: medecin.telephone ?? '',
     };
     this.formError = '';
     this.showModal = true;
@@ -115,8 +115,8 @@ export class MedecinsComponent implements OnInit {
   onSubmit(): void {
     this.formError = '';
 
-    if (!this.form.nom || !this.form.prenom || !this.form.specialite) {
-      this.formError = 'Nom, prénom et spécialité sont obligatoires.';
+    if (!this.form.nom || !this.form.prenom || !this.form.specialite || !this.form.telephone) {
+      this.formError = 'Nom, prénom, spécialité et le numéro de téléphone sont obligatoires.';
       return;
     }
 
@@ -128,8 +128,8 @@ export class MedecinsComponent implements OnInit {
   }
 
   private createMedecin(): void {
-    if (!this.form.email || !this.form.password) {
-      this.formError = 'Email et mot de passe sont obligatoires.';
+    if (!this.form.email) {
+      this.formError = "L'email est obligatoire.";
       return;
     }
 
@@ -137,12 +137,13 @@ export class MedecinsComponent implements OnInit {
     this.medecinService
       .create({
         email: this.form.email,
-        password: this.form.password,
+        password: 'medisync2027',
         nom: this.form.nom,
         prenom: this.form.prenom,
         specialite: this.form.specialite,
         adresseCabinet: this.form.adresseCabinet || undefined,
         regionId: this.form.regionId || undefined,
+        telephone: this.form.telephone
       })
       .subscribe({
         next: (response) => {
@@ -170,6 +171,7 @@ export class MedecinsComponent implements OnInit {
         specialite: this.form.specialite,
         adresseCabinet: this.form.adresseCabinet || undefined,
         regionId: this.form.regionId || undefined,
+        telephone: this.form.telephone
       })
       .subscribe({
         next: (response) => {

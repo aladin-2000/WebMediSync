@@ -27,6 +27,7 @@ export interface CreerMedecinRequest {
   longitude?: number;
   scoreFiabiliteMin?: number;
   regionId?: string;
+  telephone : string;
 }
 
 export interface InscriptionMedecinRequest {
@@ -57,7 +58,7 @@ export interface ModifierMedecinRequest {
   prenom: string;
   specialite: string;
   adresseCabinet?: string;
-  telephone?: string;
+  telephone: string | undefined ;
   latitude?: number;
   longitude?: number;
   scoreFiabiliteMin?: number;

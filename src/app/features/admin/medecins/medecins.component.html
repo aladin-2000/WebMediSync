@@ -23,6 +23,7 @@
           <th>Prénom</th>
           <th>Spécialité</th>
           <th>Adresse cabinet</th>
+          <th>Téléphone</th>
           <th>Région</th>
           <th></th>
         </tr>
@@ -34,14 +35,15 @@
             <td>{{ medecin.prenom }}</td>
             <td>{{ specialiteLibelle(medecin.specialite) }}</td>
             <td>{{ medecin.adresseCabinet || '—' }}</td>
+            <td>{{ medecin.telephone || '—' }}</td>
             <td>{{ medecin.regionNom || '—' }}</td>
             <td class="actions">
               <button class="btn" (click)="openEditModal(medecin)">
                 <i class="ti ti-pencil"></i>
               </button>
-              <button class="btn danger" (click)="deleteMedecin(medecin)">
+              <!-- <button class="btn danger" (click)="deleteMedecin(medecin)">
                 <i class="ti ti-trash"></i>
-              </button>
+              </button> --> 
             </td>
           </tr>
         }
@@ -58,15 +60,9 @@
   <div class="modal-body">
   <form (ngSubmit)="onSubmit()">
     @if (!editingMedecin) {
-      <div class="form-row">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" [(ngModel)]="form.email" required>
-        </div>
-        <div class="form-group">
-          <label for="password">Mot de passe</label>
-          <input type="password" id="password" name="password" [(ngModel)]="form.password" required>
-        </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" [(ngModel)]="form.email" required>
       </div>
     }
 
@@ -93,6 +89,10 @@
       <div class="form-group">
         <label for="adresseCabinet">Adresse cabinet</label>
         <input type="text" id="adresseCabinet" name="adresseCabinet" [(ngModel)]="form.adresseCabinet">
+      </div>
+      <div class="form-group">
+        <label for="telephone">Numéro de téléphone</label>
+        <input type="tel" id="telephone" name="telephone" [(ngModel)]="form.telephone">
       </div>
       <div class="form-group">
         <label for="regionId">Région</label>
