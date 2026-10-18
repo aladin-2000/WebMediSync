@@ -1,0 +1,80 @@
+<div class="page">
+  <div class="page-header">
+    <h2>Utilisateurs</h2>
+  </div>
+
+  <div class="filters">
+    <select [(ngModel)]="roleFilter" (ngModelChange)="onRoleChange()">
+      <option value="">Tous les rôles</option>
+      <option value="MEDECIN">Médecin</option>
+      <option value="DELEGUE">Délégué</option>
+    </select>
+    <input
+      type="text"
+      placeholder="Rechercher par email..."
+      [ngModel]="searchTerm"
+      (ngModelChange)="onSearchInput($event)"
+    />
+  </div>
+
+  @if (errorMessage) {
+    <div class="error-banner">{{ errorMessage }}</div>
+  }
+
+  @if (isLoading) {
+    <p class="info-text">Chargement...</p>
+  } @else if (users.length === 0) {
+    <p class="info-text">Aucun utilisateur trouvé.</p>
+  } @else {
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Rôle</th>
+          <th>Email</th>
+          <th>Statut</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users; track user.id) {
+          <tr>
+            <td>{{ user.prenom }} {{ user.nom }}</td>
+            <td>
+              <span class="badge-role" [class.medecin]="user.role === 'MEDECIN'" [class.delegue]="user.role === 'DELEGUE'">
+                {{ user.role === 'MEDECIN' ? 'Médecin' : 'Délégué' }}
+              </span>
+            </td>
+            <td>{{ user.email }}</td>
+            <td>
+              <span class="badge-status" [class.actif]="user.isActive" [class.inactif]="!user.isActive">
+                {{ user.isActive ? 'Actif' : 'Inactif' }}
+              </span>
+            </td>
+            <td class="actions">
+              <button
+                class="btn"
+                [class.danger]="user.isActive"
+                [class.success]="!user.isActive"
+                (click)="toggleActive(user)"
+              >
+                <i class="ti" [class.ti-ban]="user.isActive" [class.ti-check]="!user.isActive"></i>
+                {{ user.isActive ? 'Désactiver' : 'Activer' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button class="btn" [disabled]="page === 0" (click)="previousPage()">
+        <i class="ti ti-chevron-left"></i> Précédent
+      </button>
+      <span class="page-info">Page {{ page + 1 }} sur {{ totalPages }}</span>
+      <button class="btn" [disabled]="page >= totalPages - 1" (click)="nextPage()">
+        Suivant <i class="ti ti-chevron-right"></i>
+      </button>
+    </div>
+  }
+</div>

@@ -36,6 +36,14 @@
     </button>
     <button
       class="nav-item"
+      [class.active]="activePage === 'utilisateurs'"
+      (click)="navigate('utilisateurs')"
+    >
+      <i class="ti ti-user-shield"></i>
+      <span>Utilisateurs</span>
+    </button>
+    <button
+      class="nav-item"
       [class.active]="activePage === 'statistiques'"
       (click)="navigate('statistiques')"
     >

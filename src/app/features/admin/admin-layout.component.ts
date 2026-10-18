@@ -5,11 +5,12 @@ import { MedecinsComponent } from './medecins/medecins.component';
 import { ValidationsComponent } from './validations/validations.component';
 import { LaboratoiresComponent } from './laboratoires/laboratoires.component';
 import { StatistiquesComponent } from './statistiques/statistiques.component';
+import { UtilisateursComponent } from './utilisateurs/utilisateurs.component';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [CommonModule, AdminSidebarComponent, MedecinsComponent, ValidationsComponent, LaboratoiresComponent, StatistiquesComponent],
+  imports: [CommonModule, AdminSidebarComponent, MedecinsComponent, ValidationsComponent, LaboratoiresComponent, StatistiquesComponent, UtilisateursComponent],
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.css'],
 })
