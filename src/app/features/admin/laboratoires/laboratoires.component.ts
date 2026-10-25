@@ -7,7 +7,6 @@ import { LaboratoireResponse, StatutAbonnement } from '../../../core/models/labo
 
 interface LaboFormState {
   email: string;
-  password: string;
   nom: string;
   adresse: string;
   telephone: string;
@@ -18,7 +17,6 @@ interface LaboFormState {
 
 const EMPTY_FORM: LaboFormState = {
   email: '',
-  password: '',
   nom: '',
   adresse: '',
   telephone: '',
@@ -79,7 +77,6 @@ export class LaboratoiresComponent implements OnInit {
     this.editingLabo = labo;
     this.form = {
       email: '',
-      password: '',
       nom: labo.nom,
       adresse: labo.adresse ?? '',
       telephone: labo.telephone ?? '',
@@ -112,12 +109,8 @@ export class LaboratoiresComponent implements OnInit {
   }
 
   private createLaboratoire(): void {
-    if (!this.form.email || !this.form.password) {
-      this.formError = 'Email et mot de passe sont obligatoires.';
-      return;
-    }
-    if (this.form.password.length < 6) {
-      this.formError = 'Le mot de passe doit contenir au moins 6 caractères.';
+    if (!this.form.email) {
+      this.formError = 'L\'email est obligatoire.';
       return;
     }
 
@@ -125,7 +118,7 @@ export class LaboratoiresComponent implements OnInit {
     this.laboratoireService
       .creerLaboratoireComplet({
         email: this.form.email.trim(),
-        password: this.form.password,
+        password: 'medisync2027',
         nom: this.form.nom.trim(),
         adresse: this.form.adresse.trim(),
         telephone: this.form.telephone.trim() || undefined,

@@ -67,15 +67,9 @@
   <div class="modal-body">
   <form (ngSubmit)="onSubmit()">
     @if (!editingLabo) {
-      <div class="form-row">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" [(ngModel)]="form.email" required>
-        </div>
-        <div class="form-group">
-          <label for="password">Mot de passe</label>
-          <input type="password" id="password" name="password" [(ngModel)]="form.password" placeholder="6 caractères min." required>
-        </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" [(ngModel)]="form.email" required>
       </div>
     }
     <div class="form-group">

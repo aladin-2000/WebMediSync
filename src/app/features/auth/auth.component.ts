@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { roleHomePath, CHANGE_PASSWORD_PATH } from '../../core/guards/role.guard';
 import { MedecinService } from '../admin/services/medecin.service';
@@ -15,7 +15,7 @@ import { LaboratoireService } from '../../core/services/laboratoire.service';
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
-export class AuthComponent {
+export class AuthComponent implements OnInit {
   email = '';
   password = '';
   errorMessage = '';
@@ -26,8 +26,16 @@ export class AuthComponent {
     private medecinService: MedecinService,
     private delegueService: DelegueService,
     private laboratoireService: LaboratoireService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
+
+  ngOnInit(): void {
+    const message = this.route.snapshot.queryParamMap.get('message');
+    if (message) {
+      this.errorMessage = message;
+    }
+  }
 
   onLogin() {
     this.errorMessage = '';
