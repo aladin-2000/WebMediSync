@@ -99,6 +99,10 @@
             <span class="value">{{ delegueLabel(selectedRdv) }}</span>
           </div>
           <div class="detail-row">
+            <span class="label">Laboratoire</span>
+            <span class="value">{{ selectedRdv.laboratoireNom || '-' }}</span>
+          </div>
+          <div class="detail-row">
             <span class="label">Date</span>
             <span class="value">{{ formatDateLongue(selectedRdv.date) }}</span>
           </div>
