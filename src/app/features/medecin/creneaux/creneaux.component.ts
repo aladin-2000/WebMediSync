@@ -10,7 +10,7 @@ import { MedecinService } from '../../admin/services/medecin.service';
 import { toISODate, lundiDeLaSemaine, dimancheDeLaSemaine } from '../../delegue/shared/semaine.util';
 import { MONTHS, DAYS_LABELS_LONG } from '../shared/date-labels.constants';
 
-const DAYS_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+const DAYS_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven'];
 
 type ActionType = 'realise' | 'absent' | 'annuler';
 
@@ -58,21 +58,21 @@ export class CreneauxComponent implements OnInit {
 
   get weekLabel(): string {
     const lundi = lundiDeLaSemaine(this.currentDate);
-    const samedi = new Date(lundi);
-    samedi.setDate(samedi.getDate() + 5);
+    const vendredi = new Date(lundi);
+    vendredi.setDate(vendredi.getDate() + 4);
     const moisLundi = MONTHS[lundi.getMonth()];
-    const moisSamedi = MONTHS[samedi.getMonth()];
-    if (lundi.getMonth() === samedi.getMonth()) {
-      return `${lundi.getDate()} - ${samedi.getDate()} ${moisSamedi} ${samedi.getFullYear()}`;
+    const moisVendredi = MONTHS[vendredi.getMonth()];
+    if (lundi.getMonth() === vendredi.getMonth()) {
+      return `${lundi.getDate()} - ${vendredi.getDate()} ${moisVendredi} ${vendredi.getFullYear()}`;
     }
-    return `${lundi.getDate()} ${moisLundi} - ${samedi.getDate()} ${moisSamedi} ${samedi.getFullYear()}`;
+    return `${lundi.getDate()} ${moisLundi} - ${vendredi.getDate()} ${moisVendredi} ${vendredi.getFullYear()}`;
   }
 
   get cells(): RendezVousCell[] {
     const lundi = lundiDeLaSemaine(this.currentDate);
     const today = toISODate(new Date());
     const cells: RendezVousCell[] = [];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 5; i++) {
       const date = new Date(lundi);
       date.setDate(date.getDate() + i);
       const dateISO = toISODate(date);

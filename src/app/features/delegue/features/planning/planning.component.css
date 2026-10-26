@@ -113,10 +113,10 @@
   color: #c92a2a;
 }
 
-/* Grille semaine (Lun -> Sam, seul le dimanche n'est jamais travaillé) */
+/* Grille semaine (Lun -> Ven) */
 .week-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 12px;
 }
 

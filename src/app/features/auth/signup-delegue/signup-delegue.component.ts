@@ -65,13 +65,17 @@ export class SignupDelegueComponent implements OnInit {
     }
 
     this.isLoading = true;
+
+    const resolvedLaboName = this.laboInconnu
+      ? this.laboName
+      : this.laboratoires.find(l => l.id === this.laboratoireId)?.nom;
+
     this.delegueService.inscrire({
       email: this.email,
       password: this.password,
       nom: this.nom,
       prenom: this.prenom,
-      laboratoireId: this.laboInconnu ? undefined : this.laboratoireId,
-      laboName: this.laboInconnu ? this.laboName : undefined,
+      laboName: resolvedLaboName,
       telephone: this.telephone || undefined,
     }).subscribe({
       next: (response) => {

@@ -60,7 +60,7 @@
           }
           <label class="checkbox-inline">
             <input type="checkbox" name="laboInconnu" [(ngModel)]="laboInconnu">
-            Mon laboratoire n'est pas encore inscrit sur MediSync
+            Mon laboratoire n'existe pas
           </label>
         </div>
 
@@ -90,12 +90,11 @@
     } @else {
       <div class="success-state">
         <div class="logo-box success">
-          <i class="ti ti-mail-check"></i>
+          <i class="ti ti-clock-check"></i>
         </div>
-        <h2>Vérifiez votre boîte email</h2>
+        <h2>Merci de vous être inscrit à notre plateforme</h2>
         <p>
-          Un lien de vérification a été envoyé à <strong>{{ email }}</strong>.
-          Cliquez dessus pour activer votre compte et vous connecter.
+          Votre compte a été créé avec succès. Veuillez attendre qu'un administrateur active votre compte avant de pouvoir vous connecter.
         </p>
         <a routerLink="/login" class="btn-login link">Retour à la connexion</a>
       </div>

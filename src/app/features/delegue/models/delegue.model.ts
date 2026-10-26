@@ -31,7 +31,6 @@ export interface InscriptionDelegueRequest {
   password: string;
   nom: string;
   prenom: string;
-  laboratoireId?: string;
   laboName?: string;
   telephone?: string;
 }
