@@ -28,7 +28,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (labo of laboratoires; track labo.id) {
+        @for (labo of paginatedLaboratoires; track labo.id) {
           <tr [class.inactive-row]="!labo.isActive">
             <td>{{ labo.nom }}</td>
             <td>{{ labo.adresse || '—' }}</td>
@@ -56,6 +56,13 @@
         }
       </tbody>
     </table>
+
+    <app-pagination
+      [totalItems]="laboratoires.length"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      (pageChange)="onPageChange($event)"
+    ></app-pagination>
   }
 </div>
 

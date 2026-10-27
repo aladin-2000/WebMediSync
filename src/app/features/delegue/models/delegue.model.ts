@@ -26,6 +26,23 @@ export interface ModifierDelegueRequest {
   telephone?: string;
 }
 
+export interface AdminUpdateDelegueRequest {
+  userId: string;
+  nom: string;
+  prenom: string;
+  telephone?: string;
+  laboratoireId?: string;
+}
+
+export interface AdminCreerDelegueRequest {
+  email: string;
+  password: string;
+  nom: string;
+  prenom: string;
+  telephone?: string;
+  laboratoireId: string;
+}
+
 export interface InscriptionDelegueRequest {
   email: string;
   password: string;

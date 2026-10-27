@@ -1,0 +1,94 @@
+<div class="page">
+  <div class="page-header">
+    <h2>Délégués en attente d'activation</h2>
+  </div>
+
+  @if (errorMessage) {
+    <div class="error-banner">{{ errorMessage }}</div>
+  }
+
+  @if (isLoading) {
+    <p class="info-text">Chargement...</p>
+  } @else if (delegues.length === 0) {
+    <p class="info-text">Aucun délégué en attente d'activation.</p>
+  } @else {
+    <table class="medecins-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Laboratoire demandé</th>
+          <th>Téléphone</th>
+          <th>Date d'inscription</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (delegue of paginatedDelegues; track delegue.id) {
+          <tr>
+            <td>{{ delegue.nom }}</td>
+            <td>{{ delegue.prenom }}</td>
+            <td>{{ delegue.laboName || '—' }}</td>
+            <td>{{ delegue.telephone || '—' }}</td>
+            <td>{{ formatDate(delegue.createdAt) }}</td>
+            <td class="actions">
+              <button class="btn success" (click)="openActiverModal(delegue)">
+                <i class="ti ti-user-check"></i>
+                Activer
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <app-pagination
+      [totalItems]="delegues.length"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      (pageChange)="onPageChange($event)"
+    ></app-pagination>
+  }
+</div>
+
+<app-modal
+  title="Activer le délégué"
+  [visible]="showModal"
+  (close)="closeModal()"
+>
+  <div class="modal-body">
+    @if (selectedDelegue) {
+      <p class="modal-info">
+        Activer <strong>{{ selectedDelegue.prenom }} {{ selectedDelegue.nom }}</strong>
+        et l'associer à un laboratoire.
+      </p>
+      @if (selectedDelegue.laboName) {
+        <p class="modal-hint">Laboratoire demandé : <strong>{{ selectedDelegue.laboName }}</strong></p>
+      }
+    }
+
+    <div class="form-group">
+      <label for="laboratoire">Laboratoire</label>
+      <select id="laboratoire" name="laboratoire" [(ngModel)]="selectedLaboId" required>
+        <option value="" disabled>Choisir un laboratoire</option>
+        @for (labo of laboratoires; track labo.id) {
+          <option [value]="labo.id">{{ labo.nom }}</option>
+        }
+      </select>
+    </div>
+
+    @if (formError) {
+      <div class="error-banner">
+        <i class="ti ti-alert-triangle"></i>
+        <span>{{ formError }}</span>
+      </div>
+    }
+
+    <div class="modal-actions">
+      <button type="button" class="btn" (click)="closeModal()">Annuler</button>
+      <button type="button" class="btn success" [disabled]="isSaving" (click)="onActiver()">
+        {{ isSaving ? 'Activation...' : 'Activer et associer' }}
+      </button>
+    </div>
+  </div>
+</app-modal>

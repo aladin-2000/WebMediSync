@@ -29,7 +29,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (medecin of medecins; track medecin.id) {
+        @for (medecin of paginatedMedecins; track medecin.id) {
           <tr>
             <td>{{ medecin.nom }} @if (!medecin.valide) { <span class="badge-pending">en attente</span> }</td>
             <td>{{ medecin.prenom }}</td>
@@ -49,6 +49,13 @@
         }
       </tbody>
     </table>
+
+    <app-pagination
+      [totalItems]="medecins.length"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      (pageChange)="onPageChange($event)"
+    ></app-pagination>
   }
 </div>
 

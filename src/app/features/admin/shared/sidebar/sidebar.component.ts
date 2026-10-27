@@ -5,7 +5,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { MedecinService } from '../../services/medecin.service';
 import { ModalComponent } from '../../../medecin/shared/modal/modal.component';
 
-export type AdminPageName = 'medecins' | 'validations' | 'laboratoires' | 'statistiques' | 'utilisateurs';
+export type AdminPageName = 'medecins' | 'validations' | 'laboratoires' | 'delegues' | 'gestion-delegues' | 'statistiques' | 'utilisateurs';
 
 @Component({
   selector: 'app-admin-sidebar',
@@ -20,6 +20,7 @@ export class AdminSidebarComponent implements OnInit {
 
   showLogoutConfirm = false;
   nombreEnAttente = 0;
+  deleguesMenuOpen = false;
 
   constructor(
     private authService: AuthService,
@@ -35,6 +36,14 @@ export class AdminSidebarComponent implements OnInit {
         }
       },
     });
+  }
+
+  get isDeleguesPage(): boolean {
+    return this.activePage === 'delegues' || this.activePage === 'gestion-delegues';
+  }
+
+  toggleDeleguesMenu(): void {
+    this.deleguesMenuOpen = !this.deleguesMenuOpen;
   }
 
   navigate(page: AdminPageName): void {

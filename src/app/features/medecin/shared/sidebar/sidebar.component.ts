@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -45,7 +45,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   notifications: NotificationResponse[] = [];
   unreadCount = 0;
-  showNotifPanel = false;
   private notifPollHandle: ReturnType<typeof setInterval> | null = null;
 
   // Tiroir mobile : sidebar masquée par défaut sous 768px, ouverte via le bouton hamburger
@@ -112,81 +111,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleNotifPanel(event: Event): void {
-    event.stopPropagation();
-    this.showNotifPanel = !this.showNotifPanel;
-    if (this.showNotifPanel) {
-      this.loadNotifications();
-    }
-  }
-
-  @HostListener('document:click')
-  closeNotifPanel(): void {
-    this.showNotifPanel = false;
-  }
-
-  marquerNotifLue(notif: NotificationResponse, event: Event): void {
-    event.stopPropagation();
-    if (notif.isRead) {
-      return;
-    }
-    this.notificationService.marquerLue(notif.id).subscribe({
-      next: () => {
-        notif.isRead = true;
-        this.unreadCount = Math.max(0, this.unreadCount - 1);
-      },
-    });
-  }
-
-  marquerToutesLues(event: Event): void {
-    event.stopPropagation();
-    if (this.unreadCount === 0) {
-      return;
-    }
-    this.notificationService.marquerToutesLues().subscribe({
-      next: () => {
-        this.notifications.forEach((n) => (n.isRead = true));
-        this.unreadCount = 0;
-      },
-    });
-  }
-
-  voirToutesLesNotifications(event: Event): void {
-    event.stopPropagation();
-    this.showNotifPanel = false;
-    this.navigate('notifications');
-  }
-
-  notifIcon(type: NotificationResponse['type']): string {
-    switch (type) {
-      case 'REALISATION':
-        return 'ti-circle-check';
-      case 'ANNULATION':
-        return 'ti-circle-x';
-      case 'ABSENCE':
-        return 'ti-user-off';
-      case 'CONFLIT':
-        return 'ti-alert-triangle';
-      case 'RESERVATION':
-        return 'ti-calendar-plus';
-      case 'PROPOSITION':
-        return 'ti-replace';
-      default:
-        return 'ti-bell';
-    }
-  }
-
-  notifTimeAgo(dateStr: string): string {
-    const diffMs = Date.now() - new Date(dateStr).getTime();
-    const minutes = Math.floor(diffMs / 60000);
-    if (minutes < 1) return "à l'instant";
-    if (minutes < 60) return `il y a ${minutes} min`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `il y a ${hours} h`;
-    const days = Math.floor(hours / 24);
-    if (days < 7) return `il y a ${days} j`;
-    return new Date(dateStr).toLocaleDateString('fr-FR');
-  }
 
   specialiteLibelle(valeur: string): string {
     return this.specialites.find((s) => s.valeur === valeur)?.libelle ?? valeur;

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../medecin/shared/modal/modal.component';
+import { PaginationComponent } from '../shared/pagination/pagination.component';
 import { LaboratoireService } from '../../../core/services/laboratoire.service';
 import { LaboratoireResponse, StatutAbonnement } from '../../../core/models/laboratoire.model';
 
@@ -28,7 +29,7 @@ const EMPTY_FORM: LaboFormState = {
 @Component({
   selector: 'app-admin-laboratoires',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, PaginationComponent],
   templateUrl: './laboratoires.component.html',
   styleUrls: ['./laboratoires.component.css', '../shared/admin-modal-form.css'],
 })
@@ -36,6 +37,8 @@ export class LaboratoiresComponent implements OnInit {
   laboratoires: LaboratoireResponse[] = [];
   isLoading = false;
   errorMessage = '';
+  currentPage = 0;
+  pageSize = 10;
 
   showModal = false;
   editingLabo: LaboratoireResponse | null = null;
@@ -57,6 +60,7 @@ export class LaboratoiresComponent implements OnInit {
         this.isLoading = false;
         if (response.success && response.data) {
           this.laboratoires = response.data;
+          this.currentPage = 0;
         }
       },
       error: () => {
@@ -64,6 +68,15 @@ export class LaboratoiresComponent implements OnInit {
         this.errorMessage = 'Impossible de charger la liste des laboratoires.';
       },
     });
+  }
+
+  get paginatedLaboratoires(): LaboratoireResponse[] {
+    const start = this.currentPage * this.pageSize;
+    return this.laboratoires.slice(start, start + this.pageSize);
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
   }
 
   openAddModal(): void {

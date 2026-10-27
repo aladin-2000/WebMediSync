@@ -72,6 +72,21 @@
   border-radius: 10px;
 }
 
+.nav-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-group-toggle .chevron {
+  margin-left: auto;
+  font-size: 12px;
+}
+
+.sub-item {
+  padding-left: 38px;
+  font-size: 13px;
+}
+
 .sidebar-spacer {
   flex: 1;
 }

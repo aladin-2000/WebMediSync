@@ -6,11 +6,13 @@ import { ValidationsComponent } from './validations/validations.component';
 import { LaboratoiresComponent } from './laboratoires/laboratoires.component';
 import { StatistiquesComponent } from './statistiques/statistiques.component';
 import { UtilisateursComponent } from './utilisateurs/utilisateurs.component';
+import { AdminDeleguesComponent } from './delegues/delegues.component';
+import { GestionDeleguesComponent } from './gestion-delegues/gestion-delegues.component';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [CommonModule, AdminSidebarComponent, MedecinsComponent, ValidationsComponent, LaboratoiresComponent, StatistiquesComponent, UtilisateursComponent],
+  imports: [CommonModule, AdminSidebarComponent, MedecinsComponent, ValidationsComponent, LaboratoiresComponent, StatistiquesComponent, UtilisateursComponent, AdminDeleguesComponent, GestionDeleguesComponent],
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.css'],
 })

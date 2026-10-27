@@ -1,0 +1,25 @@
+@if (totalPages > 1) {
+  <div class="pagination-bar">
+    <span class="pagination-info">Affichage {{ startItem }}–{{ endItem }} sur {{ totalItems }}</span>
+
+    <div class="pagination-controls">
+      <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">
+        <i class="ti ti-chevron-left"></i>
+      </button>
+
+      @for (p of pages; track $index) {
+        @if (p === '...') {
+          <span class="ellipsis">…</span>
+        } @else {
+          <button class="page-btn" [class.active]="p === currentPage" (click)="goToPage(+p)">
+            {{ +p + 1 }}
+          </button>
+        }
+      }
+
+      <button class="page-btn" [disabled]="currentPage === totalPages - 1" (click)="goToPage(currentPage + 1)">
+        <i class="ti ti-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+}

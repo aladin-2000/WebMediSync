@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api.config';
 import { ApiResponse } from '../../../core/models/user.model';
 import {
+  AdminCreerDelegueRequest,
+  AdminUpdateDelegueRequest,
   CreerDelegueLaboRequest,
   DelegueResponse,
   InscriptionDelegueRequest,
@@ -48,5 +50,19 @@ export class DelegueService {
 
   activer(id: string): Observable<ApiResponse<DelegueResponse>> {
     return this.http.patch<ApiResponse<DelegueResponse>>(`${this.baseUrl}/${id}/activer`, {});
+  }
+
+  adminUpdate(id: string, body: AdminUpdateDelegueRequest): Observable<ApiResponse<DelegueResponse>> {
+    return this.http.put<ApiResponse<DelegueResponse>>(`${this.baseUrl}/${id}`, body);
+  }
+
+  adminCreer(body: AdminCreerDelegueRequest): Observable<ApiResponse<DelegueResponse>> {
+    return this.http.post<ApiResponse<DelegueResponse>>(`${this.baseUrl}/admin-creer`, body);
+  }
+
+  adminActiver(id: string, laboratoireId: string): Observable<ApiResponse<DelegueResponse>> {
+    return this.http.patch<ApiResponse<DelegueResponse>>(
+      `${this.baseUrl}/${id}/admin-activer`, { laboratoireId }
+    );
   }
 }

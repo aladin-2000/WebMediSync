@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../medecin/shared/modal/modal.component';
+import { PaginationComponent } from '../shared/pagination/pagination.component';
 import { MedecinService } from '../services/medecin.service';
 import { MedecinResponse, RegionOption, SpecialiteOption } from '../models/medecin.model';
 
@@ -28,7 +29,7 @@ const EMPTY_FORM: MedecinFormState = {
 @Component({
   selector: 'app-admin-medecins',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, PaginationComponent],
   templateUrl: './medecins.component.html',
   styleUrls: ['./medecins.component.css', '../shared/admin-modal-form.css'],
 })
@@ -38,6 +39,8 @@ export class MedecinsComponent implements OnInit {
   regions: RegionOption[] = [];
   isLoading = false;
   errorMessage = '';
+  currentPage = 0;
+  pageSize = 10;
 
   showModal = false;
   editingMedecin: MedecinResponse | null = null;
@@ -65,6 +68,15 @@ export class MedecinsComponent implements OnInit {
     });
   }
 
+  get paginatedMedecins(): MedecinResponse[] {
+    const start = this.currentPage * this.pageSize;
+    return this.medecins.slice(start, start + this.pageSize);
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+  }
+
   specialiteLibelle(valeur: string): string {
     return this.specialites.find((s) => s.valeur === valeur)?.libelle ?? valeur;
   }
@@ -77,6 +89,7 @@ export class MedecinsComponent implements OnInit {
         this.isLoading = false;
         if (response.success && response.data) {
           this.medecins = response.data;
+          this.currentPage = 0;
         }
       },
       error: () => {

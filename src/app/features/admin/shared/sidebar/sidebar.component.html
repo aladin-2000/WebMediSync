@@ -34,6 +34,33 @@
       <i class="ti ti-building-hospital"></i>
       <span>Laboratoires</span>
     </button>
+    <div class="nav-group">
+      <button
+        class="nav-item nav-group-toggle"
+        [class.active]="isDeleguesPage"
+        (click)="toggleDeleguesMenu()"
+      >
+        <i class="ti ti-id-badge-2"></i>
+        <span>Actions sur les délégués</span>
+        <i class="ti chevron" [class.ti-chevron-down]="!deleguesMenuOpen && !isDeleguesPage" [class.ti-chevron-up]="deleguesMenuOpen || isDeleguesPage"></i>
+      </button>
+      @if (deleguesMenuOpen || isDeleguesPage) {
+        <button
+          class="nav-item sub-item"
+          [class.active]="activePage === 'delegues'"
+          (click)="navigate('delegues')"
+        >
+          <span>Délégués en attente</span>
+        </button>
+        <button
+          class="nav-item sub-item"
+          [class.active]="activePage === 'gestion-delegues'"
+          (click)="navigate('gestion-delegues')"
+        >
+          <span>Lister les délégués</span>
+        </button>
+      }
+    </div>
     <button
       class="nav-item"
       [class.active]="activePage === 'utilisateurs'"
