@@ -109,6 +109,11 @@
   background: #fff;
 }
 
+.input-icon input::placeholder,
+.form-group > input::placeholder {
+  color: #a0a7b0;
+}
+
 .input-icon input:focus,
 .form-group > input:focus,
 .form-group > select:focus {

@@ -44,9 +44,8 @@ export class AuthService {
     return this.http.post<ApiResponse<null>>(`${API_BASE_URL}/auth/renvoyer-verification`, { email });
   }
 
-  changePassword(currentPassword: string, newPassword: string): Observable<ApiResponse<null>> {
+  changePassword(newPassword: string): Observable<ApiResponse<null>> {
     return this.http.put<ApiResponse<null>>(`${API_BASE_URL}/auth/changer-mot-de-passe`, {
-      currentPassword,
       newPassword,
     }).pipe(
       tap((response) => {

@@ -15,7 +15,6 @@ import { DelegueService } from '../../delegue/services/delegue.service';
   styleUrls: ['./changer-mot-de-passe.component.css']
 })
 export class ChangerMotDePasseComponent {
-  currentPassword = '';
   newPassword = '';
   confirmPassword = '';
   errorMessage = '';
@@ -31,7 +30,7 @@ export class ChangerMotDePasseComponent {
   onSubmit() {
     this.errorMessage = '';
 
-    if (!this.currentPassword || !this.newPassword || !this.confirmPassword) {
+    if (!this.newPassword || !this.confirmPassword) {
       this.errorMessage = 'Veuillez remplir tous les champs.';
       return;
     }
@@ -42,7 +41,7 @@ export class ChangerMotDePasseComponent {
     }
 
     this.isLoading = true;
-    this.authService.changePassword(this.currentPassword, this.newPassword).subscribe({
+    this.authService.changePassword(this.newPassword).subscribe({
       next: (response) => {
         this.isLoading = false;
         if (!response.success) {

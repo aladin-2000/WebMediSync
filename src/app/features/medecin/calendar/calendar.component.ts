@@ -549,6 +549,20 @@ changeMonth(dir: number): void {
     return dateDebut===dateFin && debut.getDay() === 0  ? true : false;
   }
 
+   private isSamedi(dateDebut: string, dateFin: string): boolean {
+    const [y1, m1, d1] = dateDebut.split('-').map(Number);
+    const debut = new Date(y1, m1 - 1, d1);
+    return dateDebut===dateFin && debut.getDay() === 6  ? true : false;
+  }
+
+  private isWeekEnd(dateDebut: string, dateFin: string): boolean {
+    const [y1, m1, d1] = dateDebut.split('-').map(Number);
+    const [y2, m2, d2] = dateFin.split('-').map(Number);
+    const debut = new Date(y1, m1 - 1, d1);
+    const fin = new Date(y2, m2 - 1, d2);
+    return debut.getDay() === 6 && fin.getDay() === 0;
+  }
+
   private validerPlageAjout(): string {
     const maintenant = new Date();
     const aujourdHui = this.todayISO;
@@ -559,6 +573,12 @@ changeMonth(dir: number): void {
 
     if (this.isDimanche(this.dateDebut, this.dateFin)) {
       return 'Impossible de planifier des créneaux le dimanche.';
+    }
+    if (this.isSamedi(this.dateDebut, this.dateFin)) {
+      return 'Impossible de planifier des créneaux le samedi.';
+    }
+    if (this.isWeekEnd(this.dateDebut, this.dateFin)) {
+      return 'Impossible de planifier des créneaux le week-end.';
     }
 
     if (this.dateDebut === aujourdHui) {
