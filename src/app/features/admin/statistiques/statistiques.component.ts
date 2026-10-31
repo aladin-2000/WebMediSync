@@ -28,7 +28,10 @@ export class StatistiquesComponent implements OnInit {
   selectedMois: number;
   selectedAnnee: number;
   moisOptions = MOIS_LABELS.map((label, i) => ({ value: i + 1, label }));
-  anneeOptions: number[] = [];
+
+  popupLabo: StatsVisitesLabo | null = null;
+  popupDelegues: StatsVisitesDelegue[] = [];
+  popupLoading = false;
 
   isLoading = false;
   errorMessage = '';
@@ -37,9 +40,6 @@ export class StatistiquesComponent implements OnInit {
     const now = new Date();
     this.selectedMois = now.getMonth() + 1;
     this.selectedAnnee = now.getFullYear();
-    for (let y = 2024; y <= now.getFullYear(); y++) {
-      this.anneeOptions.push(y);
-    }
   }
 
   ngOnInit(): void {
@@ -95,6 +95,26 @@ export class StatistiquesComponent implements OnInit {
     this.selectedLaboNom = labo.laboratoireNom;
     this.activeTab = 'delegues';
     this.loadDeleguesForLabo(labo.laboratoireId);
+  }
+
+  openLaboPopup(labo: StatsVisitesLabo): void {
+    this.popupLabo = labo;
+    this.popupDelegues = [];
+    this.popupLoading = true;
+    this.statsService.getVisitesParDelegueForLabo(labo.laboratoireId, this.selectedMois, this.selectedAnnee).subscribe({
+      next: (res) => {
+        this.popupLoading = false;
+        if (res.success) this.popupDelegues = res.data;
+      },
+      error: () => {
+        this.popupLoading = false;
+      },
+    });
+  }
+
+  closeLaboPopup(): void {
+    this.popupLabo = null;
+    this.popupDelegues = [];
   }
 
   clearLaboFilter(): void {

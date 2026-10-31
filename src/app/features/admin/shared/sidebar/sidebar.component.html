@@ -7,25 +7,36 @@
   </div>
 
   <nav class="sidebar-nav">
-    <button
-      class="nav-item"
-      [class.active]="activePage === 'medecins'"
-      (click)="navigate('medecins')"
-    >
-      <i class="ti ti-users"></i>
-      <span>Gérer les médecins</span>
-    </button>
-    <button
-      class="nav-item"
-      [class.active]="activePage === 'validations'"
-      (click)="navigate('validations')"
-    >
-      <i class="ti ti-user-check"></i>
-      <span>Validation médecins</span>
-      @if (nombreEnAttente > 0) {
-        <span class="badge-count">{{ nombreEnAttente }}</span>
+    <div class="nav-group">
+      <button
+        class="nav-item nav-group-toggle"
+        [class.open]="isMedecinsPage || medecinsMenuOpen"
+        (click)="toggleMedecinsMenu()"
+      >
+        <i class="ti ti-users"></i>
+        <span>Médecins</span>
+        @if (nombreEnAttente > 0) {
+          <span class="badge-count">{{ nombreEnAttente }}</span>
+        }
+        <i class="ti chevron" [class.ti-chevron-down]="!medecinsMenuOpen && !isMedecinsPage" [class.ti-chevron-up]="medecinsMenuOpen || isMedecinsPage"></i>
+      </button>
+      @if (medecinsMenuOpen || isMedecinsPage) {
+        <button
+          class="nav-item sub-item"
+          [class.active]="activePage === 'validations'"
+          (click)="navigate('validations')"
+        >
+          <span>Médecins en attente</span>
+        </button>
+        <button
+          class="nav-item sub-item"
+          [class.active]="activePage === 'medecins'"
+          (click)="navigate('medecins')"
+        >
+          <span>Consulter les médecins</span>
+        </button>
       }
-    </button>
+    </div>
     <button
       class="nav-item"
       [class.active]="activePage === 'laboratoires'"
@@ -37,7 +48,7 @@
     <div class="nav-group">
       <button
         class="nav-item nav-group-toggle"
-        [class.active]="isDeleguesPage"
+        [class.open]="isDeleguesPage || deleguesMenuOpen"
         (click)="toggleDeleguesMenu()"
       >
         <i class="ti ti-id-badge-2"></i>

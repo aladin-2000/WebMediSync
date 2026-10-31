@@ -21,6 +21,7 @@ export class AdminSidebarComponent implements OnInit {
   showLogoutConfirm = false;
   nombreEnAttente = 0;
   deleguesMenuOpen = false;
+  medecinsMenuOpen = false;
 
   constructor(
     private authService: AuthService,
@@ -38,8 +39,16 @@ export class AdminSidebarComponent implements OnInit {
     });
   }
 
+  get isMedecinsPage(): boolean {
+    return this.activePage === 'medecins' || this.activePage === 'validations';
+  }
+
   get isDeleguesPage(): boolean {
     return this.activePage === 'delegues' || this.activePage === 'gestion-delegues';
+  }
+
+  toggleMedecinsMenu(): void {
+    this.medecinsMenuOpen = !this.medecinsMenuOpen;
   }
 
   toggleDeleguesMenu(): void {

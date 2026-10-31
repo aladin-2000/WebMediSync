@@ -77,6 +77,10 @@
   flex-direction: column;
 }
 
+.nav-group-toggle.open {
+  color: #fff;
+}
+
 .nav-group-toggle .chevron {
   margin-left: auto;
   font-size: 12px;

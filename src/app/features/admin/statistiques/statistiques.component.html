@@ -48,11 +48,7 @@
         <option [value]="m.value">{{ m.label }}</option>
       }
     </select>
-    <select [(ngModel)]="selectedAnnee" (change)="onPeriodChange()">
-      @for (a of anneeOptions; track a) {
-        <option [value]="a">{{ a }}</option>
-      }
-    </select>
+    <input type="number" class="annee-input" [(ngModel)]="selectedAnnee" (change)="onPeriodChange()" min="2024" max="2099">
   </div>
 
   <!-- Filter chip -->
@@ -88,13 +84,13 @@
           </thead>
           <tbody>
             @for (labo of statsLabos; track labo.laboratoireId) {
-              <tr>
+              <tr class="clickable-row" (click)="openLaboPopup(labo)">
                 <td>{{ labo.laboratoireNom }}</td>
                 <td>
                   <span class="visit-count">{{ labo.nombreVisites }}</span>
                 </td>
                 <td class="actions">
-                  <button class="btn-link" (click)="voirDelegues(labo)">
+                  <button class="btn-link" (click)="openLaboPopup(labo); $event.stopPropagation()">
                     <i class="ti ti-users"></i>
                     Voir délégués
                   </button>
@@ -139,5 +135,44 @@
         </table>
       }
     }
+  }
+
+  <!-- Popup délégués d'un labo -->
+  @if (popupLabo) {
+    <div class="popup-backdrop" (click)="closeLaboPopup()">
+      <div class="popup-card" (click)="$event.stopPropagation()">
+        <div class="popup-header">
+          <h3>{{ popupLabo.laboratoireNom }}</h3>
+          <button class="popup-close" (click)="closeLaboPopup()">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+        <p class="popup-subtitle">Visites par délégué — {{ moisOptions[selectedMois - 1].label }} {{ selectedAnnee }}</p>
+        @if (popupLoading) {
+          <p class="info-text">Chargement...</p>
+        } @else if (popupDelegues.length === 0) {
+          <p class="info-text">Aucune visite réalisée pour ce laboratoire.</p>
+        } @else {
+          <table class="stats-table popup-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Visites</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (d of popupDelegues; track d.delegueId) {
+                <tr>
+                  <td>{{ d.delegueNom }}</td>
+                  <td>{{ d.deleguePrenom }}</td>
+                  <td><span class="visit-count">{{ d.nombreVisites }}</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
   }
 </div>
