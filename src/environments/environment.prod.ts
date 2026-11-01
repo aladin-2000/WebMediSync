@@ -1,3 +1,3 @@
 export const environment = {
-  apiBaseUrl: 'https://medisync.tn',
+  apiBaseUrl: 'https://api.medisync.tn',
 };
