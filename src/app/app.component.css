@@ -1,4 +1,42 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   height: 100vh;
+}
+
+.contact-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #059669;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 16px;
+  flex-shrink: 0;
+}
+
+.contact-banner i {
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.contact-separator {
+  opacity: 0.5;
+}
+
+.app-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+@media (max-width: 600px) {
+  .contact-banner {
+    flex-wrap: wrap;
+    font-size: 11px;
+    gap: 4px;
+    padding: 4px 10px;
+  }
 }

@@ -22,6 +22,7 @@ export class AdminSidebarComponent implements OnInit {
   nombreEnAttente = 0;
   deleguesMenuOpen = false;
   medecinsMenuOpen = false;
+  mobileOpen = false;
 
   constructor(
     private authService: AuthService,
@@ -53,6 +54,14 @@ export class AdminSidebarComponent implements OnInit {
 
   toggleDeleguesMenu(): void {
     this.deleguesMenuOpen = !this.deleguesMenuOpen;
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileOpen = !this.mobileOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.mobileOpen = false;
   }
 
   navigate(page: AdminPageName): void {

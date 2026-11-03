@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationSoundService } from '../../../../core/services/notification-sound.service';
 import { NotificationResponse } from '../../../../core/models/notification.model';
 import { MedecinService } from '../../../admin/services/medecin.service';
 import { MedecinResponse, RegionOption, SpecialiteOption } from '../../../admin/models/medecin.model';
@@ -11,7 +12,7 @@ import { ModalComponent } from '../modal/modal.component';
 
 export type ViewName = 'home' | 'calendar' | 'recurrences' | 'creneaux' | 'historique' | 'notifications';
 
-const NOTIF_POLL_INTERVAL_MS = 30000;
+const NOTIF_POLL_INTERVAL_MS = 10000;
 
 @Component({
   selector: 'app-sidebar',
@@ -45,6 +46,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   notifications: NotificationResponse[] = [];
   unreadCount = 0;
+  private previousUnreadCount = 0;
   private notifPollHandle: ReturnType<typeof setInterval> | null = null;
 
   // Tiroir mobile : sidebar masquée par défaut sous 768px, ouverte via le bouton hamburger
@@ -54,6 +56,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private medecinService: MedecinService,
     private notificationService: NotificationService,
+    private notificationSoundService: NotificationSoundService,
     private router: Router
   ) {
     const user = this.authService.getCurrentUser();
@@ -105,7 +108,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
       next: (response) => {
         if (response.success) {
           this.notifications = response.data;
-          this.unreadCount = response.data.filter((n) => !n.isRead).length;
+          const newCount = response.data.filter((n) => !n.isRead).length;
+          if (newCount > this.previousUnreadCount) {
+            this.notificationSoundService.play();
+          }
+          this.previousUnreadCount = newCount;
+          this.unreadCount = newCount;
         }
       },
     });

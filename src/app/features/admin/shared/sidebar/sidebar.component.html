@@ -1,9 +1,14 @@
-<aside class="sidebar">
+<button class="mobile-menu-btn" (click)="toggleMobileMenu()" aria-label="Ouvrir le menu">
+  <i class="ti" [class.ti-menu-2]="!mobileOpen" [class.ti-x]="mobileOpen"></i>
+</button>
+
+@if (mobileOpen) {
+  <div class="sidebar-backdrop" (click)="closeMobileMenu()"></div>
+}
+
+<aside class="sidebar" [class.open]="mobileOpen">
   <div class="sidebar-header">
-    <div class="logo-box">
-      <i class="ti ti-heartbeat"></i>
-    </div>
-    <span class="brand">WebMediSync</span>
+    <img src="assets/logo.png" alt="MediSync" class="sidebar-logo-img">
   </div>
 
   <nav class="sidebar-nav">
@@ -24,14 +29,14 @@
         <button
           class="nav-item sub-item"
           [class.active]="activePage === 'validations'"
-          (click)="navigate('validations')"
+          (click)="navigate('validations'); closeMobileMenu()"
         >
           <span>Médecins en attente</span>
         </button>
         <button
           class="nav-item sub-item"
           [class.active]="activePage === 'medecins'"
-          (click)="navigate('medecins')"
+          (click)="navigate('medecins'); closeMobileMenu()"
         >
           <span>Consulter les médecins</span>
         </button>
@@ -40,7 +45,7 @@
     <button
       class="nav-item"
       [class.active]="activePage === 'laboratoires'"
-      (click)="navigate('laboratoires')"
+      (click)="navigate('laboratoires'); closeMobileMenu()"
     >
       <i class="ti ti-building-hospital"></i>
       <span>Laboratoires</span>
@@ -59,14 +64,14 @@
         <button
           class="nav-item sub-item"
           [class.active]="activePage === 'delegues'"
-          (click)="navigate('delegues')"
+          (click)="navigate('delegues'); closeMobileMenu()"
         >
           <span>Délégués en attente</span>
         </button>
         <button
           class="nav-item sub-item"
           [class.active]="activePage === 'gestion-delegues'"
-          (click)="navigate('gestion-delegues')"
+          (click)="navigate('gestion-delegues'); closeMobileMenu()"
         >
           <span>Lister les délégués</span>
         </button>
@@ -75,7 +80,7 @@
     <button
       class="nav-item"
       [class.active]="activePage === 'utilisateurs'"
-      (click)="navigate('utilisateurs')"
+      (click)="navigate('utilisateurs'); closeMobileMenu()"
     >
       <i class="ti ti-user-shield"></i>
       <span>Utilisateurs</span>
@@ -83,7 +88,7 @@
     <button
       class="nav-item"
       [class.active]="activePage === 'statistiques'"
-      (click)="navigate('statistiques')"
+      (click)="navigate('statistiques'); closeMobileMenu()"
     >
       <i class="ti ti-chart-bar"></i>
       <span>Statistiques</span>

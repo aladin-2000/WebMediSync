@@ -6,7 +6,7 @@
 /* Hero */
 .hero {
   position: relative;
-  background: linear-gradient(120deg, #1971c2 0%, #4263eb 55%, #7048e8 100%);
+  background: linear-gradient(120deg, #1971c2 0%, #4263eb 55%, #1864ab 100%);
   border-radius: 16px;
   padding: 28px 32px;
   margin-bottom: 20px;
@@ -352,7 +352,7 @@
   font-weight: 600;
   padding: 3px 10px;
   border-radius: 20px;
-  background: #eaf4ff;
+  background: #e7f5ff;
   color: #1971c2;
   margin-bottom: 6px;
 }
@@ -478,7 +478,7 @@
 }
 
 .slot-card:hover {
-  background: linear-gradient(135deg, #eaf4ff, #dbe4ff);
+  background: linear-gradient(135deg, #e7f5ff, #dbe4ff);
   border-color: #1971c2;
   transform: translateY(-2px);
   box-shadow: 0 6px 14px rgba(25, 113, 194, 0.15);

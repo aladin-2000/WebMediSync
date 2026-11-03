@@ -169,3 +169,11 @@
   font-size: 14px;
   color: #495057;
 }
+
+@media (max-width: 768px) {
+  .page { padding: 16px; }
+  .page-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .filters { flex-direction: column; gap: 8px; }
+  .filters input { max-width: 100%; }
+  .users-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}

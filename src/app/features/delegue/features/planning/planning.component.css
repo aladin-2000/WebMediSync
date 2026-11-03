@@ -6,7 +6,7 @@
 /* Hero */
 .hero {
   position: relative;
-  background: linear-gradient(120deg, #1971c2 0%, #4263eb 55%, #7048e8 100%);
+  background: linear-gradient(120deg, #1971c2 0%, #4263eb 55%, #1864ab 100%);
   border-radius: 16px;
   padding: 24px 28px;
   margin-bottom: 20px;
@@ -134,7 +134,7 @@
 
 .week-col.today {
   border-color: #1971c2;
-  background: linear-gradient(180deg, #eaf4ff, #f8f9fa 60%);
+  background: linear-gradient(180deg, #e7f5ff, #f8f9fa 60%);
   box-shadow: 0 4px 14px rgba(25, 113, 194, 0.12);
 }
 

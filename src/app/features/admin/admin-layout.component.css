@@ -1,6 +1,6 @@
 :host {
   display: block;
-  height: 100vh;
+  height: 100%;
 }
 
 .app {
@@ -21,4 +21,14 @@
   flex: 1;
   overflow-y: auto;
   background: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding-top: 56px;
+  }
+
+  .content {
+    padding: 0;
+  }
 }

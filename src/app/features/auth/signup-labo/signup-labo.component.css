@@ -2,8 +2,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #eaf4ff 0%, #e3d9fb 100%);
+  min-height: 100%;
+  background: linear-gradient(135deg, #e7f5ff 0%, #e3d9fb 100%);
   padding: 30px 20px;
 }
 
@@ -24,7 +24,7 @@
 
 .logo-box {
   background: linear-gradient(135deg, #e5dbff, #d0ebff);
-  color: #7048e8;
+  color: #1864ab;
   width: 64px;
   height: 64px;
   border-radius: 50%;
@@ -113,7 +113,7 @@
 .form-group > input:focus,
 .form-group > select:focus {
   outline: none;
-  border-color: #7048e8;
+  border-color: #1864ab;
   box-shadow: 0 0 0 3px rgba(112, 72, 232, 0.12);
 }
 
@@ -133,7 +133,7 @@
 .btn-login {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #1971c2, #7048e8);
+  background: linear-gradient(135deg, #1971c2, #1864ab);
   color: white;
   border: none;
   border-radius: 8px;
@@ -166,7 +166,7 @@
 }
 
 .auth-footer a {
-  color: #7048e8;
+  color: #1864ab;
   font-weight: 500;
   text-decoration: none;
 }

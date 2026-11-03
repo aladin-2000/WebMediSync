@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationSoundService } from '../../../../core/services/notification-sound.service';
 import { DelegueService } from '../../services/delegue.service';
 import { DelegueResponse } from '../../models/delegue.model';
 import { ModalComponent } from '../modal/modal.component';
@@ -15,7 +16,7 @@ import { ModalComponent } from '../modal/modal.component';
 
 export type PageName = 'home' | 'search' | 'planning' | 'history' | 'notifications';
 
-const NOTIF_POLL_INTERVAL_MS = 30000;
+const NOTIF_POLL_INTERVAL_MS = 10000;
 
 @Component({
   selector: 'app-delegue-sidebar',
@@ -46,6 +47,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   editProfilError = '';
 
   unreadCount = 0;
+  private previousUnreadCount = 0;
   private notifPollHandle: ReturnType<typeof setInterval> | null = null;
 
   // Tiroir mobile : sidebar masquée par défaut sous 768px, ouverte via le bouton hamburger
@@ -55,6 +57,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private delegueService: DelegueService,
     private notificationService: NotificationService,
+    private notificationSoundService: NotificationSoundService,
     private router: Router
   ) {}
 
@@ -90,7 +93,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.notificationService.getMesNotifications().subscribe({
       next: (response) => {
         if (response.success) {
-          this.unreadCount = response.data.filter((n) => !n.isRead).length;
+          const newCount = response.data.filter((n) => !n.isRead).length;
+          if (newCount > this.previousUnreadCount) {
+            this.notificationSoundService.play();
+          }
+          this.previousUnreadCount = newCount;
+          this.unreadCount = newCount;
         }
       },
     });

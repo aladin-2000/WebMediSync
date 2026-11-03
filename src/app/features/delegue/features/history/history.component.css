@@ -6,7 +6,7 @@
 /* Hero */
 .hero {
   position: relative;
-  background: linear-gradient(120deg, #1971c2 0%, #4263eb 55%, #7048e8 100%);
+  background: linear-gradient(120deg, #1971c2 0%, #4263eb 55%, #1864ab 100%);
   border-radius: 16px;
   padding: 24px 28px;
   margin-bottom: 20px;

@@ -13,26 +13,16 @@
 }
 
 .logo {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1971c2;
   margin-bottom: 1.5rem;
   display: flex;
-  align-items: center;
-  gap: 10px;
+  justify-content: center;
+  padding: 8px 0;
 }
 
-.logo-badge {
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
-  background: linear-gradient(135deg, #1971c2, #7048e8);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  box-shadow: 0 4px 10px rgba(25, 113, 194, 0.3);
+.sidebar-logo-img {
+  width: 160px;
+  height: auto;
+  object-fit: contain;
 }
 
 .nav {
@@ -112,7 +102,7 @@
 }
 
 .profile-section:hover {
-  background: #eaf4ff;
+  background: #e7f5ff;
   border-color: #bcdcff;
 }
 
@@ -126,7 +116,7 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4dabf7, #7048e8);
+  background: linear-gradient(135deg, #3b82f6, #1864ab);
   color: #fff;
   display: flex;
   align-items: center;
@@ -246,7 +236,7 @@
   align-items: center;
   gap: 14px;
   padding: 20px;
-  background: linear-gradient(135deg, #eaf4ff, #f3f0fe);
+  background: linear-gradient(135deg, #e7f5ff, #f3f0fe);
   border-bottom: 1px solid #e9ecef;
 }
 
@@ -254,7 +244,7 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4dabf7, #7048e8);
+  background: linear-gradient(135deg, #3b82f6, #1864ab);
   color: #fff;
   display: flex;
   align-items: center;

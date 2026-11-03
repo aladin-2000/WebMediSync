@@ -13,27 +13,16 @@
 }
 
 .logo {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1c2733;
   margin-bottom: 1.4rem;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 0.3rem;
+  justify-content: center;
+  padding: 8px 0;
 }
 
-.logo-badge {
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
-  background: linear-gradient(135deg, #1971c2, #3b82f6);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  box-shadow: 0 4px 10px rgba(25, 113, 194, 0.28);
+.sidebar-logo-img {
+  width: 160px;
+  height: auto;
+  object-fit: contain;
 }
 
 nav {
@@ -75,7 +64,7 @@ nav {
 }
 
 .nav-item.active {
-  background: #eaf2fd;
+  background: #e7f5ff;
   color: #1971c2;
   font-weight: 600;
 }
@@ -156,7 +145,7 @@ nav {
 }
 
 .notif-mark-all:hover {
-  background: #eaf2fd;
+  background: #e7f5ff;
 }
 
 .notif-panel-body {
@@ -281,7 +270,7 @@ nav {
 }
 
 .notif-panel-footer:hover {
-  background: #eaf2fd;
+  background: #e7f5ff;
 }
 
 .spacer {
@@ -302,7 +291,7 @@ nav {
 }
 
 .profile-card:hover {
-  background: #eaf2fd;
+  background: #e7f5ff;
   border-color: #d6e6fb;
 }
 
@@ -448,7 +437,7 @@ nav {
   align-items: center;
   gap: 14px;
   padding: 20px;
-  background: linear-gradient(135deg, #eaf2fd, #f5f8fe);
+  background: linear-gradient(135deg, #e7f5ff, #f5f8fe);
   border-bottom: 1px solid #eef1f4;
 }
 

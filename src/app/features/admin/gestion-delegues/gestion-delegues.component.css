@@ -112,3 +112,12 @@
   display: flex;
   gap: 8px;
 }
+
+@media (max-width: 768px) {
+  .page { padding: 16px; }
+  .page-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .filter-bar { flex-wrap: wrap; }
+  .medecins-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .actions { flex-direction: column; gap: 4px; }
+  .header-actions { flex-wrap: wrap; }
+}

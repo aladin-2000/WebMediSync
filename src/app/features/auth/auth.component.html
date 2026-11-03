@@ -1,47 +1,58 @@
 <div class="auth-wrapper">
-  <div class="auth-card">
-    <div class="auth-header">
-      <div class="logo-box">
-        <i class="ti ti-heartbeat"></i>
-      </div>
-      <h2>WebMediSync</h2>
-      <p>Connectez-vous à votre espace dédié</p>
+  <div class="auth-left">
+    <div class="auth-left-content">
+      <img src="assets/logo.png" alt="MediSync" class="auth-logo-large">
+      <h1>Bienvenue sur <span>MediSync</span></h1>
+      <p>La plateforme de gestion des rendez-vous médicaux qui connecte médecins, délégués et laboratoires.</p>
     </div>
+  </div>
 
-    <form (ngSubmit)="onLogin()">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <div class="input-icon">
-          <i class="ti ti-user"></i>
-          <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="Entrez votre email" required>
+  <div class="auth-right">
+    <div class="auth-card">
+      <div class="auth-header">
+        <img src="assets/logo.png" alt="MediSync" class="auth-logo-mobile">
+        <h2>Connexion</h2>
+        <p>Connectez-vous à votre espace dédié</p>
+      </div>
+
+      <form (ngSubmit)="onLogin()">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <div class="input-icon">
+            <i class="ti ti-mail"></i>
+            <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="Entrez votre email" required>
+          </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="password">Mot de passe</label>
-        <div class="input-icon">
-          <i class="ti ti-lock"></i>
-          <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="Entrez votre mot de passe" required>
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <div class="input-icon">
+            <i class="ti ti-lock"></i>
+            <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="Entrez votre mot de passe" required>
+          </div>
         </div>
+
+        <div *ngIf="errorMessage" class="error-banner">
+          <i class="ti ti-alert-circle"></i>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <button type="submit" class="btn-login" [disabled]="isLoading">
+          <i class="ti ti-login" *ngIf="!isLoading"></i>
+          {{ isLoading ? 'Connexion...' : 'Se connecter' }}
+        </button>
+      </form>
+
+      <div class="auth-footer signup-links">
+        Pas encore de compte ?
+        <a routerLink="/inscription/medecin">Je suis médecin</a>
+        ·
+        <a routerLink="/inscription/delegue">Je suis délégué</a>
       </div>
 
-      <div *ngIf="errorMessage" class="error-banner">
-        <i class="ti ti-alert-circle"></i>
-        <span>{{ errorMessage }}</span>
+      <div class="auth-footer back-link">
+        <a routerLink="/accueil"><i class="ti ti-arrow-left"></i> Retour à l'accueil</a>
       </div>
-
-      <button type="submit" class="btn-login" [disabled]="isLoading">
-        {{ isLoading ? 'Connexion...' : 'Se connecter' }}
-      </button>
-    </form>
-
-    <div class="auth-footer signup-links">
-      Pas encore de compte ?
-      <a routerLink="/inscription/medecin">Je suis médecin</a>
-      ·
-      <a routerLink="/inscription/delegue">Je suis délégué</a>
-      ·
-      <!-- <a routerLink="/inscription/labo">Je suis un laboratoire</a> -->
     </div>
   </div>
 </div>
