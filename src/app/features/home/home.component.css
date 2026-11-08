@@ -380,15 +380,10 @@
   gap: 12px;
 }
 
-.phone-screen i {
-  font-size: 48px;
-  color: #059669;
-}
-
-.phone-screen span {
-  font-size: 18px;
-  font-weight: 800;
-  color: #064e3b;
+.phone-logo {
+  width: 100px;
+  height: auto;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
 }
 
 /* ── Contact ── */
@@ -549,12 +544,8 @@
     height: 300px;
   }
 
-  .phone-screen i {
-    font-size: 36px;
-  }
-
-  .phone-screen span {
-    font-size: 15px;
+  .phone-logo {
+    width: 80px;
   }
 
   .contact-cards {
@@ -680,12 +671,8 @@
     border-radius: 16px;
   }
 
-  .phone-screen i {
-    font-size: 30px;
-  }
-
-  .phone-screen span {
-    font-size: 14px;
+  .phone-logo {
+    width: 65px;
   }
 
   .footer p {
