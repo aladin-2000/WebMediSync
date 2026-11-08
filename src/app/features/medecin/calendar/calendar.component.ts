@@ -8,6 +8,7 @@ import { CreneauService } from '../services/creneau.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { MedecinService } from '../../admin/services/medecin.service';
 import { toISODate } from '../../delegue/shared/semaine.util';
+import { TimeInputComponent } from '../../../shared/time-input/time-input.component';
 
 export interface CalendarCell {
   day: number;
@@ -32,7 +33,7 @@ export interface CreneauxHoraireDuJour {
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, TimeInputComponent],
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css'],
 })

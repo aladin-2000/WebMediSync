@@ -67,12 +67,12 @@
           <div class="time-range">
             <div class="input-group">
               <span class="label-small">De</span>
-              <input type="time" [(ngModel)]="searchHeureDebut">
+              <app-time-input [allowEmpty]="true" [(ngModel)]="searchHeureDebut"></app-time-input>
             </div>
             <span class="separator">—</span>
             <div class="input-group">
               <span class="label-small">À</span>
-              <input type="time" [(ngModel)]="searchHeureFin">
+              <app-time-input [allowEmpty]="true" [(ngModel)]="searchHeureFin"></app-time-input>
             </div>
           </div>
         </div>

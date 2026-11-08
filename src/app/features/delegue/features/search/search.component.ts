@@ -9,11 +9,12 @@ import { CreneauResponse } from '../../../medecin/models/disponibilite.models';
 import { RendezVousService } from '../../services/rendezvous.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { DAYS_LABELS_LONG } from '../../../medecin/shared/date-labels.constants';
+import { TimeInputComponent } from '../../../../shared/time-input/time-input.component';
 
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, TimeInputComponent],
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css'],
 })
