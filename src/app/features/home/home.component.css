@@ -219,6 +219,178 @@
   flex-shrink: 0;
 }
 
+/* ── Mobile App Download ── */
+.mobile-app {
+  padding: 64px 24px;
+  background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-app::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mobile-app-content {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.mobile-app-info {
+  flex: 1;
+}
+
+.mobile-app-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.mobile-app-badge i {
+  font-size: 18px;
+}
+
+.mobile-app h2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 16px;
+  line-height: 1.3;
+}
+
+.mobile-app p {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.7;
+  margin: 0 0 20px;
+}
+
+.mobile-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+  display: grid;
+  gap: 10px;
+}
+
+.mobile-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.mobile-features li i {
+  color: #a7f3d0;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.btn-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  background: #fff;
+  color: #059669;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.btn-download:hover {
+  background: #f0fdf4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+}
+
+.btn-download i {
+  font-size: 22px;
+}
+
+.download-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.download-hint i {
+  font-size: 14px;
+}
+
+.mobile-app-visual {
+  flex-shrink: 0;
+}
+
+.phone-mockup {
+  width: 200px;
+  height: 380px;
+  background: #1e293b;
+  border-radius: 32px;
+  padding: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.phone-mockup::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 6px;
+  border-radius: 3px;
+  background: #334155;
+}
+
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #ecfdf5, #d1fae5);
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.phone-screen i {
+  font-size: 48px;
+  color: #059669;
+}
+
+.phone-screen span {
+  font-size: 18px;
+  font-weight: 800;
+  color: #064e3b;
+}
+
 /* ── Contact ── */
 .contact {
   padding: 64px 24px;
@@ -341,6 +513,50 @@
     padding: 24px 20px;
   }
 
+  .mobile-app {
+    padding: 40px 20px;
+  }
+
+  .mobile-app-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .mobile-app h2 {
+    font-size: 22px;
+  }
+
+  .mobile-features {
+    justify-items: center;
+  }
+
+  .mobile-features li {
+    justify-content: center;
+  }
+
+  .btn-download {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+
+  .download-hint {
+    justify-content: center;
+  }
+
+  .phone-mockup {
+    width: 160px;
+    height: 300px;
+  }
+
+  .phone-screen i {
+    font-size: 36px;
+  }
+
+  .phone-screen span {
+    font-size: 15px;
+  }
+
   .contact-cards {
     flex-direction: column;
     align-items: center;
@@ -429,6 +645,47 @@
 
   .footer {
     padding: 18px 16px;
+  }
+
+  .mobile-app {
+    padding: 32px 16px;
+  }
+
+  .mobile-app h2 {
+    font-size: 20px;
+  }
+
+  .mobile-app p {
+    font-size: 14px;
+  }
+
+  .mobile-features li {
+    font-size: 13px;
+  }
+
+  .btn-download {
+    padding: 12px 24px;
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  .phone-mockup {
+    width: 140px;
+    height: 260px;
+    border-radius: 24px;
+    padding: 10px;
+  }
+
+  .phone-screen {
+    border-radius: 16px;
+  }
+
+  .phone-screen i {
+    font-size: 30px;
+  }
+
+  .phone-screen span {
+    font-size: 14px;
   }
 
   .footer p {
