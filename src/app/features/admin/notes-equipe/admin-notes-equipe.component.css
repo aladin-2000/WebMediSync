@@ -1,0 +1,312 @@
+.page {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.page-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: #6c757d;
+  font-size: 13px;
+}
+
+.pill-count {
+  font-size: 12px;
+  font-weight: 600;
+  background: #fff4e6;
+  color: #e8590c;
+  padding: 4px 10px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffe3e3;
+  color: #c92a2a;
+  border: 1px solid #ffa8a8;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.search-box {
+  position: relative;
+  flex: 1 1 280px;
+  max-width: 420px;
+}
+
+.search-box i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #adb5bd;
+}
+
+.search-box input,
+.toolbar select {
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  background: #fff;
+  color: #495057;
+}
+
+.search-box input {
+  width: 100%;
+  padding-left: 34px;
+}
+
+.search-box input:focus,
+.toolbar select:focus {
+  outline: none;
+  border-color: #339af0;
+  box-shadow: 0 0 0 3px rgba(51, 154, 240, 0.1);
+}
+
+.info-text {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.empty {
+  text-align: center;
+  color: #868e96;
+  padding: 48px 16px;
+}
+
+.empty i {
+  font-size: 42px;
+  color: #ced4da;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.notes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 760px;
+}
+
+.notes-table th,
+.notes-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e9ecef;
+  vertical-align: top;
+}
+
+.notes-table th {
+  color: #495057;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.notes-table tr.done td {
+  color: #868e96;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.auteur {
+  font-weight: 500;
+  color: #212529;
+}
+
+.role {
+  display: inline-block;
+  margin-top: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+
+.role.medecin {
+  background: #e7f5ff;
+  color: #1971c2;
+}
+
+.role.delegue {
+  background: #f3f0ff;
+  color: #6741d9;
+}
+
+.contenu {
+  max-width: 520px;
+}
+
+.texte {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.btn-link {
+  display: block;
+  margin-top: 4px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: #1971c2;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.status {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 10px;
+  background: #fff4e6;
+  color: #e8590c;
+  white-space: nowrap;
+}
+
+.status.done {
+  background: #ebfbee;
+  color: #2b8a3e;
+}
+
+.actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background: #fff;
+  color: #495057;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btn:hover:not(:disabled) {
+  background: #f1f3f5;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* ── Écran étroit : le tableau devient une liste de cartes ── */
+@media (max-width: 700px) {
+  .page {
+    padding: 16px 12px;
+  }
+
+  .page-header {
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  /* 16px minimum : évite le zoom automatique de Safari iOS au focus */
+  .search-box input,
+  .toolbar select {
+    font-size: 16px;
+  }
+
+  .toolbar select {
+    flex: 1 1 calc(50% - 4px);
+  }
+
+  .table-scroll {
+    overflow-x: visible;
+  }
+
+  .notes-table {
+    min-width: 0;
+  }
+
+  .notes-table thead {
+    display: none;
+  }
+
+  .notes-table,
+  .notes-table tbody {
+    display: block;
+  }
+
+  .notes-table tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'auteur status'
+      'date   date'
+      'texte  texte'
+      'action action';
+    gap: 6px 10px;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .notes-table td {
+    display: block;
+    padding: 0;
+    border: none;
+  }
+
+  .cell-auteur { grid-area: auteur; white-space: normal; }
+  .cell-status { grid-area: status; align-self: start; }
+  .cell-date { grid-area: date; font-size: 12px; color: #868e96; }
+  .contenu { grid-area: texte; max-width: none; }
+  .actions { grid-area: action; text-align: left; }
+
+  .actions .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+}

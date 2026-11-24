@@ -197,3 +197,14 @@
   max-width: 220px;
   margin: 0 auto;
 }
+
+/* Indicateur de robustesse du mot de passe (pleine largeur sous la ligne mot de passe) */
+.pwd-strength {
+  margin: -8px 0 18px;
+}
+
+@media (max-width: 520px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,100 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h2>Notes des utilisateurs</h2>
+      <p class="subtitle">Avis et idées envoyés par les médecins et les délégués à l'équipe MediSync.</p>
+    </div>
+    <span class="pill-count">{{ nombreATraiter }} à traiter</span>
+  </div>
+
+  @if (errorMessage) {
+    <div class="error-banner"><i class="ti ti-alert-circle"></i> {{ errorMessage }}</div>
+  }
+
+  <div class="toolbar">
+    <div class="search-box">
+      <i class="ti ti-search"></i>
+      <input
+        type="text"
+        [(ngModel)]="recherche"
+        (ngModelChange)="onFiltresChange()"
+        placeholder="Rechercher (auteur, contenu…)"
+        aria-label="Rechercher une note"
+      >
+    </div>
+    <select [(ngModel)]="filtreRole" (ngModelChange)="onFiltresChange()" aria-label="Filtrer par rôle">
+      <option value="">Tous les rôles</option>
+      <option value="MEDECIN">Médecins</option>
+      <option value="DELEGUE">Délégués</option>
+    </select>
+    <select [(ngModel)]="filtreStatut" (ngModelChange)="onFiltresChange()" aria-label="Filtrer par statut">
+      <option value="">Toutes les notes</option>
+      <option value="a-traiter">À traiter</option>
+      <option value="traitee">Traitées</option>
+    </select>
+  </div>
+
+  @if (isLoading) {
+    <p class="info-text">Chargement…</p>
+  } @else if (notes.length === 0) {
+    <div class="empty">
+      <i class="ti ti-message-circle-off"></i>
+      <p>Aucune note reçue pour le moment.</p>
+    </div>
+  } @else if (notesFiltrees.length === 0) {
+    <p class="info-text">Aucune note ne correspond aux critères.</p>
+  } @else {
+    <div class="table-scroll">
+      <table class="notes-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Auteur</th>
+            <th>Note</th>
+            <th>Statut</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (n of notesPage; track n.id) {
+            <tr [class.done]="n.traitee">
+              <td class="nowrap cell-date">{{ n.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td class="nowrap cell-auteur">
+                <div class="auteur">{{ n.auteurNom }}</div>
+                <span class="role" [class.medecin]="n.role === 'MEDECIN'" [class.delegue]="n.role === 'DELEGUE'">
+                  {{ n.role === 'MEDECIN' ? 'Médecin' : 'Délégué' }}
+                </span>
+              </td>
+              <td class="contenu">
+                <span class="texte">{{ texte(n) }}</span>
+                @if (estLongue(n)) {
+                  <button type="button" class="btn-link" (click)="basculerDeplie(n)">
+                    {{ estDepliee(n) ? 'Voir moins' : 'Voir plus' }}
+                  </button>
+                }
+              </td>
+              <td class="cell-status">
+                <span class="status" [class.done]="n.traitee">{{ n.traitee ? 'Traitée' : 'À traiter' }}</span>
+              </td>
+              <td class="actions">
+                <button class="btn small" [disabled]="enCours === n.id" (click)="basculerTraitee(n)">
+                  <i class="ti" [class.ti-check]="!n.traitee" [class.ti-arrow-back-up]="n.traitee"></i>
+                  {{ n.traitee ? 'Rouvrir' : 'Marquer traitée' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <app-pagination
+      [totalItems]="notesFiltrees.length"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [pageSizeOptions]="pageSizeOptions"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    ></app-pagination>
+  }
+</div>

@@ -1,6 +1,6 @@
 @if (visible) {
   <div class="overlay" (click)="onOverlayClick($event)">
-    <div class="modal" role="dialog" [attr.aria-label]="title">
+    <div class="modal" role="dialog" [attr.aria-label]="title" [style.max-width.px]="maxWidth">
       <div class="modal-header">
         <span class="modal-title">{{ title }}</span>
         <button class="btn-close" (click)="close.emit()" aria-label="Fermer">

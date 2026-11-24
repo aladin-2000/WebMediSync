@@ -24,6 +24,8 @@
           <th>Nom</th>
           <th>Prénom</th>
           <th>Spécialité</th>
+          <th>Fonction</th>
+          <th>Établissement</th>
           <th>Adresse cabinet</th>
           <th></th>
         </tr>
@@ -34,6 +36,8 @@
             <td>{{ medecin.nom }}</td>
             <td>{{ medecin.prenom }}</td>
             <td>{{ specialiteLibelle(medecin.specialite) }}</td>
+            <td>{{ medecin.fonctionLibelle || '—' }}</td>
+            <td>{{ medecin.etablissementNom || '—' }}</td>
             <td>{{ medecin.adresseCabinet || '—' }}</td>
             <td class="actions">
               <button class="btn success" [disabled]="validatingId === medecin.id" (click)="validerMedecin(medecin)">

@@ -5,6 +5,9 @@ import { ModalComponent } from '../../medecin/shared/modal/modal.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
 import { LaboratoireService } from '../../../core/services/laboratoire.service';
 import { LaboratoireResponse, StatutAbonnement } from '../../../core/models/laboratoire.model';
+import { PhoneMaskDirective } from '../../../shared/phone/phone-mask.directive';
+import { PhonePipe } from '../../../shared/phone/phone.pipe';
+import { phoneError } from '../../../shared/phone/phone.util';
 
 interface LaboFormState {
   email: string;
@@ -29,7 +32,7 @@ const EMPTY_FORM: LaboFormState = {
 @Component({
   selector: 'app-admin-laboratoires',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, PaginationComponent, PhoneMaskDirective, PhonePipe],
   templateUrl: './laboratoires.component.html',
   styleUrls: ['./laboratoires.component.css', '../shared/admin-modal-form.css'],
 })
@@ -106,6 +109,12 @@ export class LaboratoiresComponent implements OnInit {
   }
 
   onSubmit(): void {
+    const telError = phoneError(this.form.telephone);
+    if (telError) {
+      this.formError = telError;
+      return;
+    }
+
     this.formError = '';
 
     if (!this.form.nom || !this.form.adresse || !this.form.statutAbonnement
@@ -131,7 +140,7 @@ export class LaboratoiresComponent implements OnInit {
     this.laboratoireService
       .creerLaboratoireComplet({
         email: this.form.email.trim(),
-        password: 'medisync2027',
+        password: 'Medisync@2027',
         nom: this.form.nom.trim(),
         adresse: this.form.adresse.trim(),
         telephone: this.form.telephone.trim() || undefined,

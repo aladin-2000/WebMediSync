@@ -32,7 +32,7 @@
           <tr [class.inactive-row]="!labo.isActive">
             <td>{{ labo.nom }}</td>
             <td>{{ labo.adresse || '—' }}</td>
-            <td>{{ labo.telephone || '—' }}</td>
+            <td>{{ (labo.telephone | phone) || '—' }}</td>
             <td>
               {{ labo.statutAbonnement }}
               <span class="dates-hint">{{ formatDate(labo.dateDebutAbonnement) }} → {{ formatDate(labo.dateFinAbonnement) }}</span>
@@ -90,7 +90,7 @@
     <div class="form-row">
       <div class="form-group">
         <label for="telephone">Téléphone (optionnel)</label>
-        <input type="tel" id="telephone" name="telephone" [(ngModel)]="form.telephone">
+        <input type="tel" appPhoneMask id="telephone" name="telephone" [(ngModel)]="form.telephone">
       </div>
       <div class="form-group">
         <label for="statutAbonnement">Statut d'abonnement</label>

@@ -13,6 +13,19 @@ export class PaginationComponent {
   @Input() pageSize = 10;
   @Input() currentPage = 0;
   @Output() pageChange = new EventEmitter<number>();
+  /** Si renseigné, affiche un sélecteur « Lignes par page ». */
+  @Input() pageSizeOptions: number[] = [];
+  @Output() pageSizeChange = new EventEmitter<number>();
+
+  /** La barre reste visible tant que le sélecteur de taille a un intérêt. */
+  get visible(): boolean {
+    return this.totalPages > 1
+      || (this.pageSizeOptions.length > 0 && this.totalItems > Math.min(...this.pageSizeOptions));
+  }
+
+  onPageSizeSelect(value: string): void {
+    this.pageSizeChange.emit(Number(value));
+  }
 
   get totalPages(): number {
     return Math.ceil(this.totalItems / this.pageSize);

@@ -1,0 +1,49 @@
+<div class="combobox" [class.inline]="inline" [class.compact]="compact">
+  <div class="combobox-input">
+    <i class="ti ti-search combobox-icon"></i>
+    <input
+      type="text"
+      [id]="inputId"
+      autocomplete="off"
+      role="combobox"
+      aria-autocomplete="list"
+      [attr.aria-controls]="listboxId"
+      [attr.aria-expanded]="open"
+      [placeholder]="placeholder"
+      [(ngModel)]="query"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="onQueryChange()"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      (keydown)="onKeydown($event)"
+    >
+    @if (query) {
+      <button type="button" class="combobox-clear" aria-label="Effacer" (mousedown)="$event.preventDefault()" (click)="clear()">
+        <i class="ti ti-x"></i>
+      </button>
+    }
+  </div>
+
+  @if (open) {
+    <ul class="combobox-list" [id]="listboxId" role="listbox">
+      @for (e of filtered; track e.id; let i = $index) {
+        <li
+          role="option"
+          [class.active]="i === activeIndex"
+          [class.selected]="e.id === value"
+          [attr.aria-selected]="e.id === value"
+          (mousedown)="$event.preventDefault()"
+          (click)="select(e)"
+          (mouseenter)="activeIndex = i"
+        >
+          <span class="combobox-nom">{{ e.nom }}</span>
+          @if (e.regionNom) {
+            <span class="combobox-region">{{ e.regionNom }}</span>
+          }
+        </li>
+      } @empty {
+        <li class="combobox-empty">Aucun établissement trouvé</li>
+      }
+    </ul>
+  }
+</div>

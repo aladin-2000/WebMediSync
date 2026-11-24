@@ -1,16 +1,22 @@
 <div class="app">
-  <app-admin-sidebar [activePage]="activePage" (pageChange)="onPageChange($event)"></app-admin-sidebar>
+  <app-admin-sidebar [activePage]="activePage" [notesATraiter]="notesATraiter" (pageChange)="onPageChange($event)"></app-admin-sidebar>
 
   <div class="main">
     <div class="content">
       @if (activePage === 'medecins') {
         <app-admin-medecins></app-admin-medecins>
       }
+      @if (activePage === 'agenda-medecins') {
+        <app-admin-agenda-medecins></app-admin-agenda-medecins>
+      }
       @if (activePage === 'validations') {
         <app-admin-validations></app-admin-validations>
       }
       @if (activePage === 'laboratoires') {
         <app-admin-laboratoires></app-admin-laboratoires>
+      }
+      @if (activePage === 'etablissements') {
+        <app-admin-etablissements></app-admin-etablissements>
       }
       @if (activePage === 'delegues') {
         <app-admin-delegues></app-admin-delegues>
@@ -20,6 +26,9 @@
       }
       @if (activePage === 'statistiques') {
         <app-admin-statistiques></app-admin-statistiques>
+      }
+      @if (activePage === 'notes-equipe') {
+        <app-admin-notes-equipe (aTraiterChange)="notesATraiter = $event"></app-admin-notes-equipe>
       }
       @if (activePage === 'utilisateurs') {
         <app-utilisateurs></app-utilisateurs>

@@ -3,11 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { LaboratoireService } from '../../../core/services/laboratoire.service';
+import { PhoneMaskDirective } from '../../../shared/phone/phone-mask.directive';
+import { phoneError } from '../../../shared/phone/phone.util';
+import { PasswordStrengthComponent } from '../../../shared/password/password-strength.component';
+import { passwordError } from '../../../shared/password/password-policy';
 
 @Component({
   selector: 'app-signup-labo',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, PhoneMaskDirective, PasswordStrengthComponent],
   templateUrl: './signup-labo.component.html',
   styleUrls: ['./signup-labo.component.css'],
 })
@@ -26,14 +30,21 @@ export class SignupLaboComponent {
   constructor(private laboratoireService: LaboratoireService) {}
 
   onSubmit(): void {
+    const telError = phoneError(this.telephone);
+    if (telError) {
+      this.errorMessage = telError;
+      return;
+    }
+
     this.errorMessage = '';
 
     if (!this.email || !this.password || !this.nom || !this.adresse) {
       this.errorMessage = 'Veuillez remplir tous les champs obligatoires.';
       return;
     }
-    if (this.password.length < 6) {
-      this.errorMessage = 'Le mot de passe doit contenir au moins 6 caractères.';
+    const pwdError = passwordError(this.password);
+    if (pwdError) {
+      this.errorMessage = pwdError;
       return;
     }
     if (this.password !== this.confirmPassword) {

@@ -5,6 +5,7 @@ import { API_BASE_URL } from '../../../core/config/api.config';
 import { ApiResponse } from '../../../core/models/user.model';
 import {
   CreerMedecinRequest,
+  FonctionOption,
   InscriptionMedecinRequest,
   MedecinResponse,
   ModifierMedecinRequest,
@@ -22,6 +23,11 @@ export class MedecinService {
 
   getAll(): Observable<ApiResponse<MedecinResponse[]>> {
     return this.http.get<ApiResponse<MedecinResponse[]>>(this.baseUrl);
+  }
+
+  /** Admin : liste avec email et statut actif du compte. */
+  getAdminListe(): Observable<ApiResponse<MedecinResponse[]>> {
+    return this.http.get<ApiResponse<MedecinResponse[]>>(`${this.baseUrl}/admin-liste`);
   }
 
   getByUserId(userId: string): Observable<ApiResponse<MedecinResponse>> {
@@ -60,6 +66,10 @@ export class MedecinService {
     return this.http.get<ApiResponse<SpecialiteOption[]>>(`${this.baseUrl}/specialites`);
   }
 
+  getFonctions(): Observable<ApiResponse<FonctionOption[]>> {
+    return this.http.get<ApiResponse<FonctionOption[]>>(`${this.baseUrl}/fonctions`);
+  }
+
   getRegions(): Observable<ApiResponse<RegionOption[]>> {
     return this.http.get<ApiResponse<RegionOption[]>>(`${this.baseUrl}/regions`);
   }
@@ -90,5 +100,9 @@ export class MedecinService {
 
   delete(id: string): Observable<ApiResponse<null>> {
     return this.http.delete<ApiResponse<null>>(`${this.baseUrl}/${id}`);
+  }
+
+  hardDelete(id: string): Observable<ApiResponse<null>> {
+    return this.http.delete<ApiResponse<null>>(`${this.baseUrl}/${id}/permanent`);
   }
 }

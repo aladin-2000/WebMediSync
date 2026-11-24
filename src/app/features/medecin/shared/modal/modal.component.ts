@@ -11,6 +11,8 @@ import { CommonModule } from '@angular/common';
 export class ModalComponent {
   @Input() title = '';
   @Input() visible = false;
+  /** Largeur maximale en px (440 par défaut). */
+  @Input() maxWidth = 440;
   @Output() close = new EventEmitter<void>();
 
   onOverlayClick(event: MouseEvent): void {

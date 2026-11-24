@@ -7,17 +7,22 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { NotificationSoundService } from '../../../../core/services/notification-sound.service';
 import { NotificationResponse } from '../../../../core/models/notification.model';
 import { MedecinService } from '../../../admin/services/medecin.service';
-import { MedecinResponse, RegionOption, SpecialiteOption } from '../../../admin/models/medecin.model';
+import { FonctionOption, MedecinResponse, RegionOption, SpecialiteOption } from '../../../admin/models/medecin.model';
+import { EtablissementService } from '../../../admin/services/etablissement.service';
+import { EtablissementResponse } from '../../../admin/models/etablissement.model';
 import { ModalComponent } from '../modal/modal.component';
+import { EtablissementComboboxComponent } from '../../../../shared/etablissement-combobox/etablissement-combobox.component';
+import { PhoneMaskDirective } from '../../../../shared/phone/phone-mask.directive';
+import { phoneError } from '../../../../shared/phone/phone.util';
 
-export type ViewName = 'home' | 'calendar' | 'recurrences' | 'creneaux' | 'historique' | 'notifications';
+export type ViewName = 'home' | 'calendar' | 'recurrences' | 'creneaux' | 'historique' | 'notifications' | 'notes';
 
 const NOTIF_POLL_INTERVAL_MS = 10000;
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, EtablissementComboboxComponent, PhoneMaskDirective],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
@@ -32,6 +37,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
   medecin: MedecinResponse | null = null;
   specialites: SpecialiteOption[] = [];
   regions: RegionOption[] = [];
+  fonctions: FonctionOption[] = [];
+  etablissements: EtablissementResponse[] = [];
 
   showEditProfil = false;
   formNom = '';
@@ -40,6 +47,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
   formAdresseCabinet = '';
   formRegionId = '';
   formTelephone = '';
+  formTelephone2 = '';
+  formFonction = '';
+  formEtablissementId = '';
   formScoreFiabiliteMin: number | null = null;
   isSavingProfil = false;
   editProfilError = '';
@@ -55,6 +65,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private medecinService: MedecinService,
+    private etablissementService: EtablissementService,
     private notificationService: NotificationService,
     private notificationSoundService: NotificationSoundService,
     private router: Router
@@ -89,6 +100,20 @@ export class SidebarComponent implements OnInit, OnDestroy {
       next: (response) => {
         if (response.success) {
           this.regions = response.data;
+        }
+      },
+    });
+    this.medecinService.getFonctions().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.fonctions = response.data;
+        }
+      },
+    });
+    this.etablissementService.getAll().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.etablissements = response.data;
         }
       },
     });
@@ -160,6 +185,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.formAdresseCabinet = this.medecin.adresseCabinet ?? '';
     this.formRegionId = this.medecin.regionId ?? '';
     this.formTelephone = this.medecin.telephone ?? '';
+    this.formTelephone2 = this.medecin.telephone2 ?? '';
+    this.formFonction = this.medecin.fonction ?? '';
+    this.formEtablissementId = this.medecin.etablissementId ?? '';
     this.formScoreFiabiliteMin = this.medecin.scoreFiabiliteMin;
     this.editProfilError = '';
     this.showEditProfil = true;
@@ -170,8 +198,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   enregistrerProfil(): void {
-    if (!this.formNom.trim() || !this.formPrenom.trim() || !this.formSpecialite.trim()) {
-      this.editProfilError = 'Nom, prénom et spécialité sont obligatoires.';
+    const telError = phoneError(this.formTelephone, this.formTelephone2);
+    if (telError) {
+      this.editProfilError = telError;
+      return;
+    }
+
+    if (!this.formNom.trim() || !this.formPrenom.trim() || !this.formSpecialite.trim() || !this.formFonction) {
+      this.editProfilError = 'Nom, prénom, spécialité et fonction sont obligatoires.';
       return;
     }
 
@@ -184,6 +218,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
       adresseCabinet: this.formAdresseCabinet.trim() || undefined,
       regionId: this.formRegionId || undefined,
       telephone: this.formTelephone.trim() || undefined,
+      // '' envoyé explicitement pour permettre d'effacer ces champs facultatifs
+      telephone2: this.formTelephone2.trim(),
+      fonction: this.formFonction,
+      etablissementId: this.formEtablissementId,
       scoreFiabiliteMin: this.formScoreFiabiliteMin ?? undefined,
     }).subscribe({
       next: (response) => {

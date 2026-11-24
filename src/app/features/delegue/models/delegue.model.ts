@@ -6,6 +6,7 @@ export interface DelegueResponse {
   nom: string;
   prenom: string;
   telephone: string | null;
+  telephone2: string | null;
   photoUrl: string | null;
   scoreFiabilite: number;
   isActive: boolean;
@@ -18,12 +19,14 @@ export interface CreerDelegueLaboRequest {
   nom: string;
   prenom: string;
   telephone?: string;
+  telephone2?: string;
 }
 
 export interface ModifierDelegueRequest {
   nom: string;
   prenom: string;
   telephone?: string;
+  telephone2?: string;
 }
 
 export interface AdminUpdateDelegueRequest {
@@ -31,6 +34,7 @@ export interface AdminUpdateDelegueRequest {
   nom: string;
   prenom: string;
   telephone?: string;
+  telephone2?: string;
   laboratoireId?: string;
 }
 
@@ -40,6 +44,7 @@ export interface AdminCreerDelegueRequest {
   nom: string;
   prenom: string;
   telephone?: string;
+  telephone2?: string;
   laboratoireId: string;
 }
 
@@ -50,4 +55,5 @@ export interface InscriptionDelegueRequest {
   prenom: string;
   laboName?: string;
   telephone?: string;
+  telephone2?: string;
 }

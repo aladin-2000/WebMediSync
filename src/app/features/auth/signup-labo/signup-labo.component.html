@@ -28,7 +28,7 @@
             <label for="password">Mot de passe</label>
             <div class="input-icon">
               <i class="ti ti-lock"></i>
-              <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="6 caractères min." required>
+              <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="10 caractères min." autocomplete="new-password" required>
             </div>
           </div>
           <div class="form-group">
@@ -39,6 +39,7 @@
             </div>
           </div>
         </div>
+        <app-password-strength class="pwd-strength" [password]="password"></app-password-strength>
 
         <div class="form-group">
           <label for="adresse">Adresse</label>
@@ -52,7 +53,7 @@
           <label for="telephone">Téléphone (optionnel)</label>
           <div class="input-icon">
             <i class="ti ti-phone"></i>
-            <input type="tel" id="telephone" name="telephone" [(ngModel)]="telephone" placeholder="+216 ..">
+            <input type="tel" appPhoneMask id="telephone" name="telephone" [(ngModel)]="telephone" placeholder="XX XXX XXX">
           </div>
         </div>
 

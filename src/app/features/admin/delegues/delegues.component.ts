@@ -7,11 +7,12 @@ import { DelegueService } from '../../delegue/services/delegue.service';
 import { DelegueResponse } from '../../delegue/models/delegue.model';
 import { LaboratoireService } from '../../../core/services/laboratoire.service';
 import { LaboratoireResponse } from '../../../core/models/laboratoire.model';
+import { PhonePipe } from '../../../shared/phone/phone.pipe';
 
 @Component({
   selector: 'app-admin-delegues',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, PaginationComponent, PhonePipe],
   templateUrl: './delegues.component.html',
   styleUrls: ['./delegues.component.css', '../shared/admin-modal-form.css'],
 })

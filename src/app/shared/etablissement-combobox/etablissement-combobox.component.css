@@ -1,0 +1,134 @@
+:host {
+  display: block;
+}
+
+.combobox {
+  position: relative;
+}
+
+.combobox-input {
+  position: relative;
+}
+
+.combobox-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #adb5bd;
+  font-size: 17px;
+  pointer-events: none;
+}
+
+.combobox-input input {
+  width: 100%;
+  padding: 11px 36px 11px 40px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #495057;
+  background: #fff;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+.combobox-input input::placeholder {
+  color: #a0a7b0;
+}
+
+.combobox-input input:focus {
+  outline: none;
+  border-color: #339af0;
+  box-shadow: 0 0 0 3px rgba(51, 154, 240, 0.1);
+}
+
+.combobox-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  padding: 4px;
+  cursor: pointer;
+  line-height: 0;
+  color: #adb5bd;
+  font-size: 15px;
+}
+
+.combobox-list {
+  position: absolute;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  max-height: 240px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+/* Liste dans le flux : pour un conteneur qui défile (modale) */
+.combobox.inline .combobox-list {
+  position: static;
+  margin-top: 4px;
+  max-height: 200px;
+  box-shadow: none;
+}
+
+.combobox-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #495057;
+  cursor: pointer;
+}
+
+.combobox-list li.active {
+  background: #e7f5ff;
+}
+
+.combobox-list li.selected .combobox-nom {
+  font-weight: 600;
+  color: #1c7ed6;
+}
+
+.combobox-region {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: #868e96;
+}
+
+.combobox-list li.combobox-empty {
+  cursor: default;
+  color: #868e96;
+  font-style: italic;
+}
+
+/* Variante compacte : alignée sur les petits champs (ex. modale de profil) */
+.combobox.compact .combobox-icon {
+  left: 10px;
+  font-size: 14px;
+}
+
+.combobox.compact .combobox-input input {
+  padding: 8px 32px 8px 32px;
+  font-size: 13px;
+  background: #f8fafc;
+  color: #212529;
+}
+
+.combobox.compact .combobox-list li {
+  padding: 7px 8px;
+  font-size: 13px;
+}

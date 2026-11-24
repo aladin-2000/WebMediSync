@@ -6,11 +6,13 @@ import { AuthService } from '../../../core/services/auth.service';
 import { roleHomePath } from '../../../core/guards/role.guard';
 import { MedecinService } from '../../admin/services/medecin.service';
 import { DelegueService } from '../../delegue/services/delegue.service';
+import { PasswordStrengthComponent } from '../../../shared/password/password-strength.component';
+import { passwordError } from '../../../shared/password/password-policy';
 
 @Component({
   selector: 'app-changer-mot-de-passe',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PasswordStrengthComponent],
   templateUrl: './changer-mot-de-passe.component.html',
   styleUrls: ['./changer-mot-de-passe.component.css']
 })
@@ -32,6 +34,12 @@ export class ChangerMotDePasseComponent {
 
     if (!this.newPassword || !this.confirmPassword) {
       this.errorMessage = 'Veuillez remplir tous les champs.';
+      return;
+    }
+
+    const pwdError = passwordError(this.newPassword);
+    if (pwdError) {
+      this.errorMessage = pwdError;
       return;
     }
 

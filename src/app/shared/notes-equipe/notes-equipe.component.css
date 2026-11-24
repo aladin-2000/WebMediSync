@@ -1,0 +1,283 @@
+.notes-view {
+  padding: 20px;
+  max-width: 860px;
+}
+
+.page-header {
+  margin-bottom: 18px;
+}
+
+.page-header h1 {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1c2733;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+}
+
+.page-header h1 i {
+  color: #1971c2;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #8b96a5;
+  margin: 6px 0 0;
+  line-height: 1.5;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #eef1f4;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+/* ── Formulaire ── */
+.compose-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+.compose textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 110px;
+  padding: 11px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.5;
+  color: #212529;
+}
+
+.compose textarea:focus {
+  outline: none;
+  border-color: #339af0;
+  box-shadow: 0 0 0 3px rgba(51, 154, 240, 0.12);
+}
+
+.compose-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.counter {
+  font-size: 12px;
+  color: #8b96a5;
+}
+
+.counter.warn {
+  color: #e8590c;
+}
+
+.hint {
+  font-size: 12px;
+  color: #adb5bd;
+  margin-right: auto;
+}
+
+.btn-send {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border: none;
+  border-radius: 9px;
+  background: #1971c2;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-send:hover:not(:disabled) {
+  background: #1864ab;
+}
+
+.btn-send:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.banner.success {
+  background: #ebfbee;
+  color: #2b8a3e;
+  border: 1px solid #b2f2bb;
+}
+
+.banner.error {
+  background: #ffe3e3;
+  color: #c92a2a;
+  border: 1px solid #ffa8a8;
+}
+
+/* ── Historique ── */
+.history-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 24px 0 12px;
+}
+
+.history-header h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1c2733;
+  margin: 0;
+}
+
+.count {
+  font-size: 11px;
+  font-weight: 600;
+  background: #e7f5ff;
+  color: #1971c2;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.info-text {
+  color: #8b96a5;
+  font-size: 13px;
+}
+
+.empty {
+  text-align: center;
+  color: #8b96a5;
+  padding: 36px 16px;
+  font-size: 13px;
+}
+
+.empty i {
+  font-size: 40px;
+  color: #ced4da;
+}
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.note-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.note-date {
+  font-size: 12px;
+  color: #8b96a5;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 10px;
+  background: #f1f3f5;
+  color: #6c757d;
+  white-space: nowrap;
+}
+
+.badge.done {
+  background: #ebfbee;
+  color: #2b8a3e;
+}
+
+.note-text {
+  margin: 0;
+  font-size: 14px;
+  color: #343a40;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 600px) {
+  .notes-view {
+    padding: 14px 12px 24px;
+  }
+
+  .page-header h1 {
+    font-size: 17px;
+  }
+
+  .subtitle {
+    font-size: 12.5px;
+  }
+
+  .card {
+    padding: 14px 12px;
+    border-radius: 12px;
+  }
+
+  /* 16px minimum : évite le zoom automatique de Safari iOS au focus */
+  .compose textarea {
+    font-size: 16px;
+    min-height: 130px;
+  }
+
+  .hint {
+    display: none;
+  }
+
+  /* Compteur au-dessus, bouton Envoyer pleine largeur (plus facile à toucher) */
+  .compose-footer {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .counter {
+    width: 100%;
+    text-align: right;
+  }
+
+  .btn-send {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+    font-size: 15px;
+  }
+
+  .history-header {
+    margin-top: 20px;
+  }
+
+  .note-head {
+    flex-wrap: wrap;
+  }
+
+  .note-text {
+    font-size: 14px;
+  }
+}

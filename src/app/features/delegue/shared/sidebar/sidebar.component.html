@@ -121,7 +121,12 @@
 
     <div class="field">
       <label><i class="ti ti-phone"></i> Téléphone</label>
-      <input type="tel" [(ngModel)]="formTelephone">
+      <input type="tel" appPhoneMask [(ngModel)]="formTelephone">
+    </div>
+
+    <div class="field">
+      <label><i class="ti ti-phone"></i> Téléphone 2 (optionnel)</label>
+      <input type="tel" appPhoneMask [(ngModel)]="formTelephone2">
     </div>
 
     @if (editProfilError) {

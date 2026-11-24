@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api.config';
 import { ApiResponse } from '../../../core/models/user.model';
-import { CreneauResponse, PlageCreneauxRequest } from '../models/disponibilite.models';
+import { CreneauResponse, CreneauStatsMedecin, PlageCreneauxRequest } from '../models/disponibilite.models';
 
 @Injectable({
   providedIn: 'root',
@@ -36,5 +36,10 @@ export class CreneauService {
     return this.http.delete<ApiResponse<null>>(
       `${this.baseUrl}/supprimer-un-creneau?medecinId=${medecinId}&creneauId=${creneauId}`
     );
+  }
+
+  /** Admin : statistiques des créneaux par médecin (seuls les médecins ayant publié des créneaux). */
+  getStatsParMedecin(): Observable<ApiResponse<CreneauStatsMedecin[]>> {
+    return this.http.get<ApiResponse<CreneauStatsMedecin[]>>(`${this.baseUrl}/stats-par-medecin`);
   }
 }

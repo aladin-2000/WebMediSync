@@ -29,7 +29,10 @@
             <td>{{ delegue.nom }}</td>
             <td>{{ delegue.prenom }}</td>
             <td>{{ delegue.laboName || '—' }}</td>
-            <td>{{ delegue.telephone || '—' }}</td>
+            <td>
+              {{ (delegue.telephone | phone) || '—' }}
+              @if (delegue.telephone2) { <br><small>{{ delegue.telephone2 | phone }}</small> }
+            </td>
             <td>{{ formatDate(delegue.createdAt) }}</td>
             <td class="actions">
               <button class="btn success" (click)="openActiverModal(delegue)">

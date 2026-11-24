@@ -4,8 +4,9 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MedecinService } from '../../services/medecin.service';
 import { ModalComponent } from '../../../medecin/shared/modal/modal.component';
+import { NotesEquipeService } from '../../../../shared/notes-equipe/notes-equipe.service';
 
-export type AdminPageName = 'medecins' | 'validations' | 'laboratoires' | 'delegues' | 'gestion-delegues' | 'statistiques' | 'utilisateurs';
+export type AdminPageName = 'medecins' | 'agenda-medecins' | 'validations' | 'laboratoires' | 'etablissements' | 'delegues' | 'gestion-delegues' | 'statistiques' | 'utilisateurs' | 'notes-equipe';
 
 @Component({
   selector: 'app-admin-sidebar',
@@ -20,6 +21,14 @@ export class AdminSidebarComponent implements OnInit {
 
   showLogoutConfirm = false;
   nombreEnAttente = 0;
+  nombreNotesATraiter = 0;
+
+  /** Mis à jour par la page « Notes des utilisateurs » quand l'admin traite une note. */
+  @Input() set notesATraiter(valeur: number | null) {
+    if (valeur !== null) {
+      this.nombreNotesATraiter = valeur;
+    }
+  }
   deleguesMenuOpen = false;
   medecinsMenuOpen = false;
   mobileOpen = false;
@@ -27,10 +36,18 @@ export class AdminSidebarComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private medecinService: MedecinService,
+    private notesService: NotesEquipeService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.notesService.toutes().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.nombreNotesATraiter = response.data.filter((n) => !n.traitee).length;
+        }
+      },
+    });
     this.medecinService.getEnAttente().subscribe({
       next: (response) => {
         if (response.success) {
@@ -41,7 +58,7 @@ export class AdminSidebarComponent implements OnInit {
   }
 
   get isMedecinsPage(): boolean {
-    return this.activePage === 'medecins' || this.activePage === 'validations';
+    return this.activePage === 'medecins' || this.activePage === 'validations' || this.activePage === 'agenda-medecins';
   }
 
   get isDeleguesPage(): boolean {

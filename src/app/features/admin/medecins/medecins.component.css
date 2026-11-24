@@ -81,3 +81,271 @@
     gap: 4px;
   }
 }
+
+.phone2-hint {
+  display: block;
+  font-size: 0.85em;
+  opacity: 0.75;
+}
+
+/* ── Popup : mot de passe (création) affiché en clair, bouton masquer / afficher ── */
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 38px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.3px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #868e96;
+  cursor: pointer;
+  padding: 4px 6px;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.toggle-password:hover {
+  color: #495057;
+}
+
+.field-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 11.5px;
+  color: #868e96;
+  line-height: 1.4;
+}
+
+/* Popup élargie (720px) : les colonnes peuvent rétrécir sans déborder,
+   et passent sur une seule colonne sur petit écran. */
+.form-row > .form-group {
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Barre de recherche et filtres ── */
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.search-box {
+  position: relative;
+  max-width: 520px;
+}
+
+.search-box > i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #adb5bd;
+}
+
+.search-box input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 34px 9px 36px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.search-box input:focus,
+.filters select:focus {
+  outline: none;
+  border-color: #339af0;
+  box-shadow: 0 0 0 3px rgba(51, 154, 240, 0.1);
+}
+
+.search-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #868e96;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.filters select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  font-family: inherit;
+  color: #495057;
+  cursor: pointer;
+}
+
+.filters select.active {
+  border-color: #1971c2;
+  background: #e7f5ff;
+  color: #1864ab;
+}
+
+.toolbar-footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 13px;
+}
+
+.result-count {
+  color: #6c757d;
+}
+
+.btn-link {
+  border: none;
+  background: transparent;
+  color: #1971c2;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.no-result {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.no-result p {
+  margin: 0 0 8px;
+}
+
+/* ── En-têtes triables ── */
+.table-scroll {
+  overflow-x: auto;
+}
+
+.th-sort {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.th-sort i {
+  font-size: 14px;
+  color: #ced4da;
+}
+
+.th-sort:hover i {
+  color: #868e96;
+}
+
+.th-sort.active {
+  color: #1971c2;
+}
+
+.th-sort.active i {
+  color: #1971c2;
+}
+
+/* ── Email, statut actif / inactif ── */
+.cell-email {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-email a {
+  color: #1971c2;
+  text-decoration: none;
+}
+
+.cell-email a:hover {
+  text-decoration: underline;
+}
+
+.status-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.status-badge.actif {
+  background: #ebfbee;
+  color: #2b8a3e;
+}
+
+.status-badge.inactif {
+  background: #f1f3f5;
+  color: #868e96;
+}
+
+.btn.toggle-actif {
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.btn.toggle-actif.to-disable {
+  color: #e8590c;
+  border-color: #ffd8a8;
+}
+
+.btn.toggle-actif.to-disable:hover:not(:disabled) {
+  background: #fff4e6;
+}
+
+.btn.toggle-actif.to-enable {
+  color: #2b8a3e;
+  border-color: #b2f2bb;
+}
+
+.btn.toggle-actif.to-enable:hover:not(:disabled) {
+  background: #ebfbee;
+}
+
+.btn.toggle-actif:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}

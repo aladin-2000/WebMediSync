@@ -7,12 +7,16 @@ import { DelegueService } from '../../delegue/services/delegue.service';
 import { DelegueResponse } from '../../delegue/models/delegue.model';
 import { LaboratoireService } from '../../../core/services/laboratoire.service';
 import { LaboratoireResponse } from '../../../core/models/laboratoire.model';
+import { PhoneMaskDirective } from '../../../shared/phone/phone-mask.directive';
+import { PhonePipe } from '../../../shared/phone/phone.pipe';
+import { phoneError } from '../../../shared/phone/phone.util';
 
 interface DelegueFormState {
   email: string;
   nom: string;
   prenom: string;
   telephone: string;
+  telephone2: string;
   laboratoireId: string;
 }
 
@@ -21,13 +25,14 @@ const EMPTY_FORM: DelegueFormState = {
   nom: '',
   prenom: '',
   telephone: '',
+  telephone2: '',
   laboratoireId: '',
 };
 
 @Component({
   selector: 'app-gestion-delegues',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, PaginationComponent, PhoneMaskDirective, PhonePipe],
   templateUrl: './gestion-delegues.component.html',
   styleUrls: ['./gestion-delegues.component.css', '../shared/admin-modal-form.css'],
 })
@@ -123,6 +128,7 @@ export class GestionDeleguesComponent implements OnInit {
       nom: delegue.nom,
       prenom: delegue.prenom,
       telephone: delegue.telephone ?? '',
+      telephone2: delegue.telephone2 ?? '',
       laboratoireId: delegue.laboratoireId ?? '',
     };
     this.formError = '';
@@ -137,6 +143,12 @@ export class GestionDeleguesComponent implements OnInit {
   }
 
   onSubmit(): void {
+    const telError = phoneError(this.form.telephone, this.form.telephone2);
+    if (telError) {
+      this.formError = telError;
+      return;
+    }
+
     if (this.isCreating) {
       this.onCreate();
     } else {
@@ -158,10 +170,11 @@ export class GestionDeleguesComponent implements OnInit {
     this.formError = '';
     this.delegueService.adminCreer({
       email: this.form.email.trim(),
-      password: 'medisync2027',
+      password: 'Medisync@2027',
       nom: this.form.nom.trim(),
       prenom: this.form.prenom.trim(),
       telephone: this.form.telephone.trim() || undefined,
+      telephone2: this.form.telephone2.trim(),
       laboratoireId: this.form.laboratoireId,
     }).subscribe({
       next: (response) => {
@@ -198,6 +211,7 @@ export class GestionDeleguesComponent implements OnInit {
       nom: this.form.nom.trim(),
       prenom: this.form.prenom.trim(),
       telephone: this.form.telephone.trim() || undefined,
+      telephone2: this.form.telephone2.trim(),
       laboratoireId: this.form.laboratoireId || undefined,
     }).subscribe({
       next: (response) => {

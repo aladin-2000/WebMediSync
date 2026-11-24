@@ -36,19 +36,20 @@
     </div>
   </nav>
 
-  <div class="spacer"></div>
-
-  <div class="profile-card" title="Modifier mon profil" (click)="ouvrirEditProfil()">
-    <div class="profile-avatar">{{ initiales }}</div>
-    <div class="profile-info">
-      <div class="profile-name">{{ nomAffiche }}</div>
-      <div class="profile-role">Médecin</div>
+  <!-- Pied de sidebar : toujours visible en bas, seul le menu au-dessus défile -->
+  <div class="sidebar-footer">
+    <div class="profile-card" title="Modifier mon profil" (click)="ouvrirEditProfil()">
+      <div class="profile-avatar">{{ initiales }}</div>
+      <div class="profile-info">
+        <div class="profile-name">{{ nomAffiche }}</div>
+        <div class="profile-role">Médecin</div>
+      </div>
+      <i class="ti ti-pencil profile-edit-icon"></i>
     </div>
-    <i class="ti ti-pencil profile-edit-icon"></i>
-  </div>
 
-  <div class="nav-item logout" (click)="askLogout()">
-    <i class="ti ti-logout"></i> Déconnexion
+    <div class="nav-item logout" (click)="askLogout()">
+      <i class="ti ti-logout"></i> Déconnexion
+    </div>
   </div>
 </aside>
 
@@ -96,6 +97,28 @@
     </div>
 
     <div class="field">
+      <label><i class="ti ti-id-badge"></i> Fonction</label>
+      <select [(ngModel)]="formFonction">
+        <option value="" disabled>Choisir une fonction</option>
+        @for (f of fonctions; track f.valeur) {
+          <option [value]="f.valeur">{{ f.libelle }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="profil-etablissement"><i class="ti ti-building-hospital"></i> Établissement (optionnel)</label>
+      <app-etablissement-combobox
+        inputId="profil-etablissement"
+        placeholder="Rechercher un établissement…"
+        [etablissements]="etablissements"
+        [(value)]="formEtablissementId"
+        [inline]="true"
+        [compact]="true"
+      ></app-etablissement-combobox>
+    </div>
+
+    <div class="field">
       <label><i class="ti ti-map-pin"></i> Adresse du cabinet</label>
       <input type="text" [(ngModel)]="formAdresseCabinet">
     </div>
@@ -113,7 +136,11 @@
     <div class="field-row">
       <div class="field">
         <label><i class="ti ti-phone"></i> Téléphone</label>
-        <input type="tel" [(ngModel)]="formTelephone">
+        <input type="tel" appPhoneMask [(ngModel)]="formTelephone">
+      </div>
+      <div class="field">
+        <label><i class="ti ti-phone"></i> Téléphone 2 (optionnel)</label>
+        <input type="tel" appPhoneMask [(ngModel)]="formTelephone2">
       </div>
       <!-- <div class="field">
         <label><i class="ti ti-shield-check"></i> Score minimum accepté</label>

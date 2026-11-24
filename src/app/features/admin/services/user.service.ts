@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api.config';
-import { ApiResponse } from '../../../core/models/user.model';
+import { ApiResponse, UserResponse } from '../../../core/models/user.model';
 import { PageResponse, UserDetailResponse } from '../models/user.model';
 
 @Injectable({
@@ -22,6 +22,10 @@ export class UserAdminService {
       query += `&search=${encodeURIComponent(search)}`;
     }
     return this.http.get<ApiResponse<PageResponse<UserDetailResponse>>>(`${this.baseUrl}/liste?${query}`);
+  }
+
+  getById(id: string): Observable<ApiResponse<UserResponse>> {
+    return this.http.get<ApiResponse<UserResponse>>(`${this.baseUrl}/?id=${encodeURIComponent(id)}`);
   }
 
   activer(id: string): Observable<ApiResponse<UserDetailResponse>> {

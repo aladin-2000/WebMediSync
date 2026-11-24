@@ -40,6 +40,13 @@
         >
           <span>Consulter les médecins</span>
         </button>
+        <button
+          class="nav-item sub-item"
+          [class.active]="activePage === 'agenda-medecins'"
+          (click)="navigate('agenda-medecins'); closeMobileMenu()"
+        >
+          <span>Agenda des médecins</span>
+        </button>
       }
     </div>
     <button
@@ -49,6 +56,14 @@
     >
       <i class="ti ti-building-hospital"></i>
       <span>Laboratoires</span>
+    </button>
+    <button
+      class="nav-item"
+      [class.active]="activePage === 'etablissements'"
+      (click)="navigate('etablissements'); closeMobileMenu()"
+    >
+      <i class="ti ti-building"></i>
+      <span>Établissements</span>
     </button>
     <div class="nav-group">
       <button
@@ -84,6 +99,17 @@
     >
       <i class="ti ti-user-shield"></i>
       <span>Utilisateurs</span>
+    </button>
+    <button
+      class="nav-item"
+      [class.active]="activePage === 'notes-equipe'"
+      (click)="navigate('notes-equipe'); closeMobileMenu()"
+    >
+      <i class="ti ti-message-2"></i>
+      <span>Notes des utilisateurs</span>
+      @if (nombreNotesATraiter > 0) {
+        <span class="badge-count">{{ nombreNotesATraiter }}</span>
+      }
     </button>
     <button
       class="nav-item"

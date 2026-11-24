@@ -8,20 +8,22 @@ import { NotificationSoundService } from '../../../../core/services/notification
 import { DelegueService } from '../../services/delegue.service';
 import { DelegueResponse } from '../../models/delegue.model';
 import { ModalComponent } from '../modal/modal.component';
+import { PhoneMaskDirective } from '../../../../shared/phone/phone-mask.directive';
+import { phoneError } from '../../../../shared/phone/phone.util';
 
 // ============================================
 // SIDEBAR - Navigation du délégué
 // 3 pages: Recherche, Planning, Historique
 // ============================================
 
-export type PageName = 'home' | 'search' | 'planning' | 'history' | 'notifications';
+export type PageName = 'home' | 'search' | 'planning' | 'history' | 'notifications' | 'notes';
 
 const NOTIF_POLL_INTERVAL_MS = 10000;
 
 @Component({
   selector: 'app-delegue-sidebar',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, PhoneMaskDirective],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
@@ -43,6 +45,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   formNom = '';
   formPrenom = '';
   formTelephone = '';
+  formTelephone2 = '';
   isSavingProfil = false;
   editProfilError = '';
 
@@ -138,6 +141,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.formNom = this.delegue.nom;
     this.formPrenom = this.delegue.prenom;
     this.formTelephone = this.delegue.telephone ?? '';
+    this.formTelephone2 = this.delegue.telephone2 ?? '';
     this.editProfilError = '';
     this.showEditProfil = true;
   }
@@ -147,6 +151,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   enregistrerProfil(): void {
+    const telError = phoneError(this.formTelephone, this.formTelephone2);
+    if (telError) {
+      this.editProfilError = telError;
+      return;
+    }
+
     if (!this.formNom.trim() || !this.formPrenom.trim()) {
       this.editProfilError = 'Nom et prénom sont obligatoires.';
       return;
@@ -158,6 +168,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
       nom: this.formNom.trim(),
       prenom: this.formPrenom.trim(),
       telephone: this.formTelephone.trim() || undefined,
+      // '' envoyé explicitement pour permettre d'effacer le 2e numéro
+      telephone2: this.formTelephone2.trim(),
     }).subscribe({
       next: (response) => {
         this.isSavingProfil = false;

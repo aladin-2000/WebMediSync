@@ -6,13 +6,15 @@ import { CalendarComponent } from './calendar/calendar.component';
 import { CreneauxComponent } from './creneaux/creneaux.component';
 import { HistoriqueComponent } from './historique/historique.component';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { NotesEquipeComponent } from '../../shared/notes-equipe/notes-equipe.component';
+import { NotesEquipeFabComponent } from '../../shared/notes-equipe/notes-equipe-fab.component';
 
-export type ViewName = 'home' | 'calendar' | 'recurrences' | 'creneaux' | 'historique' | 'notifications';
+export type ViewName = 'home' | 'calendar' | 'recurrences' | 'creneaux' | 'historique' | 'notifications' | 'notes';
 
 @Component({
   selector: 'app-medecin-layout',
   standalone: true,
-  imports: [CommonModule, SidebarComponent, HomeComponent, CalendarComponent, CreneauxComponent, HistoriqueComponent, NotificationsComponent],
+  imports: [CommonModule, SidebarComponent, HomeComponent, CalendarComponent, CreneauxComponent, HistoriqueComponent, NotificationsComponent, NotesEquipeComponent, NotesEquipeFabComponent],
   templateUrl: './medecin-layout.component.html',
   styleUrls: ['./medecin-layout.component.css'],
 })

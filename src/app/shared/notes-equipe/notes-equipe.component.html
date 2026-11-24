@@ -1,0 +1,65 @@
+<div class="notes-view">
+  <div class="page-header">
+    <h1><i class="ti ti-message-2"></i> Notes à l'équipe MediSync</h1>
+    <p class="subtitle">
+      Un avis, une idée, une suggestion pour améliorer MediSync ? Écrivez-nous, toute l'équipe lit vos notes.
+    </p>
+  </div>
+
+  <!-- Formulaire -->
+  <div class="card compose">
+    <label for="note-contenu" class="compose-label">Votre note</label>
+    <textarea
+      id="note-contenu"
+      rows="5"
+      [(ngModel)]="contenu"
+      (keydown)="onKeydown($event)"
+      [attr.maxlength]="max"
+      placeholder="Partagez votre avis ou vos idées avec l'équipe MediSync…"
+    ></textarea>
+    <div class="compose-footer">
+      <span class="counter" [class.warn]="contenu.length > max * 0.9">{{ contenu.length }} / {{ max }}</span>
+      <span class="hint">Ctrl + Entrée pour envoyer</span>
+      <button class="btn-send" [disabled]="!peutEnvoyer" (click)="envoyer()">
+        <i class="ti ti-send"></i> {{ isSending ? 'Envoi…' : 'Envoyer' }}
+      </button>
+    </div>
+
+    @if (successMessage) {
+      <div class="banner success"><i class="ti ti-circle-check"></i> {{ successMessage }}</div>
+    }
+    @if (errorMessage) {
+      <div class="banner error"><i class="ti ti-alert-circle"></i> {{ errorMessage }}</div>
+    }
+  </div>
+
+  <!-- Historique -->
+  <div class="history-header">
+    <h2>Mes notes</h2>
+    <span class="count">{{ notes.length }}</span>
+  </div>
+
+  @if (isLoading) {
+    <p class="info-text">Chargement…</p>
+  } @else if (notes.length === 0) {
+    <div class="empty">
+      <i class="ti ti-message-circle-off"></i>
+      <p>Vous n'avez encore envoyé aucune note.</p>
+    </div>
+  } @else {
+    <div class="notes-list">
+      @for (note of notes; track note.id) {
+        <div class="card note">
+          <div class="note-head">
+            <span class="note-date"><i class="ti ti-clock"></i> {{ note.createdAt | date: 'dd/MM/yyyy à HH:mm' }}</span>
+            <span class="badge" [class.done]="note.traitee">
+              <i class="ti" [class.ti-check]="note.traitee" [class.ti-send]="!note.traitee"></i>
+              {{ note.traitee ? 'Prise en compte' : 'Envoyée' }}
+            </span>
+          </div>
+          <p class="note-text">{{ note.contenu }}</p>
+        </div>
+      }
+    </div>
+  }
+</div>

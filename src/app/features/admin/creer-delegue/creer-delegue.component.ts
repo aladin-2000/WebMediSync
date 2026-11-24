@@ -4,12 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { DelegueService } from '../../delegue/services/delegue.service';
 import { LaboratoireService } from '../../../core/services/laboratoire.service';
 import { LaboratoireResponse } from '../../../core/models/laboratoire.model';
+import { PhoneMaskDirective } from '../../../shared/phone/phone-mask.directive';
+import { phoneError } from '../../../shared/phone/phone.util';
 
 interface CreerDelegueForm {
   email: string;
   nom: string;
   prenom: string;
   telephone: string;
+  telephone2: string;
   laboratoireId: string;
 }
 
@@ -18,13 +21,14 @@ const EMPTY_FORM: CreerDelegueForm = {
   nom: '',
   prenom: '',
   telephone: '',
+  telephone2: '',
   laboratoireId: '',
 };
 
 @Component({
   selector: 'app-creer-delegue',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PhoneMaskDirective],
   templateUrl: './creer-delegue.component.html',
   styleUrls: ['./creer-delegue.component.css'],
 })
@@ -51,6 +55,12 @@ export class CreerDelegueComponent implements OnInit {
   }
 
   onSubmit(): void {
+    const telError = phoneError(this.form.telephone, this.form.telephone2);
+    if (telError) {
+      this.formError = telError;
+      return;
+    }
+
     if (!this.form.email || !this.form.nom || !this.form.prenom || !this.form.laboratoireId) {
       this.formError = 'Email, nom, prénom et laboratoire sont obligatoires.';
       return;
@@ -65,10 +75,11 @@ export class CreerDelegueComponent implements OnInit {
     this.successMessage = '';
     this.delegueService.adminCreer({
       email: this.form.email.trim(),
-      password: 'medisync2027',
+      password: 'Medisync@2027',
       nom: this.form.nom.trim(),
       prenom: this.form.prenom.trim(),
       telephone: this.form.telephone.trim() || undefined,
+      telephone2: this.form.telephone2.trim() || undefined,
       laboratoireId: this.form.laboratoireId,
     }).subscribe({
       next: (response) => {

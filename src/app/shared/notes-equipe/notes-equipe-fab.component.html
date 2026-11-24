@@ -1,0 +1,74 @@
+@if (ouvert) {
+  <div class="backdrop" (click)="fermer()"></div>
+  <div class="panel" role="dialog" aria-label="Note à l'équipe MediSync">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title"><i class="ti ti-message-2"></i> Note à l'équipe</div>
+        <div class="panel-sub">Un avis, une idée ? On vous lit.</div>
+      </div>
+      <button type="button" class="icon-btn" (click)="fermer()" aria-label="Fermer">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+
+    <div class="panel-body">
+      <textarea
+        #zoneTexte
+        rows="4"
+        [(ngModel)]="contenu"
+        (keydown)="onKeydown($event)"
+        [attr.maxlength]="max"
+        placeholder="Votre avis ou vos idées pour MediSync…"
+        aria-label="Votre note"
+      ></textarea>
+      <div class="compose-footer">
+        <span class="counter">{{ contenu.length }} / {{ max }}</span>
+        <button type="button" class="btn-send" [disabled]="!peutEnvoyer" (click)="envoyer()">
+          <i class="ti ti-send"></i> {{ isSending ? 'Envoi…' : 'Envoyer' }}
+        </button>
+      </div>
+
+      @if (successMessage) {
+        <div class="banner success"><i class="ti ti-circle-check"></i> {{ successMessage }}</div>
+      }
+      @if (errorMessage) {
+        <div class="banner error"><i class="ti ti-alert-circle"></i> {{ errorMessage }}</div>
+      }
+
+      <div class="recent">
+        <div class="recent-title">Mes dernières notes</div>
+        @if (isLoading) {
+          <div class="muted">Chargement…</div>
+        } @else if (dernieres.length === 0) {
+          <div class="muted">Aucune note envoyée pour le moment.</div>
+        } @else {
+          @for (n of dernieres; track n.id) {
+            <div class="recent-item">
+              <div class="recent-meta">
+                <span>{{ n.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                <span class="badge" [class.done]="n.traitee">{{ n.traitee ? 'Prise en compte' : 'Envoyée' }}</span>
+              </div>
+              <div class="recent-text">{{ n.contenu }}</div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <button type="button" class="panel-footer" (click)="ouvrirPageComplete()">
+      Voir toutes mes notes{{ total ? ' (' + total + ')' : '' }} <i class="ti ti-arrow-right"></i>
+    </button>
+  </div>
+}
+
+<button
+  type="button"
+  class="fab"
+  [class.open]="ouvert"
+  (click)="basculer()"
+  [attr.aria-expanded]="ouvert"
+  [title]="ouvert ? 'Fermer' : 'Écrire une note à l\'équipe MediSync'"
+  aria-label="Notes à l'équipe MediSync"
+>
+  <i class="ti" [class.ti-message-2]="!ouvert" [class.ti-x]="ouvert"></i>
+</button>

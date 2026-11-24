@@ -18,6 +18,14 @@
       @if (activePage === 'notifications') {
         <app-delegue-notifications></app-delegue-notifications>
       }
+      @if (activePage === 'notes') {
+        <app-notes-equipe></app-notes-equipe>
+      }
     </div>
   </div>
 </div>
+
+<!-- Note flottante (bas droite) : masquée sur la page complète des notes -->
+@if (activePage !== 'notes') {
+  <app-notes-equipe-fab (voirTout)="onPageChange('notes')"></app-notes-equipe-fab>
+}

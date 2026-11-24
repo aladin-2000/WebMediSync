@@ -16,15 +16,140 @@
   } @else if (medecins.length === 0) {
     <p class="info-text">Aucun médecin enregistré.</p>
   } @else {
+    <!-- Barre de recherche et filtres -->
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="ti ti-search"></i>
+        <input
+          type="text"
+          [(ngModel)]="recherche"
+          (ngModelChange)="onFiltresChange()"
+          placeholder="Rechercher (nom, établissement, adresse, téléphone…)"
+          aria-label="Rechercher un médecin"
+        >
+        @if (recherche) {
+          <button type="button" class="search-clear" (click)="recherche = ''; onFiltresChange()" aria-label="Effacer la recherche">
+            <i class="ti ti-x"></i>
+          </button>
+        }
+      </div>
+
+      <div class="filters">
+        <select [(ngModel)]="filtreSpecialite" (ngModelChange)="onFiltresChange()" aria-label="Filtrer par spécialité" [class.active]="filtreSpecialite">
+          <option value="">Toutes les spécialités</option>
+          @for (opt of specialites; track opt.valeur) {
+            <option [value]="opt.valeur">{{ opt.libelle }}</option>
+          }
+        </select>
+        <select [(ngModel)]="filtreFonction" (ngModelChange)="onFiltresChange()" aria-label="Filtrer par fonction" [class.active]="filtreFonction">
+          <option value="">Toutes les fonctions</option>
+          @for (f of fonctions; track f.valeur) {
+            <option [value]="f.valeur">{{ f.libelle }}</option>
+          }
+        </select>
+        <select [(ngModel)]="filtreRegion" (ngModelChange)="onFiltresChange()" aria-label="Filtrer par région" [class.active]="filtreRegion">
+          <option value="">Toutes les régions</option>
+          @for (r of regions; track r.valeur) {
+            <option [value]="r.valeur">{{ r.libelle }}</option>
+          }
+        </select>
+        <select [(ngModel)]="filtreEtablissement" (ngModelChange)="onFiltresChange()" aria-label="Filtrer par établissement" [class.active]="filtreEtablissement">
+          <option value="">Tous les établissements</option>
+          <option [value]="sansEtablissement">— Sans établissement —</option>
+          @for (e of etablissements; track e.id) {
+            <option [value]="e.id">{{ e.nom }}</option>
+          }
+        </select>
+        <select [(ngModel)]="filtreStatut" (ngModelChange)="onFiltresChange()" aria-label="Filtrer par statut" [class.active]="filtreStatut">
+          <option value="">Tous les statuts</option>
+          <option value="actif">Actif</option>
+          <option value="inactif">Inactif</option>
+        </select>
+      </div>
+
+      <div class="toolbar-footer">
+        <span class="result-count">
+          {{ medecinsFiltres.length }} médecin{{ medecinsFiltres.length > 1 ? 's' : '' }}
+          @if (filtresActifs) { sur {{ medecins.length }} }
+        </span>
+        @if (filtresActifs) {
+          <button type="button" class="btn-link" (click)="reinitialiserFiltres()">
+            <i class="ti ti-filter-off"></i> Réinitialiser
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (medecinsFiltres.length === 0) {
+      <div class="no-result">
+        <p>Aucun médecin ne correspond aux critères.</p>
+        <button type="button" class="btn-link" (click)="reinitialiserFiltres()">Réinitialiser les filtres</button>
+      </div>
+    } @else {
+    <div class="table-scroll">
     <table class="medecins-table">
       <thead>
         <tr>
-          <th>Nom</th>
-          <th>Prénom</th>
-          <th>Spécialité</th>
-          <th>Adresse cabinet</th>
-          <th>Téléphone</th>
-          <th>Région</th>
+          <th [attr.aria-sort]="ariaSort('nom')">
+            <button type="button" class="th-sort" [class.active]="sortKey === 'nom'" (click)="trierPar('nom')">
+              Nom
+              <i class="ti" [class.ti-arrows-sort]="sortKey !== 'nom'" [class.ti-sort-ascending]="sortKey === 'nom' && sortDir === 'asc'" [class.ti-sort-descending]="sortKey === 'nom' && sortDir === 'desc'"></i>
+            </button>
+          </th>
+          <th [attr.aria-sort]="ariaSort('prenom')">
+            <button type="button" class="th-sort" [class.active]="sortKey === 'prenom'" (click)="trierPar('prenom')">
+              Prénom
+              <i class="ti" [class.ti-arrows-sort]="sortKey !== 'prenom'" [class.ti-sort-ascending]="sortKey === 'prenom' && sortDir === 'asc'" [class.ti-sort-descending]="sortKey === 'prenom' && sortDir === 'desc'"></i>
+            </button>
+          </th>
+          <th [attr.aria-sort]="ariaSort('email')">
+            <button type="button" class="th-sort" [class.active]="sortKey === 'email'" (click)="trierPar('email')">
+              Email
+              <i class="ti" [class.ti-arrows-sort]="sortKey !== 'email'" [class.ti-sort-ascending]="sortKey === 'email' && sortDir === 'asc'" [class.ti-sort-descending]="sortKey === 'email' && sortDir === 'desc'"></i>
+            </button>
+          </th>
+          <th [attr.aria-sort]="ariaSort('specialite')">
+            <button type="button" class="th-sort" [class.active]="sortKey === 'specialite'" (click)="trierPar('specialite')">
+              Spécialité
+              <i class="ti" [class.ti-arrows-sort]="sortKey !== 'specialite'" [class.ti-sort-ascending]="sortKey === 'specialite' && sortDir === 'asc'" [class.ti-sort-descending]="sortKey === 'specialite' && sortDir === 'desc'"></i>
+            </button>
+          </th>
+          <th [attr.aria-sort]="ariaSort('fonction')">
+            <button type="button" class="th-sort" [class.active]="sortKey === 'fonction'" (click)="trierPar('fonction')">
+              Fonction
+              <i class="ti" [class.ti-arrows-sort]="sortKey !== 'fonction'" [class.ti-sort-ascending]="sortKey === 'fonction' && sortDir === 'asc'" [class.ti-sort-descending]="sortKey === 'fonction' && sortDir === 'desc'"></i>
+            </button>
+          </th>
+          <th [attr.aria-sort]="ariaSort('etablissement')">
+            <button type="button" class="th-sort" [class.active]="sortKey === 'etablissement'" (click)="trierPar('etablissement')">
+              Établissement
+              <i class="ti" [class.ti-arrows-sort]="sortKey !== 'etablissement'" [class.ti-sort-ascending]="sortKey === 'etablissement' && sortDir === 'asc'" [class.ti-sort-descending]="sortKey === 'etablissement' && sortDir === 'desc'"></i>
+            </button>
+          </th>
+          <th [attr.aria-sort]="ariaSort('adresse')">
+            <button type="button" class="th-sort" [class.active]="sortKey === 'adresse'" (click)="trierPar('adresse')">
+              Adresse cabinet
+              <i class="ti" [class.ti-arrows-sort]="sortKey !== 'adresse'" [class.ti-sort-ascending]="sortKey === 'adresse' && sortDir === 'asc'" [class.ti-sort-descending]="sortKey === 'adresse' && sortDir === 'desc'"></i>
+            </button>
+          </th>
+          <th [attr.aria-sort]="ariaSort('telephone')">
+            <button type="button" class="th-sort" [class.active]="sortKey === 'telephone'" (click)="trierPar('telephone')">
+              Téléphone
+              <i class="ti" [class.ti-arrows-sort]="sortKey !== 'telephone'" [class.ti-sort-ascending]="sortKey === 'telephone' && sortDir === 'asc'" [class.ti-sort-descending]="sortKey === 'telephone' && sortDir === 'desc'"></i>
+            </button>
+          </th>
+          <th [attr.aria-sort]="ariaSort('region')">
+            <button type="button" class="th-sort" [class.active]="sortKey === 'region'" (click)="trierPar('region')">
+              Région
+              <i class="ti" [class.ti-arrows-sort]="sortKey !== 'region'" [class.ti-sort-ascending]="sortKey === 'region' && sortDir === 'asc'" [class.ti-sort-descending]="sortKey === 'region' && sortDir === 'desc'"></i>
+            </button>
+          </th>
+          <th [attr.aria-sort]="ariaSort('statut')">
+            <button type="button" class="th-sort" [class.active]="sortKey === 'statut'" (click)="trierPar('statut')">
+              Statut
+              <i class="ti" [class.ti-arrows-sort]="sortKey !== 'statut'" [class.ti-sort-ascending]="sortKey === 'statut' && sortDir === 'asc'" [class.ti-sort-descending]="sortKey === 'statut' && sortDir === 'desc'"></i>
+            </button>
+          </th>
           <th></th>
         </tr>
       </thead>
@@ -33,45 +158,95 @@
           <tr>
             <td>{{ medecin.nom }} @if (!medecin.valide) { <span class="badge-pending">en attente</span> }</td>
             <td>{{ medecin.prenom }}</td>
+            <td class="cell-email">
+              @if (medecin.email) { <a [href]="'mailto:' + medecin.email" [title]="medecin.email">{{ medecin.email }}</a> } @else { — }
+            </td>
             <td>{{ specialiteLibelle(medecin.specialite) }}</td>
+            <td>{{ medecin.fonctionLibelle || '—' }}</td>
+            <td>{{ medecin.etablissementNom || '—' }}</td>
             <td>{{ medecin.adresseCabinet || '—' }}</td>
-            <td>{{ medecin.telephone || '—' }}</td>
+            <td>
+              {{ (medecin.telephone | phone) || '—' }}
+              @if (medecin.telephone2) { <span class="phone2-hint">{{ medecin.telephone2 | phone }}</span> }
+            </td>
             <td>{{ medecin.regionNom || '—' }}</td>
+            <td>
+              <span class="status-badge" [class.actif]="medecin.actif" [class.inactif]="!medecin.actif">
+                {{ medecin.actif ? 'Actif' : 'Inactif' }}
+              </span>
+            </td>
             <td class="actions">
-              <button class="btn" (click)="openEditModal(medecin)">
+              <button class="btn" (click)="openEditModal(medecin)" title="Modifier">
                 <i class="ti ti-pencil"></i>
               </button>
-              <!-- <button class="btn danger" (click)="deleteMedecin(medecin)">
+              <button
+                class="btn toggle-actif"
+                [class.to-disable]="medecin.actif"
+                [class.to-enable]="!medecin.actif"
+                [disabled]="togglingId === medecin.id"
+                (click)="basculerActif(medecin)"
+                [title]="medecin.actif ? 'Désactiver le compte' : 'Activer le compte'"
+              >
+                <i class="ti" [class.ti-user-off]="medecin.actif" [class.ti-user-check]="!medecin.actif"></i>
+                {{ medecin.actif ? 'Désactiver' : 'Activer' }}
+              </button>
+              <button class="btn danger" (click)="hardDeleteMedecin(medecin)" title="Supprimer définitivement">
                 <i class="ti ti-trash"></i>
-              </button> --> 
+              </button>
             </td>
           </tr>
         }
       </tbody>
     </table>
+    </div>
 
     <app-pagination
-      [totalItems]="medecins.length"
+      [totalItems]="medecinsFiltres.length"
       [pageSize]="pageSize"
       [currentPage]="currentPage"
+      [pageSizeOptions]="pageSizeOptions"
       (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
     ></app-pagination>
+    }
   }
 </div>
 
 <app-modal
   [title]="editingMedecin ? 'Modifier le médecin' : 'Ajouter un médecin'"
   [visible]="showModal"
+  [maxWidth]="720"
   (close)="closeModal()"
 >
   <div class="modal-body">
   <form (ngSubmit)="onSubmit()">
-    @if (!editingMedecin) {
+    <div class="form-row">
       <div class="form-group">
         <label for="email">Email</label>
-        <input type="email" id="email" name="email" [(ngModel)]="form.email" required>
+        <input
+          type="email" id="email" name="email" autocomplete="off"
+          [(ngModel)]="form.email" required
+          [placeholder]="isLoadingEmail ? 'Chargement…' : 'adresse@exemple.com'"
+        >
       </div>
-    }
+      @if (!editingMedecin) {
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <div class="password-field">
+            <input
+              [type]="showPassword ? 'text' : 'password'" id="password" name="password" autocomplete="new-password"
+              spellcheck="false" [(ngModel)]="form.password" placeholder="10 caractères min."
+            >
+            <button type="button" class="toggle-password" (click)="showPassword = !showPassword"
+                    [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+              <i class="ti" [class.ti-eye-off]="showPassword" [class.ti-eye]="!showPassword"></i>
+            </button>
+          </div>
+          <app-password-strength [password]="form.password"></app-password-strength>
+          <small class="field-hint">Communiquez ce mot de passe au médecin ; il devra le changer à sa première connexion.</small>
+        </div>
+      }
+    </div>
 
     <div class="form-row">
       <div class="form-group">
@@ -92,6 +267,26 @@
         }
       </select>
     </div>
+    <div class="form-group">
+      <label for="fonction">Fonction</label>
+      <select id="fonction" name="fonction" [(ngModel)]="form.fonction" required>
+        <option value="" disabled>Choisir une fonction</option>
+        @for (f of fonctions; track f.valeur) {
+          <option [value]="f.valeur">{{ f.libelle }}</option>
+        }
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="etablissementId">Établissement (optionnel)</label>
+      <app-etablissement-combobox
+        inputId="etablissementId"
+        placeholder="Rechercher un établissement…"
+        [etablissements]="etablissements"
+        [(value)]="form.etablissementId"
+        [inline]="true"
+        [compact]="true"
+      ></app-etablissement-combobox>
+    </div>
     <div class="form-row">
       <div class="form-group">
         <label for="adresseCabinet">Adresse cabinet</label>
@@ -99,7 +294,11 @@
       </div>
       <div class="form-group">
         <label for="telephone">Numéro de téléphone</label>
-        <input type="tel" id="telephone" name="telephone" [(ngModel)]="form.telephone">
+        <input type="tel" appPhoneMask id="telephone" name="telephone" [(ngModel)]="form.telephone">
+      </div>
+      <div class="form-group">
+        <label for="telephone2">Téléphone 2 (optionnel)</label>
+        <input type="tel" appPhoneMask id="telephone2" name="telephone2" [(ngModel)]="form.telephone2">
       </div>
       <div class="form-group">
         <label for="regionId">Région</label>

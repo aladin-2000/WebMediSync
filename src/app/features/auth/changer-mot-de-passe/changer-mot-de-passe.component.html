@@ -13,8 +13,9 @@
         <label for="newPassword">Nouveau mot de passe</label>
         <div class="input-icon">
           <i class="ti ti-lock"></i>
-          <input type="password" id="newPassword" name="newPassword" [(ngModel)]="newPassword" placeholder="Choisissez un nouveau mot de passe" required>
+          <input type="password" id="newPassword" name="newPassword" [(ngModel)]="newPassword" placeholder="10 caractères min." autocomplete="new-password" required>
         </div>
+        <app-password-strength [password]="newPassword"></app-password-strength>
       </div>
 
       <div class="form-group">

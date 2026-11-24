@@ -9,6 +9,11 @@ import { RendezVousEnrichmentService } from '../../delegue/services/rendezvous-e
 import { RendezVousEnrichi } from '../../delegue/models/rendezvous-enrichi.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { calculerStatsDelegue, StatsDelegue } from '../labo-stats.util';
+import { PhoneMaskDirective } from '../../../shared/phone/phone-mask.directive';
+import { PhonePipe } from '../../../shared/phone/phone.pipe';
+import { phoneError } from '../../../shared/phone/phone.util';
+import { PasswordStrengthComponent } from '../../../shared/password/password-strength.component';
+import { passwordError } from '../../../shared/password/password-policy';
 
 interface CreerForm {
   email: string;
@@ -16,14 +21,15 @@ interface CreerForm {
   nom: string;
   prenom: string;
   telephone: string;
+  telephone2: string;
 }
 
-const EMPTY_FORM: CreerForm = { email: '', password: '', nom: '', prenom: '', telephone: '' };
+const EMPTY_FORM: CreerForm = { email: '', password: '', nom: '', prenom: '', telephone: '', telephone2: '' };
 
 @Component({
   selector: 'app-labo-delegues',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, PhoneMaskDirective, PhonePipe, PasswordStrengthComponent],
   templateUrl: './delegues.component.html',
   styleUrls: ['./delegues.component.css'],
 })
@@ -88,12 +94,19 @@ export class DeleguesComponent implements OnInit {
   }
 
   creerDelegue(): void {
+    const telError = phoneError(this.form.telephone, this.form.telephone2);
+    if (telError) {
+      this.formError = telError;
+      return;
+    }
+
     if (!this.form.email.trim() || !this.form.password.trim() || !this.form.nom.trim() || !this.form.prenom.trim()) {
       this.formError = 'Email, mot de passe, nom et prénom sont obligatoires.';
       return;
     }
-    if (this.form.password.length < 6) {
-      this.formError = 'Le mot de passe doit contenir au moins 6 caractères.';
+    const pwdError = passwordError(this.form.password);
+    if (pwdError) {
+      this.formError = pwdError;
       return;
     }
 
@@ -105,6 +118,7 @@ export class DeleguesComponent implements OnInit {
       nom: this.form.nom.trim(),
       prenom: this.form.prenom.trim(),
       telephone: this.form.telephone.trim() || undefined,
+      telephone2: this.form.telephone2.trim() || undefined,
     }).subscribe({
       next: (response) => {
         this.isSaving = false;

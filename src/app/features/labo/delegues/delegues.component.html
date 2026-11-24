@@ -40,7 +40,10 @@
           <tr [class.inactive-row]="!delegue.isActive">
             <td>{{ delegue.nom }}</td>
             <td>{{ delegue.prenom }}</td>
-            <td>{{ delegue.telephone || '—' }}</td>
+            <td>
+              {{ (delegue.telephone | phone) || '—' }}
+              @if (delegue.telephone2) { <br><small>{{ delegue.telephone2 | phone }}</small> }
+            </td>
             <td>{{ delegue.scoreFiabilite }}%</td>
             <td>
               <span class="badge" [class.success]="delegue.isActive" [class.neutral]="!delegue.isActive">
@@ -81,11 +84,17 @@
     </div>
     <div class="field">
       <label>Mot de passe</label>
-      <input type="password" [(ngModel)]="form.password" placeholder="6 caractères min.">
+      <input type="password" [(ngModel)]="form.password" placeholder="10 caractères min." autocomplete="new-password">
+      <app-password-strength [password]="form.password"></app-password-strength>
     </div>
     <div class="field">
       <label>Téléphone (optionnel)</label>
-      <input type="tel" [(ngModel)]="form.telephone">
+      <input type="tel" appPhoneMask [(ngModel)]="form.telephone">
+    </div>
+
+    <div class="field">
+      <label>Téléphone 2 (optionnel)</label>
+      <input type="tel" appPhoneMask [(ngModel)]="form.telephone2">
     </div>
 
     @if (formError) {

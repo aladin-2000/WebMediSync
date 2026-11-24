@@ -1,0 +1,279 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h2>Agenda des médecins</h2>
+      <p class="subtitle">Consultez les créneaux et les rendez-vous d'un médecin.</p>
+    </div>
+  </div>
+
+  <!-- Sélection du médecin -->
+  <div class="medecin-picker">
+    @if (!medecin) {
+      <label for="agenda-medecin-search">Médecin</label>
+      <div class="search-box">
+        <i class="ti ti-search"></i>
+        <input
+          id="agenda-medecin-search"
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="recherche"
+          (focus)="ouvrirListe()"
+          (input)="ouvrirListe()"
+          placeholder="Rechercher un médecin (nom, spécialité, établissement…)"
+        >
+      </div>
+      @if (listeOuverte) {
+        <ul class="picker-list" role="listbox">
+          @if (isLoadingMedecins) {
+            <li class="picker-empty">Chargement…</li>
+          }
+          @for (m of medecinsFiltres; track m.id) {
+            <li class="picker-item" role="option" (mousedown)="$event.preventDefault(); choisirMedecin(m)">
+              <div class="avatar">{{ m.prenom.charAt(0) + m.nom.charAt(0) | uppercase }}</div>
+              <div class="picker-text">
+                <div class="picker-name">
+                  Dr. {{ m.prenom }} {{ m.nom }}
+                  @if (!m.valide) { <span class="tag warn">Non validé</span> }
+                </div>
+                <div class="picker-sub">
+                  {{ specialiteLibelle(m.specialite) }}
+                  @if (m.etablissementNom) { · {{ m.etablissementNom }} }
+                  @if (m.regionNom) { · {{ m.regionNom }} }
+                </div>
+              </div>
+            </li>
+          } @empty {
+            @if (!isLoadingMedecins) {
+              <li class="picker-empty">Aucun médecin trouvé</li>
+            }
+          }
+        </ul>
+      }
+    } @else {
+      <div class="medecin-card">
+        <div class="avatar lg">{{ medecin.prenom.charAt(0) + medecin.nom.charAt(0) | uppercase }}</div>
+        <div class="medecin-info">
+          <div class="medecin-name">Dr. {{ medecin.prenom }} {{ medecin.nom }}</div>
+          <div class="medecin-meta">
+            <span><i class="ti ti-stethoscope"></i> {{ specialiteLibelle(medecin.specialite) }}</span>
+            @if (medecin.fonctionLibelle) { <span><i class="ti ti-id-badge"></i> {{ medecin.fonctionLibelle }}</span> }
+            @if (medecin.etablissementNom) { <span><i class="ti ti-building-hospital"></i> {{ medecin.etablissementNom }}</span> }
+            @if (medecin.telephone) { <span><i class="ti ti-phone"></i> {{ medecin.telephone | phone }}</span> }
+          </div>
+        </div>
+        <button class="btn" (click)="retourListe()"><i class="ti ti-arrow-left"></i> Retour à la liste</button>
+      </div>
+    }
+  </div>
+
+  @if (errorMessage) {
+    <div class="error-banner"><i class="ti ti-alert-circle"></i> {{ errorMessage }}</div>
+  }
+
+  @if (!medecin) {
+    <div class="table-card">
+      <div class="table-header">
+        <div>
+          <h3>Médecins ayant publié des créneaux</h3>
+          <span class="table-count">{{ lignesFiltrees.length }} médecin{{ lignesFiltrees.length > 1 ? 's' : '' }}</span>
+        </div>
+        <div class="search-box small">
+          <i class="ti ti-filter"></i>
+          <input
+            type="text"
+            [(ngModel)]="filtreTableau"
+            (ngModelChange)="onFiltreTableauChange()"
+            placeholder="Filtrer le tableau…"
+          >
+        </div>
+      </div>
+
+      @if (statsError) {
+        <div class="error-banner"><i class="ti ti-alert-circle"></i> {{ statsError }}</div>
+      }
+
+      @if (isLoadingStats || isLoadingMedecins) {
+        <p class="info-text">Chargement…</p>
+      } @else if (lignes.length === 0) {
+        <div class="empty-state">
+          <i class="ti ti-calendar-off"></i>
+          <p>Aucun médecin n'a encore publié de créneaux.</p>
+        </div>
+      } @else {
+        <div class="table-scroll">
+          <table class="agenda-table">
+            <thead>
+              <tr>
+                <th>Médecin</th>
+                <th>Spécialité / Fonction</th>
+                <th>Établissement</th>
+                <th class="num">Créneaux</th>
+                <th class="num">Libres à venir</th>
+                <th class="num">Réservés</th>
+                <th>Prochain créneau</th>
+                <th>Dernier créneau</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (l of lignesPage; track l.medecin.id) {
+                <tr class="clickable" (click)="choisirMedecin(l.medecin)">
+                  <td>
+                    <div class="cell-medecin">
+                      <div class="avatar">{{ l.medecin.prenom.charAt(0) + l.medecin.nom.charAt(0) | uppercase }}</div>
+                      <div>
+                        <div class="picker-name">
+                          Dr. {{ l.medecin.prenom }} {{ l.medecin.nom }}
+                          @if (!l.medecin.valide) { <span class="tag warn">Non validé</span> }
+                        </div>
+                        @if (l.medecin.regionNom) { <div class="picker-sub">{{ l.medecin.regionNom }}</div> }
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    {{ specialiteLibelle(l.medecin.specialite) }}
+                    @if (l.medecin.fonctionLibelle) { <div class="picker-sub">{{ l.medecin.fonctionLibelle }}</div> }
+                  </td>
+                  <td>{{ l.medecin.etablissementNom || '—' }}</td>
+                  <td class="num">{{ l.stats.total }}</td>
+                  <td class="num"><span class="pill libre">{{ l.stats.aVenirLibres }}</span></td>
+                  <td class="num"><span class="pill reserve">{{ l.stats.reserves }}</span></td>
+                  <td>{{ l.stats.prochainCreneau ? (l.stats.prochainCreneau | date: 'dd/MM/yyyy') : '—' }}</td>
+                  <td>{{ l.stats.dernierCreneau ? (l.stats.dernierCreneau | date: 'dd/MM/yyyy') : '—' }}</td>
+                  <td class="actions">
+                    <button class="btn small" (click)="$event.stopPropagation(); choisirMedecin(l.medecin)">
+                      <i class="ti ti-calendar"></i> Voir l'agenda
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr><td colspan="9" class="info-text">Aucun médecin ne correspond au filtre.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-pagination
+          [totalItems]="lignesFiltrees.length"
+          [pageSize]="pageSize"
+          [currentPage]="currentPage"
+          (pageChange)="onPageChange($event)"
+        ></app-pagination>
+      }
+    </div>
+  } @else {
+    <!-- Statistiques du mois -->
+    <div class="stats">
+      <div class="stat"><span class="stat-value">{{ stats.total }}</span><span class="stat-label">Créneaux</span></div>
+      <div class="stat libre"><span class="stat-value">{{ stats.libres }}</span><span class="stat-label">Libres</span></div>
+      <div class="stat reserve"><span class="stat-value">{{ stats.reserves }}</span><span class="stat-label">Réservés</span></div>
+      <div class="stat annule"><span class="stat-value">{{ stats.annules }}</span><span class="stat-label">Annulés</span></div>
+      <div class="stat"><span class="stat-value">{{ stats.taux }}%</span><span class="stat-label">Remplissage</span></div>
+    </div>
+
+    <div class="agenda-layout">
+      <!-- Calendrier mensuel -->
+      <div class="calendar">
+        <div class="calendar-header">
+          <button class="icon-btn" (click)="changeMonth(-1)" aria-label="Mois précédent"><i class="ti ti-chevron-left"></i></button>
+          <div class="month-label">{{ moisLibelle }}</div>
+          <button class="icon-btn" (click)="changeMonth(1)" aria-label="Mois suivant"><i class="ti ti-chevron-right"></i></button>
+          <button class="btn small" (click)="goToday()">Aujourd'hui</button>
+        </div>
+
+        <div class="grid" [class.loading]="isLoading">
+          @for (label of daysLabels; track label) {
+            <div class="day-label">{{ label }}</div>
+          }
+          @for (cell of cells; track $index) {
+            @if (cell) {
+              <button
+                class="cell"
+                [class.today]="cell.isToday"
+                [class.past]="cell.isPast"
+                [class.selected]="cell.key === selectedKey"
+                [class.has-slots]="cell.libres + cell.reserves + cell.annules > 0"
+                (click)="selectDay(cell)"
+              >
+                <span class="cell-day">{{ cell.day }}</span>
+                <span class="cell-badges">
+                  @if (cell.libres) { <span class="pill libre" title="Libres">{{ cell.libres }}</span> }
+                  @if (cell.reserves) { <span class="pill reserve" title="Réservés">{{ cell.reserves }}</span> }
+                  @if (cell.annules) { <span class="pill annule" title="Annulés">{{ cell.annules }}</span> }
+                </span>
+              </button>
+            } @else {
+              <div class="cell empty"></div>
+            }
+          }
+        </div>
+
+        <div class="legend">
+          <span><span class="dot libre"></span> Libre</span>
+          <span><span class="dot reserve"></span> Réservé</span>
+          <span><span class="dot annule"></span> Annulé</span>
+        </div>
+      </div>
+
+      <!-- Détail du jour -->
+      <div class="day-panel">
+        <div class="day-panel-header">
+          <h3>{{ jourAppartientAuMois ? jourLibelle : 'Choisissez un jour' }}</h3>
+          <div class="filters">
+            <button [class.active]="filtre === 'tous'" (click)="filtre = 'tous'">Tous</button>
+            <button [class.active]="filtre === 'libres'" (click)="filtre = 'libres'">Libres</button>
+            <button [class.active]="filtre === 'reserves'" (click)="filtre = 'reserves'">Réservés</button>
+          </div>
+        </div>
+
+        @if (isLoading) {
+          <p class="info-text">Chargement de l'agenda…</p>
+        } @else if (!jourAppartientAuMois) {
+          <p class="info-text">Cliquez sur un jour du calendrier pour voir ses créneaux.</p>
+        } @else {
+          <div class="slots">
+            @for (c of creneauxDuJour; track c.id) {
+              <div class="slot" [class]="'slot ' + c.statut.toLowerCase()">
+                <div class="slot-head">
+                  <span class="slot-time"><i class="ti ti-clock"></i> {{ heure(c.heureDebut) }} – {{ heure(c.heureFin) }}</span>
+                  <span class="badge" [class]="'badge ' + c.statut.toLowerCase()">{{ statutCreneauLibelle(c.statut) }}</span>
+                </div>
+
+                @for (rdv of c.rdvs; track rdv.id) {
+                  <div class="rdv" [class.rdv-annule]="rdv.statut === 'ANNULE'">
+                    <div class="rdv-row">
+                      <span class="rdv-delegue"><i class="ti ti-user"></i> {{ rdv.deleguePrenom }} {{ rdv.delegueNom }}</span>
+                      <span class="rdv-statut" [class]="'rdv-statut ' + rdv.statut.toLowerCase()">{{ statutRdvLibelle(rdv.statut) }}</span>
+                    </div>
+                    <div class="rdv-details">
+                      <span><i class="ti ti-building-hospital"></i> {{ rdv.laboratoireNom || 'Laboratoire inconnu' }}</span>
+                      <span><i class="ti ti-calendar"></i> {{ c.date | date: 'dd/MM/yyyy' }} à {{ heure(c.heureDebut) }}</span>
+                      <span><i class="ti ti-clock-plus"></i> Réservé le {{ rdv.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+                    @if (rdv.statut === 'ANNULE') {
+                      <div class="rdv-note">
+                        Annulé{{ rdv.annulePar ? ' par ' + annuleParLibelle(rdv.annulePar) : '' }}
+                        @if (rdv.motifAnnulation) { — « {{ rdv.motifAnnulation }} » }
+                      </div>
+                    }
+                    @if (rdv.statut === 'RESERVE' && (rdv.realiseParDelegue || rdv.realiseParMedecin)) {
+                      <div class="rdv-note ok">
+                        Réalisation confirmée par
+                        {{ rdv.realiseParDelegue && rdv.realiseParMedecin ? 'le délégué et le médecin' : rdv.realiseParDelegue ? 'le délégué' : 'le médecin' }}
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            } @empty {
+              <p class="info-text">Aucun créneau{{ filtre === 'libres' ? ' libre' : filtre === 'reserves' ? ' réservé' : '' }} ce jour.</p>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (!isLoading && stats.total === 0) {
+      <p class="info-text center">Aucun créneau créé par ce médecin en {{ moisLibelle.toLowerCase() }}.</p>
+    }
+  }
+</div>
